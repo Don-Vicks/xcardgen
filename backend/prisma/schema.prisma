@@ -1,0 +1,300 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Workspace {
+  id          String            @id @default(uuid())
+  name        String            @unique
+  logo        String?
+  socialLinks Json?
+  ownerId     String
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  events      Event[]
+  templates   Template[]
+  owner       User              @relation("WorkspaceOwner", fields: [ownerId], references: [id])
+  members     WorkspaceMember[]
+
+  @@index([ownerId])
+}
+
+model WorkspaceMember {
+  id          String        @id @default(uuid())
+  userId      String
+  workspaceId String
+  role        WorkspaceRole @default(MEMBER)
+  invitedAt   DateTime      @default(now())
+  acceptedAt  DateTime?
+  removedAt   DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  user        User          @relation(fields: [userId], references: [id])
+  workspace   Workspace     @relation(fields: [workspaceId], references: [id])
+
+  @@unique([userId, workspaceId])
+  @@index([workspaceId])
+  @@index([userId])
+}
+
+// ... User model
+model User {
+  id                   String            @id @default(uuid())
+  name                 String
+  email                String            @unique
+  password             String?
+  googleId             String?           @unique
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  // analytics            Analytics[] // Removed
+  events               Event[]           @relation("UserEvents")
+  loginLogs            LoginLog[]
+  sessions             Session[]
+  Subscriptions        Subscriptions[]
+  templates            Template[]
+  workspaceOwnerships  Workspace[]       @relation("WorkspaceOwner")
+  workspaceMemberships WorkspaceMember[]
+
+  @@index([email])
+}
+
+model Event {
+  id              String           @id @default(uuid())
+  userId          String
+  workspaceId     String?
+  name            String
+  slug            String           @unique
+  date            DateTime
+  description     String?
+  coverImage      String?
+  templateId      String?          @unique
+  status          EventStatus      @default(DRAFT)
+  properties      Json?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  stats           EventStats?
+  visits          EventVisit[]
+  cardGenerations CardGeneration[]
+  attendees       Attendee[]
+  downloads       Download[]
+  template        Template?        @relation("EventTemplate", fields: [templateId], references: [id])
+  user            User             @relation("UserEvents", fields: [userId], references: [id])
+  workspace       Workspace?       @relation(fields: [workspaceId], references: [id])
+  // generations Generation[] // Removed
+
+  @@unique([userId, name])
+  @@index([userId, templateId])
+  @@index([workspaceId])
+}
+
+model Template {
+  id              String         @id @default(uuid())
+  userId          String
+  workspaceId     String?
+  name            String         @default("Untitled Template")
+  backgroundImage String
+  canvasData      Json?          @db.JsonB // Konva/Canvas JSON data
+  sampleData      Json?          @db.JsonB // Sample data for previewing
+  properties      Json?          @db.JsonB
+  status          TemplateStatus @default(DRAFT)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  event           Event?         @relation("EventTemplate")
+  user            User           @relation(fields: [userId], references: [id])
+  workspace       Workspace?     @relation(fields: [workspaceId], references: [id])
+
+  @@index([userId])
+  @@index([workspaceId])
+}
+
+model Attendee {
+  id              String           @id @default(uuid())
+  eventId         String
+  name            String
+  email           String?
+  data            Json?            @db.JsonB // Custom fields (PFP, Company, etc.)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  event           Event            @relation(fields: [eventId], references: [id])
+  cardGenerations CardGeneration[]
+  nftMints        NFTMint[]
+
+  @@unique([eventId, email]) // Optional: prevent duplicate emails per event if email exists
+  @@index([eventId])
+}
+
+// Aggregated Stats (Fast Retrieval)
+model EventStats {
+  id          String   @id @default(uuid())
+  eventId     String   @unique
+  views       Int      @default(0)
+  uniques     Int      @default(0)
+  generations Int      @default(0)
+  shares      Int      @default(0)
+  updatedAt   DateTime @updatedAt
+  event       Event    @relation(fields: [eventId], references: [id])
+}
+
+// Detailed Event Visits (Time-series)
+model EventVisit {
+  id        String   @id @default(uuid())
+  eventId   String
+  visitorId String? // Fingerprint/Cookie ID
+  referrer  String?
+  userAgent String?
+  country   String?
+  city      String?
+  device    String?
+  createdAt DateTime @default(now())
+  event     Event    @relation(fields: [eventId], references: [id])
+
+  @@index([eventId, createdAt])
+}
+
+// Detailed Card Generations (Time-series)
+model CardGeneration {
+  id         String        @id @default(uuid())
+  eventId    String
+  attendeeId String?
+  imageUrl   String
+  createdAt  DateTime      @default(now())
+  attendee   Attendee?     @relation(fields: [attendeeId], references: [id])
+  event      Event         @relation(fields: [eventId], references: [id])
+  downloads  Download[]
+  shares     SocialShare[]
+
+  @@index([eventId, createdAt])
+}
+
+model SocialShare {
+  id               String         @id @default(uuid())
+  cardGenerationId String
+  platform         String // twitter, linkedin, etc.
+  createdAt        DateTime       @default(now())
+  cardGeneration   CardGeneration @relation(fields: [cardGenerationId], references: [id])
+}
+
+model Download {
+  id               String         @id @default(uuid())
+  eventId          String
+  cardGenerationId String
+  createdAt        DateTime       @default(now())
+  event            Event          @relation(fields: [eventId], references: [id])
+  cardGeneration   CardGeneration @relation(fields: [cardGenerationId], references: [id])
+
+  @@index([eventId, cardGenerationId])
+}
+
+model NFTMint {
+  id              String     @id @default(uuid())
+  attendeeId      String
+  contractAddress String
+  tokenId         String
+  txHash          String?
+  status          MintStatus @default(PENDING)
+  network         String     @default("solana") // or polygon, etc.
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  attendee        Attendee   @relation(fields: [attendeeId], references: [id])
+
+  @@index([attendeeId])
+}
+
+model SubscriptionPlan {
+  id            String               @id @default(uuid())
+  name          String               @unique
+  description   String
+  amount        Decimal
+  interval      SubscriptionInterval
+  currency      String
+  isActive      Boolean              @default(true)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  subscriptions Subscriptions[]
+}
+
+model Subscriptions {
+  id                 String             @id @default(uuid())
+  userId             String
+  subscriptionPlanId String
+  status             SubscriptionStatus @default(ACTIVE)
+  startDate          DateTime           @default(now())
+  endDate            DateTime?
+  cancelledAt        DateTime?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  subscriptionPlan   SubscriptionPlan   @relation(fields: [subscriptionPlanId], references: [id])
+  user               User               @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([subscriptionPlanId])
+}
+
+model LoginLog {
+  id        String   @id @default(uuid())
+  userId    String
+  deviceId  String
+  ipAddress String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model Session {
+  id           String    @id @default(uuid())
+  userId       String
+  token        String    @unique
+  ipAddress    String
+  userAgent    String
+  deviceId     String?
+  expiresAt    DateTime
+  isActive     Boolean   @default(true)
+  lastActivity DateTime  @default(now())
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  revokedAt    DateTime?
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isActive])
+  @@index([token, isActive])
+  @@index([expiresAt])
+}
+
+enum WorkspaceRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum TemplateStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum SubscriptionInterval {
+  MONTH
+  YEAR
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  EXPIRED
+}
+
+enum MintStatus {
+  PENDING
+  MINTED
+  FAILED
+}
