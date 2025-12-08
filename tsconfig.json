@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@xcardgen/types": ["./types"]
+    },
+    "moduleResolution": "node",
+    "strict": true,
+    "strictPropertyInitialization": false
+  }
+}
