@@ -1,6 +1,7 @@
 import {
   IsDateString,
   IsNotEmpty,
+  IsObject,
   IsOptional,
   IsString,
 } from 'class-validator';
@@ -33,4 +34,11 @@ export class CreateEventDto {
 
   @IsString()
   workspaceId: string;
+
+  @IsObject()
+  @IsOptional()
+  appearance?: {
+    theme?: string;
+    primaryColor?: string;
+  };
 }

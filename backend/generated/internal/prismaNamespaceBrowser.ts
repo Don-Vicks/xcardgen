@@ -144,6 +144,7 @@ export const EventScalarFieldEnum = {
   templateId: 'templateId',
   status: 'status',
   properties: 'properties',
+  appearance: 'appearance',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'

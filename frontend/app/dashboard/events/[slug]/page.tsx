@@ -1,5 +1,6 @@
 "use client"
 
+import { EventAppearanceSettings } from "@/components/dashboard/event-appearance-settings"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -256,9 +257,10 @@ export default function EventDashboardPage({ params }: { params: Promise<{ slug:
         </TabsContent>
 
         <TabsContent value="settings">
-          <div className="py-8 text-center text-muted-foreground">
-            Event settings coming soon...
-          </div>
+          <EventAppearanceSettings
+            event={event}
+            onUpdate={(appearance) => setEvent((prev: any) => ({ ...prev, appearance }))}
+          />
         </TabsContent>
       </Tabs>
 

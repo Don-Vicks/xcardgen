@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { eventsRequest } from "@/lib/api/requests/events.request"
 import { Template } from "@/lib/api/requests/templates.request"
+import { getButtonStyle, getCardStyle, getThemeStyles } from "@/lib/theme-utils"
 import { useGeneratedCardStore } from "@/store/generated-card.store"
 import confetti from "canvas-confetti"
 import { format } from "date-fns"
@@ -16,6 +17,7 @@ import { CalendarIcon, Download, Facebook, Image as ImageIcon, Linkedin, Loader2
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { CanvasRenderer } from "../canvas-renderer"
+import { AnimatedBackground } from "./animated-background"
 
 interface EventRegistrationViewProps {
   event: any // Replace with proper Event type
@@ -286,27 +288,54 @@ export function EventRegistrationView({ event, template }: EventRegistrationView
   const attendeeCount = (event._count?.attendees || 0) + (event.stats?.generations || 0)
   const displayCount = event._count?.attendees ?? event.stats?.generations ?? 0
 
+  // Get theme styles from appearance settings
+  // Default to minimal theme if not set
+  const themeStyles = getThemeStyles(event.appearance)
+  const buttonStyle = getButtonStyle(event.appearance)
+  const cardStyle = getCardStyle(event.appearance)
+
   return (
-    <div className="min-h-[100dvh] lg:h-screen flex flex-col lg:flex-row bg-background font-sans text-foreground lg:overflow-hidden">
+    <div
+      className="min-h-[100dvh] lg:h-screen flex flex-col lg:flex-row font-sans lg:overflow-hidden"
+      style={{
+        background: themeStyles.background,
+        color: themeStyles.textColor,
+        '--placeholder-color': themeStyles.mutedColor,
+      } as React.CSSProperties}
+    >
+      <AnimatedBackground theme={event.appearance?.theme} primaryColor={event.appearance?.primaryColor} />
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{ backgroundImage: themeStyles.overlay }}
+      />
       <FontLoader fonts={usedFonts} />
 
       {/* Left: Content */}
-      <div className="flex-1 w-full lg:overflow-hidden flex flex-col">
+      <div className="flex-1 w-full lg:overflow-hidden flex flex-col relative z-10">
         <div className="h-full w-full lg:overflow-y-auto custom-scrollbar">
           <div className="flex flex-col p-6 lg:p-12 pb-10 lg:pb-12">
             <div className="max-w-xl mx-auto w-full space-y-8">
 
               {/* Organizer Badge */}
-              <div className="flex items-center gap-3 bg-card px-4 py-2 rounded-full border shadow-sm w-fit animate-in fade-in slide-in-from-top-4 duration-700">
+              <div
+                className="flex items-center gap-3 px-4 py-2 rounded-full border shadow-sm w-fit animate-in fade-in slide-in-from-top-4 duration-700 backdrop-blur-sm"
+                style={{
+                  backgroundColor: themeStyles.cardBg,
+                  borderColor: themeStyles.borderColor
+                }}
+              >
                 {workspace?.logo ? (
                   <img src={workspace.logo} alt={workspace.name} className="w-6 h-6 rounded-full object-cover" />
                 ) : (
-                  <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
+                  <div
+                    className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold"
+                    style={{ backgroundColor: `${themeStyles.textColor}20`, color: themeStyles.textColor }}
+                  >
                     {workspace?.name?.substring(0, 2).toUpperCase()}
                   </div>
                 )}
-                <span className="text-sm font-medium text-muted-foreground">
-                  Hosted by <span className="text-foreground font-semibold">{workspace?.name || "Organizer"}</span>
+                <span className="text-sm font-medium" style={{ color: themeStyles.mutedColor }}>
+                  Hosted by <span className="font-semibold" style={{ color: themeStyles.textColor }}>{workspace?.name || "Organizer"}</span>
                 </span>
               </div>
 
@@ -317,25 +346,37 @@ export function EventRegistrationView({ event, template }: EventRegistrationView
                     <img src={event.workspace.logo} className="h-8 w-auto" alt="Logo" />
                   )}
                 </div> */}
-                <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight font-heading text-foreground">
+                <h1
+                  className="text-4xl lg:text-5xl font-extrabold tracking-tight font-heading"
+                  style={{ color: themeStyles.textColor }}
+                >
                   {event.name}
                 </h1>
                 {event.description && (
-                  <p className="text-lg text-muted-foreground leading-relaxed">
+                  <p className="text-lg leading-relaxed" style={{ color: themeStyles.mutedColor }}>
                     {event.description}
                   </p>
                 )}
-                <div className="flex items-center gap-4 text-sm text-muted-foreground pt-2">
-                  <div className="flex items-center gap-1.5 bg-card px-3 py-1.5 rounded-full border shadow-sm">
-                    <CalendarIcon className="w-4 h-4 text-primary" />
-                    <span>{format(new Date(event.date), "MMMM d, yyyy")}</span>
+                <div className="flex items-center gap-4 text-sm pt-2" style={{ color: themeStyles.mutedColor }}>
+                  <div
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border shadow-sm backdrop-blur-sm"
+                    style={{
+                      backgroundColor: themeStyles.cardBg,
+                      borderColor: themeStyles.borderColor
+                    }}
+                  >
+                    <CalendarIcon className="w-4 h-4" style={{ color: themeStyles.primaryColor }} />
+                    <span style={{ color: themeStyles.textColor }}>{format(new Date(event.date), "MMMM d, yyyy")}</span>
                   </div>
                 </div>
               </div>
 
               {/* Description */}
               {event.description && (
-                <div className="prose prose-slate dark:prose-invert max-w-none text-muted-foreground leading-relaxed">
+                <div
+                  className="prose prose-slate dark:prose-invert max-w-none leading-relaxed"
+                  style={{ color: themeStyles.mutedColor }}
+                >
                   <p>{event.description}</p>
                 </div>
               )}
@@ -357,7 +398,7 @@ export function EventRegistrationView({ event, template }: EventRegistrationView
                     </div>
                   )}
                 </div>
-                <div className="text-sm text-foreground">
+                <div className="text-sm" style={{ color: themeStyles.textColor }}>
                   <span className="font-bold">{displayCount} people</span> are attending
                 </div>
               </div>
@@ -377,41 +418,53 @@ export function EventRegistrationView({ event, template }: EventRegistrationView
               </div>
 
               {/* Form Card */}
-              <Card className="border-0 shadow-2xl shadow-primary/5 ring-1 ring-border/50 bg-card overflow-hidden relative isolate">
-                <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent -z-10" />
+              <Card
+                className="overflow-hidden relative isolate transition-all duration-3000"
+                style={cardStyle}
+              >
                 <CardContent className="p-6 lg:p-8">
                   {!generatedUrl ? (
                     <form onSubmit={handleGenerate} className="space-y-6">
                       <div className="grid gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="name" className="font-medium">Full Name</Label>
+                          <Label htmlFor="name" className="font-medium" style={{ color: themeStyles.textColor }}>Full Name</Label>
                           <div className="relative">
-                            <User className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                            <User className="absolute left-3 top-3 h-5 w-5" style={{ color: themeStyles.mutedColor }} />
                             <Input
                               id="name"
                               value={name}
                               onChange={e => setName(e.target.value)}
                               required
-                              className="h-12 pl-10 bg-input/50 focus:bg-background transition-all text-base"
+                              className="h-12 pl-10 focus:ring-2 transition-all text-base placeholder:text-[var(--placeholder-color)]"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                borderColor: themeStyles.borderColor,
+                                color: themeStyles.textColor
+                              }}
                               placeholder="e.g. Jane Doe"
                             />
                           </div>
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="email" className="font-medium">Email Address</Label>
+                          <Label htmlFor="email" className="font-medium" style={{ color: themeStyles.textColor }}>Email Address</Label>
                           <div className="relative">
-                            <Mail className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                            <Mail className="absolute left-3 top-3 h-5 w-5" style={{ color: themeStyles.mutedColor }} />
                             <Input
                               id="email"
                               type="email"
                               value={email}
                               onChange={e => setEmail(e.target.value)}
                               required
-                              className="h-12 pl-10 bg-input/50 focus:bg-background transition-all text-base"
+                              className="h-12 pl-10 focus:ring-2 transition-all text-base placeholder:text-[var(--placeholder-color)]"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                borderColor: themeStyles.borderColor,
+                                color: themeStyles.textColor
+                              }}
                               placeholder="jane@example.com"
                             />
                           </div>
-                          <p className="text-[10px] text-muted-foreground pt-1">
+                          <p className="text-[10px] pt-1" style={{ color: themeStyles.mutedColor }}>
                             * These details are for event registration and won't appear on the card unless added below.
                           </p>
                         </div>
@@ -421,9 +474,9 @@ export function EventRegistrationView({ event, template }: EventRegistrationView
                           const key = field.fieldName || (field.content ? field.content.replace(/[{}]/g, '').trim() : `field_${field.id}`)
                           return (
                             <div key={field.id} className="space-y-2">
-                              <Label htmlFor={key} className="text-muted-foreground font-medium capitalize flex items-center gap-2">
+                              <Label htmlFor={key} className="font-medium capitalize flex items-center gap-2" style={{ color: themeStyles.textColor }}>
                                 {key}
-                                {field.type === 'image' && <span className="text-xs font-normal text-muted-foreground/70">(Image)</span>}
+                                {field.type === 'image' && <span className="text-xs font-normal opacity-70">(Image)</span>}
                               </Label>
 
                               {field.type === 'image' ? (
@@ -442,10 +495,13 @@ export function EventRegistrationView({ event, template }: EventRegistrationView
                                     }}
                                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                   />
-                                  <div className={`
-                                   border-2 border-dashed rounded-xl p-6 transition-all duration-200 text-center flex flex-col items-center justify-center gap-2
-                                   ${values[key] ? 'border-primary/50 bg-primary/5' : 'border-border bg-input/20 hover:bg-accent hover:border-accent-foreground/50'}
-                                `}>
+                                  <div
+                                    className={`border-2 border-dashed rounded-xl p-6 transition-all duration-200 text-center flex flex-col items-center justify-center gap-2`}
+                                    style={{
+                                      borderColor: values[key] ? themeStyles.primaryColor : themeStyles.borderColor,
+                                      backgroundColor: values[key] ? `${themeStyles.primaryColor}10` : 'rgba(255,255,255,0.05)'
+                                    }}
+                                  >
                                     {values[key] ? (
                                       <div className="relative w-full aspect-video sm:aspect-[2/1] rounded-lg overflow-hidden shadow-sm">
                                         <img src={values[key]} className="w-full h-full object-cover" />
@@ -474,7 +530,12 @@ export function EventRegistrationView({ event, template }: EventRegistrationView
                                   placeholder={field.fieldDescription || `Enter ${key}`}
                                   value={values[key] || ''}
                                   onChange={e => setValues(prev => ({ ...prev, [key]: e.target.value }))}
-                                  className="h-12 bg-input/50 border-input focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all text-base"
+                                  className="h-12 transition-all text-base placeholder:text-[var(--placeholder-color)]"
+                                  style={{
+                                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                    borderColor: themeStyles.borderColor,
+                                    color: themeStyles.textColor
+                                  }}
                                 />
                               )}
                             </div>
@@ -482,16 +543,21 @@ export function EventRegistrationView({ event, template }: EventRegistrationView
                         })}
                       </div>
 
-                      <Button type="submit" size="lg" className="w-full h-12 text-base font-bold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all hover:scale-[1.01] bg-gradient-to-r from-primary to-violet-600 border-0 text-primary-foreground" disabled={loading}>
+                      <Button
+                        type="submit"
+                        disabled={loading}
+                        style={buttonStyle}
+                        className="w-full h-12 text-lg font-semibold shadow-lg hover:brightness-110 active:scale-[0.98] transition-all"
+                      >
                         {loading ? (
                           <>
-                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                             Generating...
                           </>
                         ) : (
                           <>
-                            Generate Ticket
-                            <Sparkles className="ml-2 h-5 w-5 animate-pulse" />
+                            <Sparkles className="mr-2 h-4 w-4" />
+                            Generate My xCard
                           </>
                         )}
                       </Button>
@@ -543,34 +609,51 @@ export function EventRegistrationView({ event, template }: EventRegistrationView
                 </CardContent>
               </Card>
             </div>
-            <div className="mt-12 text-center text-xs text-muted-foreground">
-              Powered by <span className="font-semibold text-foreground">xCardGen</span>
+            <div className="mt-12 text-center text-xs" style={{ color: themeStyles.mutedColor }}>
+              Powered by <span className="font-semibold" style={{ color: themeStyles.textColor }}>xCardGen</span>
             </div>
           </div>
           {/* Scroll Hint Overlay (Desktop) */}
-          <div className="hidden lg:flex absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent pointer-events-none items-end justify-center pb-6">
-            <div className="animate-bounce text-muted-foreground flex flex-col items-center gap-1">
+          <div className="hidden lg:flex absolute bottom-0 left-0 right-0 h-24 pointer-events-none items-end justify-center pb-6">
+            <div className="animate-bounce flex flex-col items-center gap-1" style={{ color: themeStyles.mutedColor }}>
               <span className="text-xs uppercase tracking-widest">Scroll</span>
-              <div className="w-px h-8 bg-border" />
+              <div className="w-px h-8 bg-current" />
             </div>
           </div>
         </div>
       </div>
 
       {/* Right: Live Preview */}
-      <div className="flex-1 bg-muted/30 relative hidden lg:flex items-center justify-center p-8 overflow-hidden">
+      <div
+        className="flex-1 relative hidden lg:flex items-center justify-center p-8 overflow-hidden"
+        style={{ backgroundColor: 'rgba(125, 125, 125, 0.05)' }}
+      >
         <div className="absolute inset-0 pattern-grid-lg opacity-[0.03]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent h-32 bottom-0" />
 
         <div className="sticky top-12 max-h-[calc(100vh-6rem)] w-full flex flex-col items-center justify-center h-full">
           <div className="mb-8 text-center space-y-1">
-            <Badge variant="secondary" className="bg-card shadow-sm text-muted-foreground font-medium px-3 py-1">
-              <div className="w-1.5 h-1.5 rounded-full bg-green-500 mr-2 animate-pulse" />
+            <Badge
+              variant="secondary"
+              className="shadow-sm font-medium px-3 py-1 backdrop-blur-md"
+              style={{
+                backgroundColor: themeStyles.cardBg,
+                color: themeStyles.mutedColor,
+                border: `1px solid ${themeStyles.borderColor}`
+              }}
+            >
+              <div className="w-1.5 h-1.5 rounded-full mr-2 animate-pulse" style={{ backgroundColor: themeStyles.primaryColor }} />
               Live Preview
             </Badge>
           </div>
 
-          <div className="relative shadow-2xl rounded-xl overflow-hidden ring-1 ring-black/5 transition-all duration-500 ease-out transform hover:scale-[1.02] hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.25)]">
+          <div
+            className="relative shadow-2xl rounded-xl overflow-hidden ring-1 ring-black/5 transition-all duration-500 ease-out transform hover:scale-[1.02]"
+            style={{
+              boxShadow: themeStyles.shadow,
+              borderColor: themeStyles.borderColor,
+              '--tw-ring-color': themeStyles.borderColor,
+            } as React.CSSProperties}
+          >
             <CanvasRenderer
               elements={template.canvasData as any}
               width={template.properties?.width || 600}

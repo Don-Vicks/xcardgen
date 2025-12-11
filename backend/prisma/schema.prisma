@@ -81,6 +81,7 @@ model Event {
   templateId      String?
   status          EventStatus      @default(DRAFT)
   properties      Json?
+  appearance      Json? // { theme: string, primaryColor: string }
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   stats           EventStats?

@@ -71,6 +71,7 @@ export type EventCountAggregateOutputType = {
   templateId: number
   status: number
   properties: number
+  appearance: number
   createdAt: number
   updatedAt: number
   deletedAt: number
@@ -125,6 +126,7 @@ export type EventCountAggregateInputType = {
   templateId?: true
   status?: true
   properties?: true
+  appearance?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -216,6 +218,7 @@ export type EventGroupByOutputType = {
   templateId: string | null
   status: $Enums.EventStatus
   properties: runtime.JsonValue | null
+  appearance: runtime.JsonValue | null
   createdAt: Date
   updatedAt: Date
   deletedAt: Date | null
@@ -255,6 +258,7 @@ export type EventWhereInput = {
   templateId?: Prisma.StringNullableFilter<"Event"> | string | null
   status?: Prisma.EnumEventStatusFilter<"Event"> | $Enums.EventStatus
   properties?: Prisma.JsonNullableFilter<"Event">
+  appearance?: Prisma.JsonNullableFilter<"Event">
   createdAt?: Prisma.DateTimeFilter<"Event"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Event"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Event"> | Date | string | null
@@ -281,6 +285,7 @@ export type EventOrderByWithRelationInput = {
   templateId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   properties?: Prisma.SortOrderInput | Prisma.SortOrder
+  appearance?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -311,6 +316,7 @@ export type EventWhereUniqueInput = Prisma.AtLeast<{
   templateId?: Prisma.StringNullableFilter<"Event"> | string | null
   status?: Prisma.EnumEventStatusFilter<"Event"> | $Enums.EventStatus
   properties?: Prisma.JsonNullableFilter<"Event">
+  appearance?: Prisma.JsonNullableFilter<"Event">
   createdAt?: Prisma.DateTimeFilter<"Event"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Event"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Event"> | Date | string | null
@@ -337,6 +343,7 @@ export type EventOrderByWithAggregationInput = {
   templateId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   properties?: Prisma.SortOrderInput | Prisma.SortOrder
+  appearance?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -361,6 +368,7 @@ export type EventScalarWhereWithAggregatesInput = {
   templateId?: Prisma.StringNullableWithAggregatesFilter<"Event"> | string | null
   status?: Prisma.EnumEventStatusWithAggregatesFilter<"Event"> | $Enums.EventStatus
   properties?: Prisma.JsonNullableWithAggregatesFilter<"Event">
+  appearance?: Prisma.JsonNullableWithAggregatesFilter<"Event">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Event"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Event"> | Date | string
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Event"> | Date | string | null
@@ -376,6 +384,7 @@ export type EventCreateInput = {
   coverImage?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -402,6 +411,7 @@ export type EventUncheckedCreateInput = {
   templateId?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -422,6 +432,7 @@ export type EventUpdateInput = {
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -448,6 +459,7 @@ export type EventUncheckedUpdateInput = {
   templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -471,6 +483,7 @@ export type EventCreateManyInput = {
   templateId?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -486,6 +499,7 @@ export type EventUpdateManyMutationInput = {
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -504,6 +518,7 @@ export type EventUncheckedUpdateManyInput = {
   templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -537,6 +552,7 @@ export type EventCountOrderByAggregateInput = {
   templateId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   properties?: Prisma.SortOrder
+  appearance?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -791,6 +807,7 @@ export type EventCreateWithoutWorkspaceInput = {
   coverImage?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -815,6 +832,7 @@ export type EventUncheckedCreateWithoutWorkspaceInput = {
   templateId?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -867,6 +885,7 @@ export type EventScalarWhereInput = {
   templateId?: Prisma.StringNullableFilter<"Event"> | string | null
   status?: Prisma.EnumEventStatusFilter<"Event"> | $Enums.EventStatus
   properties?: Prisma.JsonNullableFilter<"Event">
+  appearance?: Prisma.JsonNullableFilter<"Event">
   createdAt?: Prisma.DateTimeFilter<"Event"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Event"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Event"> | Date | string | null
@@ -882,6 +901,7 @@ export type EventCreateWithoutUserInput = {
   coverImage?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -906,6 +926,7 @@ export type EventUncheckedCreateWithoutUserInput = {
   templateId?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -952,6 +973,7 @@ export type EventCreateWithoutTemplateInput = {
   coverImage?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -976,6 +998,7 @@ export type EventUncheckedCreateWithoutTemplateInput = {
   coverImage?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1022,6 +1045,7 @@ export type EventCreateWithoutAttendeesInput = {
   coverImage?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1047,6 +1071,7 @@ export type EventUncheckedCreateWithoutAttendeesInput = {
   templateId?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1082,6 +1107,7 @@ export type EventUpdateWithoutAttendeesInput = {
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1107,6 +1133,7 @@ export type EventUncheckedUpdateWithoutAttendeesInput = {
   templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1126,6 +1153,7 @@ export type EventCreateWithoutStatsInput = {
   coverImage?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1151,6 +1179,7 @@ export type EventUncheckedCreateWithoutStatsInput = {
   templateId?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1186,6 +1215,7 @@ export type EventUpdateWithoutStatsInput = {
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1211,6 +1241,7 @@ export type EventUncheckedUpdateWithoutStatsInput = {
   templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1230,6 +1261,7 @@ export type EventCreateWithoutVisitsInput = {
   coverImage?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1255,6 +1287,7 @@ export type EventUncheckedCreateWithoutVisitsInput = {
   templateId?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1290,6 +1323,7 @@ export type EventUpdateWithoutVisitsInput = {
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1315,6 +1349,7 @@ export type EventUncheckedUpdateWithoutVisitsInput = {
   templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1334,6 +1369,7 @@ export type EventCreateWithoutCardGenerationsInput = {
   coverImage?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1359,6 +1395,7 @@ export type EventUncheckedCreateWithoutCardGenerationsInput = {
   templateId?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1394,6 +1431,7 @@ export type EventUpdateWithoutCardGenerationsInput = {
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1419,6 +1457,7 @@ export type EventUncheckedUpdateWithoutCardGenerationsInput = {
   templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1438,6 +1477,7 @@ export type EventCreateWithoutDownloadsInput = {
   coverImage?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1463,6 +1503,7 @@ export type EventUncheckedCreateWithoutDownloadsInput = {
   templateId?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1498,6 +1539,7 @@ export type EventUpdateWithoutDownloadsInput = {
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1523,6 +1565,7 @@ export type EventUncheckedUpdateWithoutDownloadsInput = {
   templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1544,6 +1587,7 @@ export type EventCreateManyWorkspaceInput = {
   templateId?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1559,6 +1603,7 @@ export type EventUpdateWithoutWorkspaceInput = {
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1583,6 +1628,7 @@ export type EventUncheckedUpdateWithoutWorkspaceInput = {
   templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1605,6 +1651,7 @@ export type EventUncheckedUpdateManyWithoutWorkspaceInput = {
   templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1622,6 +1669,7 @@ export type EventCreateManyUserInput = {
   templateId?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1637,6 +1685,7 @@ export type EventUpdateWithoutUserInput = {
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1661,6 +1710,7 @@ export type EventUncheckedUpdateWithoutUserInput = {
   templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1683,6 +1733,7 @@ export type EventUncheckedUpdateManyWithoutUserInput = {
   templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1700,6 +1751,7 @@ export type EventCreateManyTemplateInput = {
   coverImage?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1715,6 +1767,7 @@ export type EventUpdateWithoutTemplateInput = {
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1739,6 +1792,7 @@ export type EventUncheckedUpdateWithoutTemplateInput = {
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1761,6 +1815,7 @@ export type EventUncheckedUpdateManyWithoutTemplateInput = {
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1837,6 +1892,7 @@ export type EventSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   templateId?: boolean
   status?: boolean
   properties?: boolean
+  appearance?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -1864,6 +1920,7 @@ export type EventSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   templateId?: boolean
   status?: boolean
   properties?: boolean
+  appearance?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -1885,6 +1942,7 @@ export type EventSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   templateId?: boolean
   status?: boolean
   properties?: boolean
+  appearance?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -1906,12 +1964,13 @@ export type EventSelectScalar = {
   templateId?: boolean
   status?: boolean
   properties?: boolean
+  appearance?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
 }
 
-export type EventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "workspaceId" | "name" | "slug" | "date" | "endDate" | "description" | "coverImage" | "templateId" | "status" | "properties" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["event"]>
+export type EventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "workspaceId" | "name" | "slug" | "date" | "endDate" | "description" | "coverImage" | "templateId" | "status" | "properties" | "appearance" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["event"]>
 export type EventInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   stats?: boolean | Prisma.Event$statsArgs<ExtArgs>
   visits?: boolean | Prisma.Event$visitsArgs<ExtArgs>
@@ -1959,6 +2018,7 @@ export type $EventPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     templateId: string | null
     status: $Enums.EventStatus
     properties: runtime.JsonValue | null
+    appearance: runtime.JsonValue | null
     createdAt: Date
     updatedAt: Date
     deletedAt: Date | null
@@ -2405,6 +2465,7 @@ export interface EventFieldRefs {
   readonly templateId: Prisma.FieldRef<"Event", 'String'>
   readonly status: Prisma.FieldRef<"Event", 'EventStatus'>
   readonly properties: Prisma.FieldRef<"Event", 'Json'>
+  readonly appearance: Prisma.FieldRef<"Event", 'Json'>
   readonly createdAt: Prisma.FieldRef<"Event", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Event", 'DateTime'>
   readonly deletedAt: Prisma.FieldRef<"Event", 'DateTime'>
