@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { LoadingScreen } from '@/components/ui/loading-screen';
+import { getErrorMessage } from '@/lib/utils';
 import { useAuth } from '@/stores/auth-store';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
@@ -37,7 +38,11 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (!loading && user) {
-      router.push('/dashboard');
+      if ((user.workspaceMemberships && user.workspaceMemberships.length > 0) || (user.workspaceOwnerships && user.workspaceOwnerships.length > 0)) {
+        router.push('/dashboard');
+      } else {
+        router.push('/onboarding');
+      }
     }
   }, [user, loading, router]);
 
@@ -69,8 +74,9 @@ export default function LoginPage() {
       // Redirect is handled in context
     } catch (error) {
       console.error(error);
+      const message = getErrorMessage(error);
       toast.error('Login failed', {
-        description: 'Invalid email or password.',
+        description: message,
       });
     } finally {
       setIsLoading(false);

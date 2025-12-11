@@ -9,8 +9,8 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/client"
-import type * as $Enums from "../enums.js"
-import type * as Prisma from "../internal/prismaNamespace.js"
+import type * as $Enums from "../enums"
+import type * as Prisma from "../internal/prismaNamespace"
 
 /**
  * Model EventStats
@@ -30,6 +30,8 @@ export type EventStatsAvgAggregateOutputType = {
   views: number | null
   uniques: number | null
   generations: number | null
+  attendees: number | null
+  downloads: number | null
   shares: number | null
 }
 
@@ -37,6 +39,8 @@ export type EventStatsSumAggregateOutputType = {
   views: number | null
   uniques: number | null
   generations: number | null
+  attendees: number | null
+  downloads: number | null
   shares: number | null
 }
 
@@ -46,6 +50,8 @@ export type EventStatsMinAggregateOutputType = {
   views: number | null
   uniques: number | null
   generations: number | null
+  attendees: number | null
+  downloads: number | null
   shares: number | null
   updatedAt: Date | null
 }
@@ -56,6 +62,8 @@ export type EventStatsMaxAggregateOutputType = {
   views: number | null
   uniques: number | null
   generations: number | null
+  attendees: number | null
+  downloads: number | null
   shares: number | null
   updatedAt: Date | null
 }
@@ -66,6 +74,8 @@ export type EventStatsCountAggregateOutputType = {
   views: number
   uniques: number
   generations: number
+  attendees: number
+  downloads: number
   shares: number
   updatedAt: number
   _all: number
@@ -76,6 +86,8 @@ export type EventStatsAvgAggregateInputType = {
   views?: true
   uniques?: true
   generations?: true
+  attendees?: true
+  downloads?: true
   shares?: true
 }
 
@@ -83,6 +95,8 @@ export type EventStatsSumAggregateInputType = {
   views?: true
   uniques?: true
   generations?: true
+  attendees?: true
+  downloads?: true
   shares?: true
 }
 
@@ -92,6 +106,8 @@ export type EventStatsMinAggregateInputType = {
   views?: true
   uniques?: true
   generations?: true
+  attendees?: true
+  downloads?: true
   shares?: true
   updatedAt?: true
 }
@@ -102,6 +118,8 @@ export type EventStatsMaxAggregateInputType = {
   views?: true
   uniques?: true
   generations?: true
+  attendees?: true
+  downloads?: true
   shares?: true
   updatedAt?: true
 }
@@ -112,6 +130,8 @@ export type EventStatsCountAggregateInputType = {
   views?: true
   uniques?: true
   generations?: true
+  attendees?: true
+  downloads?: true
   shares?: true
   updatedAt?: true
   _all?: true
@@ -209,6 +229,8 @@ export type EventStatsGroupByOutputType = {
   views: number
   uniques: number
   generations: number
+  attendees: number
+  downloads: number
   shares: number
   updatedAt: Date
   _count: EventStatsCountAggregateOutputType | null
@@ -242,6 +264,8 @@ export type EventStatsWhereInput = {
   views?: Prisma.IntFilter<"EventStats"> | number
   uniques?: Prisma.IntFilter<"EventStats"> | number
   generations?: Prisma.IntFilter<"EventStats"> | number
+  attendees?: Prisma.IntFilter<"EventStats"> | number
+  downloads?: Prisma.IntFilter<"EventStats"> | number
   shares?: Prisma.IntFilter<"EventStats"> | number
   updatedAt?: Prisma.DateTimeFilter<"EventStats"> | Date | string
   event?: Prisma.XOR<Prisma.EventScalarRelationFilter, Prisma.EventWhereInput>
@@ -253,6 +277,8 @@ export type EventStatsOrderByWithRelationInput = {
   views?: Prisma.SortOrder
   uniques?: Prisma.SortOrder
   generations?: Prisma.SortOrder
+  attendees?: Prisma.SortOrder
+  downloads?: Prisma.SortOrder
   shares?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   event?: Prisma.EventOrderByWithRelationInput
@@ -267,6 +293,8 @@ export type EventStatsWhereUniqueInput = Prisma.AtLeast<{
   views?: Prisma.IntFilter<"EventStats"> | number
   uniques?: Prisma.IntFilter<"EventStats"> | number
   generations?: Prisma.IntFilter<"EventStats"> | number
+  attendees?: Prisma.IntFilter<"EventStats"> | number
+  downloads?: Prisma.IntFilter<"EventStats"> | number
   shares?: Prisma.IntFilter<"EventStats"> | number
   updatedAt?: Prisma.DateTimeFilter<"EventStats"> | Date | string
   event?: Prisma.XOR<Prisma.EventScalarRelationFilter, Prisma.EventWhereInput>
@@ -278,6 +306,8 @@ export type EventStatsOrderByWithAggregationInput = {
   views?: Prisma.SortOrder
   uniques?: Prisma.SortOrder
   generations?: Prisma.SortOrder
+  attendees?: Prisma.SortOrder
+  downloads?: Prisma.SortOrder
   shares?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.EventStatsCountOrderByAggregateInput
@@ -296,6 +326,8 @@ export type EventStatsScalarWhereWithAggregatesInput = {
   views?: Prisma.IntWithAggregatesFilter<"EventStats"> | number
   uniques?: Prisma.IntWithAggregatesFilter<"EventStats"> | number
   generations?: Prisma.IntWithAggregatesFilter<"EventStats"> | number
+  attendees?: Prisma.IntWithAggregatesFilter<"EventStats"> | number
+  downloads?: Prisma.IntWithAggregatesFilter<"EventStats"> | number
   shares?: Prisma.IntWithAggregatesFilter<"EventStats"> | number
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"EventStats"> | Date | string
 }
@@ -305,6 +337,8 @@ export type EventStatsCreateInput = {
   views?: number
   uniques?: number
   generations?: number
+  attendees?: number
+  downloads?: number
   shares?: number
   updatedAt?: Date | string
   event: Prisma.EventCreateNestedOneWithoutStatsInput
@@ -316,6 +350,8 @@ export type EventStatsUncheckedCreateInput = {
   views?: number
   uniques?: number
   generations?: number
+  attendees?: number
+  downloads?: number
   shares?: number
   updatedAt?: Date | string
 }
@@ -325,6 +361,8 @@ export type EventStatsUpdateInput = {
   views?: Prisma.IntFieldUpdateOperationsInput | number
   uniques?: Prisma.IntFieldUpdateOperationsInput | number
   generations?: Prisma.IntFieldUpdateOperationsInput | number
+  attendees?: Prisma.IntFieldUpdateOperationsInput | number
+  downloads?: Prisma.IntFieldUpdateOperationsInput | number
   shares?: Prisma.IntFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   event?: Prisma.EventUpdateOneRequiredWithoutStatsNestedInput
@@ -336,6 +374,8 @@ export type EventStatsUncheckedUpdateInput = {
   views?: Prisma.IntFieldUpdateOperationsInput | number
   uniques?: Prisma.IntFieldUpdateOperationsInput | number
   generations?: Prisma.IntFieldUpdateOperationsInput | number
+  attendees?: Prisma.IntFieldUpdateOperationsInput | number
+  downloads?: Prisma.IntFieldUpdateOperationsInput | number
   shares?: Prisma.IntFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -346,6 +386,8 @@ export type EventStatsCreateManyInput = {
   views?: number
   uniques?: number
   generations?: number
+  attendees?: number
+  downloads?: number
   shares?: number
   updatedAt?: Date | string
 }
@@ -355,6 +397,8 @@ export type EventStatsUpdateManyMutationInput = {
   views?: Prisma.IntFieldUpdateOperationsInput | number
   uniques?: Prisma.IntFieldUpdateOperationsInput | number
   generations?: Prisma.IntFieldUpdateOperationsInput | number
+  attendees?: Prisma.IntFieldUpdateOperationsInput | number
+  downloads?: Prisma.IntFieldUpdateOperationsInput | number
   shares?: Prisma.IntFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -365,6 +409,8 @@ export type EventStatsUncheckedUpdateManyInput = {
   views?: Prisma.IntFieldUpdateOperationsInput | number
   uniques?: Prisma.IntFieldUpdateOperationsInput | number
   generations?: Prisma.IntFieldUpdateOperationsInput | number
+  attendees?: Prisma.IntFieldUpdateOperationsInput | number
+  downloads?: Prisma.IntFieldUpdateOperationsInput | number
   shares?: Prisma.IntFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -380,6 +426,8 @@ export type EventStatsCountOrderByAggregateInput = {
   views?: Prisma.SortOrder
   uniques?: Prisma.SortOrder
   generations?: Prisma.SortOrder
+  attendees?: Prisma.SortOrder
+  downloads?: Prisma.SortOrder
   shares?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -388,6 +436,8 @@ export type EventStatsAvgOrderByAggregateInput = {
   views?: Prisma.SortOrder
   uniques?: Prisma.SortOrder
   generations?: Prisma.SortOrder
+  attendees?: Prisma.SortOrder
+  downloads?: Prisma.SortOrder
   shares?: Prisma.SortOrder
 }
 
@@ -397,6 +447,8 @@ export type EventStatsMaxOrderByAggregateInput = {
   views?: Prisma.SortOrder
   uniques?: Prisma.SortOrder
   generations?: Prisma.SortOrder
+  attendees?: Prisma.SortOrder
+  downloads?: Prisma.SortOrder
   shares?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -407,6 +459,8 @@ export type EventStatsMinOrderByAggregateInput = {
   views?: Prisma.SortOrder
   uniques?: Prisma.SortOrder
   generations?: Prisma.SortOrder
+  attendees?: Prisma.SortOrder
+  downloads?: Prisma.SortOrder
   shares?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -415,6 +469,8 @@ export type EventStatsSumOrderByAggregateInput = {
   views?: Prisma.SortOrder
   uniques?: Prisma.SortOrder
   generations?: Prisma.SortOrder
+  attendees?: Prisma.SortOrder
+  downloads?: Prisma.SortOrder
   shares?: Prisma.SortOrder
 }
 
@@ -463,6 +519,8 @@ export type EventStatsCreateWithoutEventInput = {
   views?: number
   uniques?: number
   generations?: number
+  attendees?: number
+  downloads?: number
   shares?: number
   updatedAt?: Date | string
 }
@@ -472,6 +530,8 @@ export type EventStatsUncheckedCreateWithoutEventInput = {
   views?: number
   uniques?: number
   generations?: number
+  attendees?: number
+  downloads?: number
   shares?: number
   updatedAt?: Date | string
 }
@@ -497,6 +557,8 @@ export type EventStatsUpdateWithoutEventInput = {
   views?: Prisma.IntFieldUpdateOperationsInput | number
   uniques?: Prisma.IntFieldUpdateOperationsInput | number
   generations?: Prisma.IntFieldUpdateOperationsInput | number
+  attendees?: Prisma.IntFieldUpdateOperationsInput | number
+  downloads?: Prisma.IntFieldUpdateOperationsInput | number
   shares?: Prisma.IntFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -506,6 +568,8 @@ export type EventStatsUncheckedUpdateWithoutEventInput = {
   views?: Prisma.IntFieldUpdateOperationsInput | number
   uniques?: Prisma.IntFieldUpdateOperationsInput | number
   generations?: Prisma.IntFieldUpdateOperationsInput | number
+  attendees?: Prisma.IntFieldUpdateOperationsInput | number
+  downloads?: Prisma.IntFieldUpdateOperationsInput | number
   shares?: Prisma.IntFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -518,6 +582,8 @@ export type EventStatsSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   views?: boolean
   uniques?: boolean
   generations?: boolean
+  attendees?: boolean
+  downloads?: boolean
   shares?: boolean
   updatedAt?: boolean
   event?: boolean | Prisma.EventDefaultArgs<ExtArgs>
@@ -529,6 +595,8 @@ export type EventStatsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   views?: boolean
   uniques?: boolean
   generations?: boolean
+  attendees?: boolean
+  downloads?: boolean
   shares?: boolean
   updatedAt?: boolean
   event?: boolean | Prisma.EventDefaultArgs<ExtArgs>
@@ -540,6 +608,8 @@ export type EventStatsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   views?: boolean
   uniques?: boolean
   generations?: boolean
+  attendees?: boolean
+  downloads?: boolean
   shares?: boolean
   updatedAt?: boolean
   event?: boolean | Prisma.EventDefaultArgs<ExtArgs>
@@ -551,11 +621,13 @@ export type EventStatsSelectScalar = {
   views?: boolean
   uniques?: boolean
   generations?: boolean
+  attendees?: boolean
+  downloads?: boolean
   shares?: boolean
   updatedAt?: boolean
 }
 
-export type EventStatsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "eventId" | "views" | "uniques" | "generations" | "shares" | "updatedAt", ExtArgs["result"]["eventStats"]>
+export type EventStatsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "eventId" | "views" | "uniques" | "generations" | "attendees" | "downloads" | "shares" | "updatedAt", ExtArgs["result"]["eventStats"]>
 export type EventStatsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   event?: boolean | Prisma.EventDefaultArgs<ExtArgs>
 }
@@ -577,6 +649,8 @@ export type $EventStatsPayload<ExtArgs extends runtime.Types.Extensions.Internal
     views: number
     uniques: number
     generations: number
+    attendees: number
+    downloads: number
     shares: number
     updatedAt: Date
   }, ExtArgs["result"]["eventStats"]>
@@ -1008,6 +1082,8 @@ export interface EventStatsFieldRefs {
   readonly views: Prisma.FieldRef<"EventStats", 'Int'>
   readonly uniques: Prisma.FieldRef<"EventStats", 'Int'>
   readonly generations: Prisma.FieldRef<"EventStats", 'Int'>
+  readonly attendees: Prisma.FieldRef<"EventStats", 'Int'>
+  readonly downloads: Prisma.FieldRef<"EventStats", 'Int'>
   readonly shares: Prisma.FieldRef<"EventStats", 'Int'>
   readonly updatedAt: Prisma.FieldRef<"EventStats", 'DateTime'>
 }

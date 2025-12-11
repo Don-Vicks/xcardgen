@@ -1,4 +1,5 @@
 import { apiRequest } from '@/lib/api/requests/auth.request'
+import { workspacesRequest } from '@/lib/api/requests/workspaces.request'
 import { CreateWorkspaceDto, LoginDto, RegisterDto } from '@/types/auth'
 import { create } from 'zustand'
 
@@ -8,6 +9,20 @@ interface User {
   name: string
   googleId?: string
   createdAt: string
+  workspaceMemberships?: Array<{
+    workspace: {
+      id: string
+      name: string
+      slug?: string
+      logo?: string
+    }
+  }>
+  workspaceOwnerships?: Array<{
+    id: string
+    name: string
+    slug?: string
+    logo?: string
+  }>
 }
 
 interface AuthState {
@@ -17,16 +32,17 @@ interface AuthState {
   // Actions
   login: (data: LoginDto) => Promise<void>
   register: (data: RegisterDto) => Promise<void>
-  createWorkspace: (data: CreateWorkspaceDto) => Promise<void>
   logout: () => Promise<void>
   loginWithGoogle: () => void
   checkAuth: () => Promise<void>
   setUser: (user: User | null) => void
+  createWorkspace: (data: CreateWorkspaceDto) => Promise<void>
 }
 
 const authRequestInstance = new apiRequest()
+const workspacesRequestInstance = workspacesRequest
 
-export const useAuth = create<AuthState>((set) => ({
+export const useAuth = create<AuthState>((set, get) => ({
   user: null,
   loading: true,
 
@@ -82,12 +98,30 @@ export const useAuth = create<AuthState>((set) => ({
   createWorkspace: async (data: CreateWorkspaceDto) => {
     try {
       set({ loading: true })
-      await authRequestInstance.createWorkspace(data)
-      // Optionally fetch profile again to update user workspace memberships if returned
-      set({ loading: false })
+
+      // Pass data directly as it now matches the full schema from the form
+      const response = await workspacesRequestInstance.createWorkspace(data)
+      const newWorkspace = response.data
+
+      // Update local user state with new workspace
+      const currentUser = get().user
+      if (currentUser) {
+        set({
+          user: {
+            ...currentUser,
+            workspaceOwnerships: [
+              ...(currentUser.workspaceOwnerships || []),
+              newWorkspace,
+            ],
+          },
+          loading: false,
+        })
+      } else {
+        set({ loading: false })
+      }
     } catch (error) {
       set({ loading: false })
-      console.error('Create Workspace failed', error)
+      console.error('Create workspace failed', error)
       throw error
     }
   },

@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  Param,
   Post,
   Req,
   Res,
@@ -12,7 +14,6 @@ import type { Request, Response } from 'express';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/user.decorator';
-import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -36,9 +37,9 @@ export class AuthController {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 15 * 60 * 1000, // 15 minutes
+      maxAge: 60 * 60 * 1000, // 60 minutes
     });
-    res.redirect(`http://localhost:3000/auth/callback`);
+    res.redirect(`http://localhost:3000/callback`);
   }
 
   // ... register and login methods (already set cookies) ...
@@ -55,7 +56,7 @@ export class AuthController {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 15 * 60 * 1000, // 15 minutes
+      maxAge: 60 * 60 * 1000, // 60 minutes
     });
 
     return res.json({
@@ -93,7 +94,7 @@ export class AuthController {
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         path: '/',
-        maxAge: 15 * 60 * 1000, // 15 minutes
+        maxAge: 60 * 60 * 1000, // 60 minutes
       });
     }
 
@@ -148,11 +149,15 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('workspace')
-  async createWorkspace(
-    @Body() createWorkspaceDto: CreateWorkspaceDto,
-    @CurrentUser() user: any,
-  ) {
-    return this.authService.createWorkspace(createWorkspaceDto, user);
+  @Delete('sessions/:id')
+  async revokeSession(@Param('id') id: string, @CurrentUser() user: any) {
+    await this.authService.revokeSession(id, user.id);
+    return { message: 'Session revoked' };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('logs')
+  async getLoginLogs(@CurrentUser() user: any) {
+    return this.authService.getUserLoginLogs(user.id);
   }
 }

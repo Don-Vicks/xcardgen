@@ -12,10 +12,10 @@ import {
 } from '@nestjs/common';
 import { CurrentUser } from '../auth/decorators/user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CreateUserDto, CreateWorkspaceDto } from './dto/create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
+import { UsersService } from './users.service';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard)
@@ -39,6 +39,14 @@ export class UsersController {
     return user;
   }
 
+  @Patch('me')
+  updateProfile(
+    @CurrentUser() user: User,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.usersService.update(user.id, updateUserDto);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
@@ -52,19 +60,5 @@ export class UsersController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
-  }
-
-  // User's Workspace Routes
-  @Get('workspace')
-  getWorkSpace(@CurrentUser() user: User) {
-    return this.usersService.getWorkspace(user.id);
-  }
-
-  @Post('workspace')
-  createWorkspace(
-    @Body() createWorkspace: CreateWorkspaceDto,
-    @CurrentUser() user: User,
-  ) {
-    return this.usersService.createWorkspace(user.id, createWorkspace);
   }
 }

@@ -4,8 +4,10 @@ export interface CreateEventDto {
   name: string
   slug: string
   date: string
-  description?: string
+  endDate?: string
+  description: string
   coverImage?: string
+  workspaceId: string
 }
 
 export interface Event {
@@ -16,6 +18,13 @@ export interface Event {
   createdAt: string
   updatedAt: string
   userId: string
+  isActive: boolean
+  stats?: {
+    totalVisits: number
+    totalGenerations: number
+    totalDownloads: number
+    totalShares: number
+  }
   _count?: {
     cards: number
   }
@@ -26,12 +35,61 @@ export class EventsRequest {
     return api.post<Event>('/events', data)
   }
 
-  async getAll() {
-    return api.get<Event[]>('/events')
+  async getAll(
+    params: {
+      workspaceId?: string
+      page?: number
+      limit?: number
+      search?: string
+      sort?: string
+    } = {}
+  ) {
+    const query = new URLSearchParams()
+    if (params.workspaceId) query.append('workspaceId', params.workspaceId)
+    if (params.page) query.append('page', params.page.toString())
+    if (params.limit) query.append('limit', params.limit.toString())
+    if (params.search) query.append('search', params.search)
+    if (params.sort) query.append('sort', params.sort)
+    return api.get<{
+      data: Event[]
+      meta: { total: number; page: number; limit: number; totalPages: number }
+    }>(`/events?${query.toString()}`)
   }
 
-  async getOne(id: string) {
+  async delete(id: string) {
+    return api.delete(`/events/${id}`)
+  }
+
+  async getAnalytics(id: string, from?: Date, to?: Date) {
+    const query = new URLSearchParams()
+    if (from) query.append('startDate', from.toISOString())
+    if (to) query.append('endDate', to.toISOString())
+    return api.get(`/events/${id}/analytics?${query.toString()}`)
+  }
+
+  async exportAnalytics(id: string) {
+    return api.get(`/events/${id}/export/analytics`, { responseType: 'blob' })
+  }
+
+  async exportAttendees(id: string) {
+    return api.get<Blob>(`/events/${id}/export/attendees`, {
+      responseType: 'blob',
+    })
+  }
+
+  async getById(id: string) {
     return api.get<Event>(`/events/${id}`)
+  }
+  exportPdf(id: string) {
+    return api.get(`/events/${id}/export/pdf`, {
+      responseType: 'blob',
+    })
+  }
+
+  exportPng(id: string) {
+    return api.get(`/events/${id}/export/png`, {
+      responseType: 'blob',
+    })
   }
 }
 

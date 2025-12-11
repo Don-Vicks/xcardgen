@@ -9,8 +9,8 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/client"
-import type * as $Enums from "../enums.js"
-import type * as Prisma from "../internal/prismaNamespace.js"
+import type * as $Enums from "../enums"
+import type * as Prisma from "../internal/prismaNamespace"
 
 /**
  * Model Event
@@ -31,12 +31,14 @@ export type EventMinAggregateOutputType = {
   name: string | null
   slug: string | null
   date: Date | null
+  endDate: Date | null
   description: string | null
   coverImage: string | null
   templateId: string | null
   status: $Enums.EventStatus | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
 }
 
 export type EventMaxAggregateOutputType = {
@@ -46,12 +48,14 @@ export type EventMaxAggregateOutputType = {
   name: string | null
   slug: string | null
   date: Date | null
+  endDate: Date | null
   description: string | null
   coverImage: string | null
   templateId: string | null
   status: $Enums.EventStatus | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
 }
 
 export type EventCountAggregateOutputType = {
@@ -61,6 +65,7 @@ export type EventCountAggregateOutputType = {
   name: number
   slug: number
   date: number
+  endDate: number
   description: number
   coverImage: number
   templateId: number
@@ -68,6 +73,7 @@ export type EventCountAggregateOutputType = {
   properties: number
   createdAt: number
   updatedAt: number
+  deletedAt: number
   _all: number
 }
 
@@ -79,12 +85,14 @@ export type EventMinAggregateInputType = {
   name?: true
   slug?: true
   date?: true
+  endDate?: true
   description?: true
   coverImage?: true
   templateId?: true
   status?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
 }
 
 export type EventMaxAggregateInputType = {
@@ -94,12 +102,14 @@ export type EventMaxAggregateInputType = {
   name?: true
   slug?: true
   date?: true
+  endDate?: true
   description?: true
   coverImage?: true
   templateId?: true
   status?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
 }
 
 export type EventCountAggregateInputType = {
@@ -109,6 +119,7 @@ export type EventCountAggregateInputType = {
   name?: true
   slug?: true
   date?: true
+  endDate?: true
   description?: true
   coverImage?: true
   templateId?: true
@@ -116,6 +127,7 @@ export type EventCountAggregateInputType = {
   properties?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -198,6 +210,7 @@ export type EventGroupByOutputType = {
   name: string
   slug: string
   date: Date
+  endDate: Date | null
   description: string | null
   coverImage: string | null
   templateId: string | null
@@ -205,6 +218,7 @@ export type EventGroupByOutputType = {
   properties: runtime.JsonValue | null
   createdAt: Date
   updatedAt: Date
+  deletedAt: Date | null
   _count: EventCountAggregateOutputType | null
   _min: EventMinAggregateOutputType | null
   _max: EventMaxAggregateOutputType | null
@@ -235,6 +249,7 @@ export type EventWhereInput = {
   name?: Prisma.StringFilter<"Event"> | string
   slug?: Prisma.StringFilter<"Event"> | string
   date?: Prisma.DateTimeFilter<"Event"> | Date | string
+  endDate?: Prisma.DateTimeNullableFilter<"Event"> | Date | string | null
   description?: Prisma.StringNullableFilter<"Event"> | string | null
   coverImage?: Prisma.StringNullableFilter<"Event"> | string | null
   templateId?: Prisma.StringNullableFilter<"Event"> | string | null
@@ -242,6 +257,7 @@ export type EventWhereInput = {
   properties?: Prisma.JsonNullableFilter<"Event">
   createdAt?: Prisma.DateTimeFilter<"Event"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Event"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Event"> | Date | string | null
   stats?: Prisma.XOR<Prisma.EventStatsNullableScalarRelationFilter, Prisma.EventStatsWhereInput> | null
   visits?: Prisma.EventVisitListRelationFilter
   cardGenerations?: Prisma.CardGenerationListRelationFilter
@@ -259,6 +275,7 @@ export type EventOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   date?: Prisma.SortOrder
+  endDate?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   coverImage?: Prisma.SortOrderInput | Prisma.SortOrder
   templateId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -266,6 +283,7 @@ export type EventOrderByWithRelationInput = {
   properties?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   stats?: Prisma.EventStatsOrderByWithRelationInput
   visits?: Prisma.EventVisitOrderByRelationAggregateInput
   cardGenerations?: Prisma.CardGenerationOrderByRelationAggregateInput
@@ -288,12 +306,14 @@ export type EventWhereUniqueInput = Prisma.AtLeast<{
   workspaceId?: Prisma.StringNullableFilter<"Event"> | string | null
   name?: Prisma.StringFilter<"Event"> | string
   date?: Prisma.DateTimeFilter<"Event"> | Date | string
+  endDate?: Prisma.DateTimeNullableFilter<"Event"> | Date | string | null
   description?: Prisma.StringNullableFilter<"Event"> | string | null
   coverImage?: Prisma.StringNullableFilter<"Event"> | string | null
   status?: Prisma.EnumEventStatusFilter<"Event"> | $Enums.EventStatus
   properties?: Prisma.JsonNullableFilter<"Event">
   createdAt?: Prisma.DateTimeFilter<"Event"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Event"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Event"> | Date | string | null
   stats?: Prisma.XOR<Prisma.EventStatsNullableScalarRelationFilter, Prisma.EventStatsWhereInput> | null
   visits?: Prisma.EventVisitListRelationFilter
   cardGenerations?: Prisma.CardGenerationListRelationFilter
@@ -311,6 +331,7 @@ export type EventOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   date?: Prisma.SortOrder
+  endDate?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   coverImage?: Prisma.SortOrderInput | Prisma.SortOrder
   templateId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -318,6 +339,7 @@ export type EventOrderByWithAggregationInput = {
   properties?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.EventCountOrderByAggregateInput
   _max?: Prisma.EventMaxOrderByAggregateInput
   _min?: Prisma.EventMinOrderByAggregateInput
@@ -333,6 +355,7 @@ export type EventScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"Event"> | string
   slug?: Prisma.StringWithAggregatesFilter<"Event"> | string
   date?: Prisma.DateTimeWithAggregatesFilter<"Event"> | Date | string
+  endDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Event"> | Date | string | null
   description?: Prisma.StringNullableWithAggregatesFilter<"Event"> | string | null
   coverImage?: Prisma.StringNullableWithAggregatesFilter<"Event"> | string | null
   templateId?: Prisma.StringNullableWithAggregatesFilter<"Event"> | string | null
@@ -340,6 +363,7 @@ export type EventScalarWhereWithAggregatesInput = {
   properties?: Prisma.JsonNullableWithAggregatesFilter<"Event">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Event"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Event"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Event"> | Date | string | null
 }
 
 export type EventCreateInput = {
@@ -347,12 +371,14 @@ export type EventCreateInput = {
   name: string
   slug: string
   date: Date | string
+  endDate?: Date | string | null
   description?: string | null
   coverImage?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   stats?: Prisma.EventStatsCreateNestedOneWithoutEventInput
   visits?: Prisma.EventVisitCreateNestedManyWithoutEventInput
   cardGenerations?: Prisma.CardGenerationCreateNestedManyWithoutEventInput
@@ -370,6 +396,7 @@ export type EventUncheckedCreateInput = {
   name: string
   slug: string
   date: Date | string
+  endDate?: Date | string | null
   description?: string | null
   coverImage?: string | null
   templateId?: string | null
@@ -377,6 +404,7 @@ export type EventUncheckedCreateInput = {
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   stats?: Prisma.EventStatsUncheckedCreateNestedOneWithoutEventInput
   visits?: Prisma.EventVisitUncheckedCreateNestedManyWithoutEventInput
   cardGenerations?: Prisma.CardGenerationUncheckedCreateNestedManyWithoutEventInput
@@ -389,12 +417,14 @@ export type EventUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stats?: Prisma.EventStatsUpdateOneWithoutEventNestedInput
   visits?: Prisma.EventVisitUpdateManyWithoutEventNestedInput
   cardGenerations?: Prisma.CardGenerationUpdateManyWithoutEventNestedInput
@@ -412,6 +442,7 @@ export type EventUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -419,6 +450,7 @@ export type EventUncheckedUpdateInput = {
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stats?: Prisma.EventStatsUncheckedUpdateOneWithoutEventNestedInput
   visits?: Prisma.EventVisitUncheckedUpdateManyWithoutEventNestedInput
   cardGenerations?: Prisma.CardGenerationUncheckedUpdateManyWithoutEventNestedInput
@@ -433,6 +465,7 @@ export type EventCreateManyInput = {
   name: string
   slug: string
   date: Date | string
+  endDate?: Date | string | null
   description?: string | null
   coverImage?: string | null
   templateId?: string | null
@@ -440,6 +473,7 @@ export type EventCreateManyInput = {
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type EventUpdateManyMutationInput = {
@@ -447,12 +481,14 @@ export type EventUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type EventUncheckedUpdateManyInput = {
@@ -462,6 +498,7 @@ export type EventUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -469,6 +506,7 @@ export type EventUncheckedUpdateManyInput = {
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type EventListRelationFilter = {
@@ -493,6 +531,7 @@ export type EventCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   date?: Prisma.SortOrder
+  endDate?: Prisma.SortOrder
   description?: Prisma.SortOrder
   coverImage?: Prisma.SortOrder
   templateId?: Prisma.SortOrder
@@ -500,6 +539,7 @@ export type EventCountOrderByAggregateInput = {
   properties?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type EventMaxOrderByAggregateInput = {
@@ -509,12 +549,14 @@ export type EventMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   date?: Prisma.SortOrder
+  endDate?: Prisma.SortOrder
   description?: Prisma.SortOrder
   coverImage?: Prisma.SortOrder
   templateId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type EventMinOrderByAggregateInput = {
@@ -524,12 +566,14 @@ export type EventMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   date?: Prisma.SortOrder
+  endDate?: Prisma.SortOrder
   description?: Prisma.SortOrder
   coverImage?: Prisma.SortOrder
   templateId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type EventNullableScalarRelationFilter = {
@@ -737,12 +781,14 @@ export type EventCreateWithoutWorkspaceInput = {
   name: string
   slug: string
   date: Date | string
+  endDate?: Date | string | null
   description?: string | null
   coverImage?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   stats?: Prisma.EventStatsCreateNestedOneWithoutEventInput
   visits?: Prisma.EventVisitCreateNestedManyWithoutEventInput
   cardGenerations?: Prisma.CardGenerationCreateNestedManyWithoutEventInput
@@ -758,6 +804,7 @@ export type EventUncheckedCreateWithoutWorkspaceInput = {
   name: string
   slug: string
   date: Date | string
+  endDate?: Date | string | null
   description?: string | null
   coverImage?: string | null
   templateId?: string | null
@@ -765,6 +812,7 @@ export type EventUncheckedCreateWithoutWorkspaceInput = {
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   stats?: Prisma.EventStatsUncheckedCreateNestedOneWithoutEventInput
   visits?: Prisma.EventVisitUncheckedCreateNestedManyWithoutEventInput
   cardGenerations?: Prisma.CardGenerationUncheckedCreateNestedManyWithoutEventInput
@@ -808,6 +856,7 @@ export type EventScalarWhereInput = {
   name?: Prisma.StringFilter<"Event"> | string
   slug?: Prisma.StringFilter<"Event"> | string
   date?: Prisma.DateTimeFilter<"Event"> | Date | string
+  endDate?: Prisma.DateTimeNullableFilter<"Event"> | Date | string | null
   description?: Prisma.StringNullableFilter<"Event"> | string | null
   coverImage?: Prisma.StringNullableFilter<"Event"> | string | null
   templateId?: Prisma.StringNullableFilter<"Event"> | string | null
@@ -815,6 +864,7 @@ export type EventScalarWhereInput = {
   properties?: Prisma.JsonNullableFilter<"Event">
   createdAt?: Prisma.DateTimeFilter<"Event"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Event"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Event"> | Date | string | null
 }
 
 export type EventCreateWithoutUserInput = {
@@ -822,12 +872,14 @@ export type EventCreateWithoutUserInput = {
   name: string
   slug: string
   date: Date | string
+  endDate?: Date | string | null
   description?: string | null
   coverImage?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   stats?: Prisma.EventStatsCreateNestedOneWithoutEventInput
   visits?: Prisma.EventVisitCreateNestedManyWithoutEventInput
   cardGenerations?: Prisma.CardGenerationCreateNestedManyWithoutEventInput
@@ -843,6 +895,7 @@ export type EventUncheckedCreateWithoutUserInput = {
   name: string
   slug: string
   date: Date | string
+  endDate?: Date | string | null
   description?: string | null
   coverImage?: string | null
   templateId?: string | null
@@ -850,6 +903,7 @@ export type EventUncheckedCreateWithoutUserInput = {
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   stats?: Prisma.EventStatsUncheckedCreateNestedOneWithoutEventInput
   visits?: Prisma.EventVisitUncheckedCreateNestedManyWithoutEventInput
   cardGenerations?: Prisma.CardGenerationUncheckedCreateNestedManyWithoutEventInput
@@ -888,12 +942,14 @@ export type EventCreateWithoutTemplateInput = {
   name: string
   slug: string
   date: Date | string
+  endDate?: Date | string | null
   description?: string | null
   coverImage?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   stats?: Prisma.EventStatsCreateNestedOneWithoutEventInput
   visits?: Prisma.EventVisitCreateNestedManyWithoutEventInput
   cardGenerations?: Prisma.CardGenerationCreateNestedManyWithoutEventInput
@@ -910,12 +966,14 @@ export type EventUncheckedCreateWithoutTemplateInput = {
   name: string
   slug: string
   date: Date | string
+  endDate?: Date | string | null
   description?: string | null
   coverImage?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   stats?: Prisma.EventStatsUncheckedCreateNestedOneWithoutEventInput
   visits?: Prisma.EventVisitUncheckedCreateNestedManyWithoutEventInput
   cardGenerations?: Prisma.CardGenerationUncheckedCreateNestedManyWithoutEventInput
@@ -944,12 +1002,14 @@ export type EventUpdateWithoutTemplateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stats?: Prisma.EventStatsUpdateOneWithoutEventNestedInput
   visits?: Prisma.EventVisitUpdateManyWithoutEventNestedInput
   cardGenerations?: Prisma.CardGenerationUpdateManyWithoutEventNestedInput
@@ -966,12 +1026,14 @@ export type EventUncheckedUpdateWithoutTemplateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stats?: Prisma.EventStatsUncheckedUpdateOneWithoutEventNestedInput
   visits?: Prisma.EventVisitUncheckedUpdateManyWithoutEventNestedInput
   cardGenerations?: Prisma.CardGenerationUncheckedUpdateManyWithoutEventNestedInput
@@ -984,12 +1046,14 @@ export type EventCreateWithoutAttendeesInput = {
   name: string
   slug: string
   date: Date | string
+  endDate?: Date | string | null
   description?: string | null
   coverImage?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   stats?: Prisma.EventStatsCreateNestedOneWithoutEventInput
   visits?: Prisma.EventVisitCreateNestedManyWithoutEventInput
   cardGenerations?: Prisma.CardGenerationCreateNestedManyWithoutEventInput
@@ -1006,6 +1070,7 @@ export type EventUncheckedCreateWithoutAttendeesInput = {
   name: string
   slug: string
   date: Date | string
+  endDate?: Date | string | null
   description?: string | null
   coverImage?: string | null
   templateId?: string | null
@@ -1013,6 +1078,7 @@ export type EventUncheckedCreateWithoutAttendeesInput = {
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   stats?: Prisma.EventStatsUncheckedCreateNestedOneWithoutEventInput
   visits?: Prisma.EventVisitUncheckedCreateNestedManyWithoutEventInput
   cardGenerations?: Prisma.CardGenerationUncheckedCreateNestedManyWithoutEventInput
@@ -1040,12 +1106,14 @@ export type EventUpdateWithoutAttendeesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stats?: Prisma.EventStatsUpdateOneWithoutEventNestedInput
   visits?: Prisma.EventVisitUpdateManyWithoutEventNestedInput
   cardGenerations?: Prisma.CardGenerationUpdateManyWithoutEventNestedInput
@@ -1062,6 +1130,7 @@ export type EventUncheckedUpdateWithoutAttendeesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1069,6 +1138,7 @@ export type EventUncheckedUpdateWithoutAttendeesInput = {
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stats?: Prisma.EventStatsUncheckedUpdateOneWithoutEventNestedInput
   visits?: Prisma.EventVisitUncheckedUpdateManyWithoutEventNestedInput
   cardGenerations?: Prisma.CardGenerationUncheckedUpdateManyWithoutEventNestedInput
@@ -1080,12 +1150,14 @@ export type EventCreateWithoutStatsInput = {
   name: string
   slug: string
   date: Date | string
+  endDate?: Date | string | null
   description?: string | null
   coverImage?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   visits?: Prisma.EventVisitCreateNestedManyWithoutEventInput
   cardGenerations?: Prisma.CardGenerationCreateNestedManyWithoutEventInput
   attendees?: Prisma.AttendeeCreateNestedManyWithoutEventInput
@@ -1102,6 +1174,7 @@ export type EventUncheckedCreateWithoutStatsInput = {
   name: string
   slug: string
   date: Date | string
+  endDate?: Date | string | null
   description?: string | null
   coverImage?: string | null
   templateId?: string | null
@@ -1109,6 +1182,7 @@ export type EventUncheckedCreateWithoutStatsInput = {
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   visits?: Prisma.EventVisitUncheckedCreateNestedManyWithoutEventInput
   cardGenerations?: Prisma.CardGenerationUncheckedCreateNestedManyWithoutEventInput
   attendees?: Prisma.AttendeeUncheckedCreateNestedManyWithoutEventInput
@@ -1136,12 +1210,14 @@ export type EventUpdateWithoutStatsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   visits?: Prisma.EventVisitUpdateManyWithoutEventNestedInput
   cardGenerations?: Prisma.CardGenerationUpdateManyWithoutEventNestedInput
   attendees?: Prisma.AttendeeUpdateManyWithoutEventNestedInput
@@ -1158,6 +1234,7 @@ export type EventUncheckedUpdateWithoutStatsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1165,6 +1242,7 @@ export type EventUncheckedUpdateWithoutStatsInput = {
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   visits?: Prisma.EventVisitUncheckedUpdateManyWithoutEventNestedInput
   cardGenerations?: Prisma.CardGenerationUncheckedUpdateManyWithoutEventNestedInput
   attendees?: Prisma.AttendeeUncheckedUpdateManyWithoutEventNestedInput
@@ -1176,12 +1254,14 @@ export type EventCreateWithoutVisitsInput = {
   name: string
   slug: string
   date: Date | string
+  endDate?: Date | string | null
   description?: string | null
   coverImage?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   stats?: Prisma.EventStatsCreateNestedOneWithoutEventInput
   cardGenerations?: Prisma.CardGenerationCreateNestedManyWithoutEventInput
   attendees?: Prisma.AttendeeCreateNestedManyWithoutEventInput
@@ -1198,6 +1278,7 @@ export type EventUncheckedCreateWithoutVisitsInput = {
   name: string
   slug: string
   date: Date | string
+  endDate?: Date | string | null
   description?: string | null
   coverImage?: string | null
   templateId?: string | null
@@ -1205,6 +1286,7 @@ export type EventUncheckedCreateWithoutVisitsInput = {
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   stats?: Prisma.EventStatsUncheckedCreateNestedOneWithoutEventInput
   cardGenerations?: Prisma.CardGenerationUncheckedCreateNestedManyWithoutEventInput
   attendees?: Prisma.AttendeeUncheckedCreateNestedManyWithoutEventInput
@@ -1232,12 +1314,14 @@ export type EventUpdateWithoutVisitsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stats?: Prisma.EventStatsUpdateOneWithoutEventNestedInput
   cardGenerations?: Prisma.CardGenerationUpdateManyWithoutEventNestedInput
   attendees?: Prisma.AttendeeUpdateManyWithoutEventNestedInput
@@ -1254,6 +1338,7 @@ export type EventUncheckedUpdateWithoutVisitsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1261,6 +1346,7 @@ export type EventUncheckedUpdateWithoutVisitsInput = {
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stats?: Prisma.EventStatsUncheckedUpdateOneWithoutEventNestedInput
   cardGenerations?: Prisma.CardGenerationUncheckedUpdateManyWithoutEventNestedInput
   attendees?: Prisma.AttendeeUncheckedUpdateManyWithoutEventNestedInput
@@ -1272,12 +1358,14 @@ export type EventCreateWithoutCardGenerationsInput = {
   name: string
   slug: string
   date: Date | string
+  endDate?: Date | string | null
   description?: string | null
   coverImage?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   stats?: Prisma.EventStatsCreateNestedOneWithoutEventInput
   visits?: Prisma.EventVisitCreateNestedManyWithoutEventInput
   attendees?: Prisma.AttendeeCreateNestedManyWithoutEventInput
@@ -1294,6 +1382,7 @@ export type EventUncheckedCreateWithoutCardGenerationsInput = {
   name: string
   slug: string
   date: Date | string
+  endDate?: Date | string | null
   description?: string | null
   coverImage?: string | null
   templateId?: string | null
@@ -1301,6 +1390,7 @@ export type EventUncheckedCreateWithoutCardGenerationsInput = {
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   stats?: Prisma.EventStatsUncheckedCreateNestedOneWithoutEventInput
   visits?: Prisma.EventVisitUncheckedCreateNestedManyWithoutEventInput
   attendees?: Prisma.AttendeeUncheckedCreateNestedManyWithoutEventInput
@@ -1328,12 +1418,14 @@ export type EventUpdateWithoutCardGenerationsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stats?: Prisma.EventStatsUpdateOneWithoutEventNestedInput
   visits?: Prisma.EventVisitUpdateManyWithoutEventNestedInput
   attendees?: Prisma.AttendeeUpdateManyWithoutEventNestedInput
@@ -1350,6 +1442,7 @@ export type EventUncheckedUpdateWithoutCardGenerationsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1357,6 +1450,7 @@ export type EventUncheckedUpdateWithoutCardGenerationsInput = {
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stats?: Prisma.EventStatsUncheckedUpdateOneWithoutEventNestedInput
   visits?: Prisma.EventVisitUncheckedUpdateManyWithoutEventNestedInput
   attendees?: Prisma.AttendeeUncheckedUpdateManyWithoutEventNestedInput
@@ -1368,12 +1462,14 @@ export type EventCreateWithoutDownloadsInput = {
   name: string
   slug: string
   date: Date | string
+  endDate?: Date | string | null
   description?: string | null
   coverImage?: string | null
   status?: $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   stats?: Prisma.EventStatsCreateNestedOneWithoutEventInput
   visits?: Prisma.EventVisitCreateNestedManyWithoutEventInput
   cardGenerations?: Prisma.CardGenerationCreateNestedManyWithoutEventInput
@@ -1390,6 +1486,7 @@ export type EventUncheckedCreateWithoutDownloadsInput = {
   name: string
   slug: string
   date: Date | string
+  endDate?: Date | string | null
   description?: string | null
   coverImage?: string | null
   templateId?: string | null
@@ -1397,6 +1494,7 @@ export type EventUncheckedCreateWithoutDownloadsInput = {
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   stats?: Prisma.EventStatsUncheckedCreateNestedOneWithoutEventInput
   visits?: Prisma.EventVisitUncheckedCreateNestedManyWithoutEventInput
   cardGenerations?: Prisma.CardGenerationUncheckedCreateNestedManyWithoutEventInput
@@ -1424,12 +1522,14 @@ export type EventUpdateWithoutDownloadsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stats?: Prisma.EventStatsUpdateOneWithoutEventNestedInput
   visits?: Prisma.EventVisitUpdateManyWithoutEventNestedInput
   cardGenerations?: Prisma.CardGenerationUpdateManyWithoutEventNestedInput
@@ -1446,6 +1546,7 @@ export type EventUncheckedUpdateWithoutDownloadsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1453,6 +1554,7 @@ export type EventUncheckedUpdateWithoutDownloadsInput = {
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stats?: Prisma.EventStatsUncheckedUpdateOneWithoutEventNestedInput
   visits?: Prisma.EventVisitUncheckedUpdateManyWithoutEventNestedInput
   cardGenerations?: Prisma.CardGenerationUncheckedUpdateManyWithoutEventNestedInput
@@ -1465,6 +1567,7 @@ export type EventCreateManyWorkspaceInput = {
   name: string
   slug: string
   date: Date | string
+  endDate?: Date | string | null
   description?: string | null
   coverImage?: string | null
   templateId?: string | null
@@ -1472,6 +1575,7 @@ export type EventCreateManyWorkspaceInput = {
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type EventUpdateWithoutWorkspaceInput = {
@@ -1479,12 +1583,14 @@ export type EventUpdateWithoutWorkspaceInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stats?: Prisma.EventStatsUpdateOneWithoutEventNestedInput
   visits?: Prisma.EventVisitUpdateManyWithoutEventNestedInput
   cardGenerations?: Prisma.CardGenerationUpdateManyWithoutEventNestedInput
@@ -1500,6 +1606,7 @@ export type EventUncheckedUpdateWithoutWorkspaceInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1507,6 +1614,7 @@ export type EventUncheckedUpdateWithoutWorkspaceInput = {
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stats?: Prisma.EventStatsUncheckedUpdateOneWithoutEventNestedInput
   visits?: Prisma.EventVisitUncheckedUpdateManyWithoutEventNestedInput
   cardGenerations?: Prisma.CardGenerationUncheckedUpdateManyWithoutEventNestedInput
@@ -1520,6 +1628,7 @@ export type EventUncheckedUpdateManyWithoutWorkspaceInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1527,6 +1636,7 @@ export type EventUncheckedUpdateManyWithoutWorkspaceInput = {
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type EventCreateManyUserInput = {
@@ -1535,6 +1645,7 @@ export type EventCreateManyUserInput = {
   name: string
   slug: string
   date: Date | string
+  endDate?: Date | string | null
   description?: string | null
   coverImage?: string | null
   templateId?: string | null
@@ -1542,6 +1653,7 @@ export type EventCreateManyUserInput = {
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type EventUpdateWithoutUserInput = {
@@ -1549,12 +1661,14 @@ export type EventUpdateWithoutUserInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stats?: Prisma.EventStatsUpdateOneWithoutEventNestedInput
   visits?: Prisma.EventVisitUpdateManyWithoutEventNestedInput
   cardGenerations?: Prisma.CardGenerationUpdateManyWithoutEventNestedInput
@@ -1570,6 +1684,7 @@ export type EventUncheckedUpdateWithoutUserInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1577,6 +1692,7 @@ export type EventUncheckedUpdateWithoutUserInput = {
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stats?: Prisma.EventStatsUncheckedUpdateOneWithoutEventNestedInput
   visits?: Prisma.EventVisitUncheckedUpdateManyWithoutEventNestedInput
   cardGenerations?: Prisma.CardGenerationUncheckedUpdateManyWithoutEventNestedInput
@@ -1590,6 +1706,7 @@ export type EventUncheckedUpdateManyWithoutUserInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1597,6 +1714,7 @@ export type EventUncheckedUpdateManyWithoutUserInput = {
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -1664,6 +1782,7 @@ export type EventSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   name?: boolean
   slug?: boolean
   date?: boolean
+  endDate?: boolean
   description?: boolean
   coverImage?: boolean
   templateId?: boolean
@@ -1671,6 +1790,7 @@ export type EventSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   properties?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
   stats?: boolean | Prisma.Event$statsArgs<ExtArgs>
   visits?: boolean | Prisma.Event$visitsArgs<ExtArgs>
   cardGenerations?: boolean | Prisma.Event$cardGenerationsArgs<ExtArgs>
@@ -1689,6 +1809,7 @@ export type EventSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   name?: boolean
   slug?: boolean
   date?: boolean
+  endDate?: boolean
   description?: boolean
   coverImage?: boolean
   templateId?: boolean
@@ -1696,6 +1817,7 @@ export type EventSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   properties?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
   template?: boolean | Prisma.Event$templateArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   workspace?: boolean | Prisma.Event$workspaceArgs<ExtArgs>
@@ -1708,6 +1830,7 @@ export type EventSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   name?: boolean
   slug?: boolean
   date?: boolean
+  endDate?: boolean
   description?: boolean
   coverImage?: boolean
   templateId?: boolean
@@ -1715,6 +1838,7 @@ export type EventSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   properties?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
   template?: boolean | Prisma.Event$templateArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   workspace?: boolean | Prisma.Event$workspaceArgs<ExtArgs>
@@ -1727,6 +1851,7 @@ export type EventSelectScalar = {
   name?: boolean
   slug?: boolean
   date?: boolean
+  endDate?: boolean
   description?: boolean
   coverImage?: boolean
   templateId?: boolean
@@ -1734,9 +1859,10 @@ export type EventSelectScalar = {
   properties?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
 }
 
-export type EventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "workspaceId" | "name" | "slug" | "date" | "description" | "coverImage" | "templateId" | "status" | "properties" | "createdAt" | "updatedAt", ExtArgs["result"]["event"]>
+export type EventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "workspaceId" | "name" | "slug" | "date" | "endDate" | "description" | "coverImage" | "templateId" | "status" | "properties" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["event"]>
 export type EventInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   stats?: boolean | Prisma.Event$statsArgs<ExtArgs>
   visits?: boolean | Prisma.Event$visitsArgs<ExtArgs>
@@ -1778,6 +1904,7 @@ export type $EventPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     name: string
     slug: string
     date: Date
+    endDate: Date | null
     description: string | null
     coverImage: string | null
     templateId: string | null
@@ -1785,6 +1912,7 @@ export type $EventPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     properties: runtime.JsonValue | null
     createdAt: Date
     updatedAt: Date
+    deletedAt: Date | null
   }, ExtArgs["result"]["event"]>
   composites: {}
 }
@@ -2222,6 +2350,7 @@ export interface EventFieldRefs {
   readonly name: Prisma.FieldRef<"Event", 'String'>
   readonly slug: Prisma.FieldRef<"Event", 'String'>
   readonly date: Prisma.FieldRef<"Event", 'DateTime'>
+  readonly endDate: Prisma.FieldRef<"Event", 'DateTime'>
   readonly description: Prisma.FieldRef<"Event", 'String'>
   readonly coverImage: Prisma.FieldRef<"Event", 'String'>
   readonly templateId: Prisma.FieldRef<"Event", 'String'>
@@ -2229,6 +2358,7 @@ export interface EventFieldRefs {
   readonly properties: Prisma.FieldRef<"Event", 'Json'>
   readonly createdAt: Prisma.FieldRef<"Event", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Event", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"Event", 'DateTime'>
 }
     
 

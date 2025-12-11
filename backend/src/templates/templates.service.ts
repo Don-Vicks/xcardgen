@@ -1,26 +1,46 @@
 import { Injectable } from '@nestjs/common';
-import { CreateTemplateDto } from './dto/create-template.dto';
-import { UpdateTemplateDto } from './dto/update-template.dto';
+import { Prisma } from 'generated/client';
+import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class TemplatesService {
-  create(createTemplateDto: CreateTemplateDto) {
-    return 'This action adds a new template';
+  constructor(private prisma: PrismaService) {}
+
+  async create(data: Prisma.TemplateCreateInput) {
+    return this.prisma.template.create({
+      data,
+    });
   }
 
-  findAll() {
-    return `This action returns all templates`;
+  async findAll(userId: string, workspaceId?: string) {
+    const where: Prisma.TemplateWhereInput = {
+      userId,
+    };
+    if (workspaceId) {
+      where.workspaceId = workspaceId;
+    }
+    return this.prisma.template.findMany({
+      where,
+      orderBy: { updatedAt: 'desc' },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} template`;
+  async findOne(id: string) {
+    return this.prisma.template.findUnique({
+      where: { id },
+    });
   }
 
-  update(id: number, updateTemplateDto: UpdateTemplateDto) {
-    return `This action updates a #${id} template`;
+  async update(id: string, data: Prisma.TemplateUpdateInput) {
+    return this.prisma.template.update({
+      where: { id },
+      data,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} template`;
+  async remove(id: string) {
+    return this.prisma.template.delete({
+      where: { id },
+    });
   }
 }

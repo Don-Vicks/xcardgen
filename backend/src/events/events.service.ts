@@ -1,5 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma.service';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  StreamableFile,
+} from '@nestjs/common';
+import * as puppeteer from 'puppeteer';
+import { PrismaService } from 'src/prisma.service';
 import { CreateEventDto } from './dto/create-event.dto';
 
 @Injectable()
@@ -12,37 +18,496 @@ export class EventsService {
         name: createEventDto.name,
         slug: createEventDto.slug,
         date: new Date(createEventDto.date),
+        endDate: createEventDto.endDate
+          ? new Date(createEventDto.endDate)
+          : null,
         userId,
+        workspaceId: createEventDto.workspaceId,
         description: createEventDto.description,
         coverImage: createEventDto.coverImage,
+        stats: {
+          create: {},
+        },
         // templateId will be null initially, handled by optional relation update
       },
     });
   }
 
-  async findAll(userId: string) {
-    const events = await this.prisma.event.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' },
-      include: {
-        _count: {
-          select: { cardGenerations: true },
+  async findAll(
+    userId: string,
+    options: {
+      workspaceId?: string;
+      page?: number;
+      limit?: number;
+      search?: string;
+      sort?: string;
+    },
+  ) {
+    const { workspaceId, page = 1, limit = 50, search, sort } = options;
+    const skip = (page - 1) * limit;
+
+    const whereClause: any = { userId, deletedAt: null };
+    if (workspaceId) {
+      whereClause.workspaceId = workspaceId;
+    }
+
+    if (search) {
+      whereClause.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { slug: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    let orderBy: any = { createdAt: 'desc' };
+    if (sort === 'oldest') orderBy = { createdAt: 'asc' };
+    if (sort === 'alphabetical') orderBy = { name: 'asc' };
+
+    const [events, total] = await Promise.all([
+      this.prisma.event.findMany({
+        where: whereClause,
+        orderBy,
+        skip,
+        take: limit,
+        include: {
+          stats: true,
+          template: true,
         },
+      }),
+      this.prisma.event.count({ where: whereClause }),
+    ]);
+
+    return {
+      data: events.map((event) => ({
+        ...event,
+        _count: {
+          cards: event.stats?.generations || 0,
+        },
+      })),
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  async findPublic(slugOrId: string) {
+    const event = await this.prisma.event.findFirst({
+      where: {
+        OR: [{ slug: slugOrId }, { id: slugOrId }],
+      },
+      include: {
+        stats: true,
       },
     });
-
-    // Map cardGenerations count to cards property for frontend compatibility
-    return events.map((event) => ({
-      ...event,
-      _count: {
-        cards: event._count.cardGenerations,
-      },
-    }));
+    if (!event) throw new NotFoundException('Event not found');
+    return event;
   }
 
   async findOne(id: string, userId: string) {
     return this.prisma.event.findFirst({
       where: { id, userId },
     });
+  }
+
+  async delete(id: string, userId: string, workspaceId: string) {
+    // Soft delete
+    return this.prisma.event.update({
+      where: { id, userId, workspaceId },
+      data: { deletedAt: new Date(), status: 'DRAFT' },
+    });
+  }
+
+  async recordVisit(
+    eventId: string,
+    data: {
+      visitorId?: string;
+      referrer?: string;
+      userAgent?: string;
+      ip?: string;
+      country?: string;
+      city?: string;
+      device?: string;
+    },
+  ) {
+    // 1. Create Visit Log
+    await this.prisma.eventVisit.create({
+      data: {
+        eventId,
+        visitorId: data.visitorId,
+        referrer: data.referrer,
+        userAgent: data.userAgent,
+        country: data.country,
+        city: data.city,
+        device: data.device,
+      },
+    });
+
+    // 2. Update Aggregated Stats
+    // Check if unique visitor
+    let isUnique = false;
+    if (data.visitorId) {
+      const existingVisit = await this.prisma.eventVisit.findFirst({
+        where: {
+          eventId,
+          visitorId: data.visitorId,
+          NOT: { id: { equals: 'just-created' } },
+        }, // Logic usually requires checking BEFORE creating.
+      });
+      // Actually, simple check: count visits by this visitorId. If 1 (the one we just made), it's unique.
+      // Better: check if previous visit exists before creating.
+    }
+
+    // Simplification for speed: Just increment views. Uniques require better tracking logic (e.g. separate check).
+    // Let's assume passed visitorId is consistent.
+    const previousVisits = data.visitorId
+      ? await this.prisma.eventVisit.count({
+          where: { eventId, visitorId: data.visitorId },
+        })
+      : 0;
+
+    const isNewVisitor = previousVisits === 1; // It's 1 because we just created it? No, I created it above. So if count is 1, it's the first time.
+
+    await this.prisma.eventStats.upsert({
+      where: { eventId },
+      create: {
+        eventId,
+        views: 1,
+        uniques: isNewVisitor ? 1 : 0,
+      },
+      update: {
+        views: { increment: 1 },
+        uniques: { increment: isNewVisitor ? 1 : 0 },
+      },
+    });
+  }
+
+  async getAnalytics(eventId: string, startDate?: string, endDate?: string) {
+    const event = await this.prisma.event.findUnique({
+      where: { id: eventId },
+      include: {
+        stats: true,
+      },
+    });
+
+    // Determine Date Range
+    const end = endDate ? new Date(endDate) : new Date();
+    const start = startDate ? new Date(startDate) : new Date();
+    if (!startDate) {
+      start.setDate(end.getDate() - 30); // Default to 30 days ago
+    }
+
+    const visits = await this.prisma.eventVisit.findMany({
+      where: {
+        eventId,
+        createdAt: {
+          gte: start,
+          lte: end,
+        },
+      },
+      select: { createdAt: true, device: true, referrer: true, country: true },
+    });
+
+    // Aggregate Visits Over Time
+    const visitsMap = new Map<string, number>();
+    visits.forEach((v) => {
+      const date = v.createdAt.toISOString().split('T')[0];
+      visitsMap.set(date, (visitsMap.get(date) || 0) + 1);
+    });
+
+    const visitsOverTime = Array.from(visitsMap.entries())
+      .map(([date, count]) => ({ date, count }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+
+    // Aggregate Countries
+    const countryMap = new Map<string, number>();
+    visits.forEach((v) => {
+      const country = v.country || 'Unknown';
+      countryMap.set(country, (countryMap.get(country) || 0) + 1);
+    });
+    const countryBreakdown = Array.from(countryMap.entries())
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 5); // Top 5
+
+    // Aggregate Devices
+    const deviceMap = new Map<string, number>();
+    visits.forEach((v) => {
+      const dev = v.device || 'Unknown';
+      deviceMap.set(dev, (deviceMap.get(dev) || 0) + 1);
+    });
+    const deviceBreakdown = Array.from(deviceMap.entries()).map(
+      ([name, value]) => ({ name, value }),
+    );
+
+    // Aggregate Referrers (Traffic Sources)
+    const referrerMap = new Map<string, number>();
+    visits.forEach((v) => {
+      let ref = v.referrer || 'Direct';
+      try {
+        if (ref !== 'Direct') {
+          const url = new URL(ref);
+          ref = url.hostname.replace('www.', '');
+        }
+      } catch (e) {} // Fallback to raw string if invalid URL
+      referrerMap.set(ref, (referrerMap.get(ref) || 0) + 1);
+    });
+    const trafficSources = Array.from(referrerMap.entries())
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 5);
+
+    // Premium: Peak Activity (UTC hours)
+    const peakActivity = new Array(24)
+      .fill(0)
+      .map((_, i) => ({ hour: i, count: 0 }));
+    visits.forEach((v) => {
+      const hour = v.createdAt.getHours();
+      peakActivity[hour].count++;
+    });
+
+    // Premium: Top Domains (Audience Quality)
+    const attendees = await this.prisma.attendee.findMany({
+      where: { eventId },
+      select: { email: true },
+    });
+    const domainMap = new Map<string, number>();
+    const genericDomains = [
+      'gmail.com',
+      'yahoo.com',
+      'hotmail.com',
+      'outlook.com',
+      'icloud.com',
+      'aol.com',
+      'protonmail.com',
+    ];
+    attendees.forEach((a) => {
+      if (!a.email) return;
+      const domain = a.email.split('@')[1];
+      if (domain && !genericDomains.includes(domain.toLowerCase())) {
+        domainMap.set(domain, (domainMap.get(domain) || 0) + 1);
+      }
+    });
+
+    const topDomains = Array.from(domainMap.entries())
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 5);
+
+    // Premium: Growth Trends
+    const duration = end.getTime() - start.getTime();
+    const prevEnd = new Date(start.getTime());
+    const prevStart = new Date(prevEnd.getTime() - duration);
+
+    const currentGenerationsCount = await this.prisma.cardGeneration.count({
+      where: { eventId, createdAt: { gte: start, lte: end } },
+    });
+
+    const [prevVisits, prevGenerations] = await Promise.all([
+      this.prisma.eventVisit.count({
+        where: { eventId, createdAt: { gte: prevStart, lte: prevEnd } },
+      }),
+      this.prisma.cardGeneration.count({
+        where: { eventId, createdAt: { gte: prevStart, lte: prevEnd } },
+      }),
+    ]);
+
+    const trends = {
+      views: this.calculateTrend(visits.length, prevVisits),
+      generations: this.calculateTrend(
+        currentGenerationsCount,
+        prevGenerations,
+      ),
+    };
+
+    // Fetch Recent Activity (Generations & Mints)
+    const [recentGenerations, recentMints] = await Promise.all([
+      this.prisma.cardGeneration.findMany({
+        where: { eventId },
+        orderBy: { createdAt: 'desc' },
+        take: 5,
+        include: { attendee: true },
+      }),
+      this.prisma.nFTMint.findMany({
+        where: { attendee: { eventId } },
+        orderBy: { createdAt: 'desc' },
+        take: 5,
+        include: { attendee: true },
+      }),
+    ]);
+
+    const recentActivity = [
+      ...recentGenerations.map((g) => ({
+        type: 'GENERATION',
+        description: `${g.attendee?.name || 'Visitor'} generated a card`,
+        createdAt: g.createdAt,
+      })),
+      ...recentMints.map((m) => ({
+        type: 'MINT',
+        description: `${m.attendee?.name || 'Attendee'} minted an NFT`,
+        createdAt: m.createdAt,
+      })),
+    ]
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .slice(0, 10);
+
+    // Fetch NFT Mint Stats
+    const nftMints = await this.prisma.nFTMint.count({
+      where: {
+        attendee: { eventId },
+        status: 'MINTED',
+      },
+    });
+
+    return {
+      event,
+      stats: {
+        ...(event?.stats || {
+          views: 0,
+          uniques: 0,
+          generations: 0,
+          attendees: 0,
+          downloads: 0,
+          shares: 0,
+        }),
+        nftMints, // Add NFT mints to stats object
+      },
+      visitsOverTime,
+      deviceBreakdown,
+      countryBreakdown,
+      trafficSources,
+      recentActivity,
+      peakActivity,
+      topDomains,
+      trends,
+    };
+  }
+
+  private calculateTrend(current: number, previous: number): number {
+    if (previous === 0) return current > 0 ? 100 : 0;
+    return Math.round(((current - previous) / previous) * 100);
+  }
+  async generateReport(
+    eventId: string,
+    format: 'pdf' | 'png',
+  ): Promise<StreamableFile> {
+    const event = await this.prisma.event.findUnique({
+      where: { id: eventId },
+    });
+    if (!event) throw new NotFoundException('Event not found');
+
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
+
+    try {
+      const page = await browser.newPage();
+
+      // Set viewport to match our report design
+      await page.setViewport({
+        width: 1200,
+        height: 1600,
+        deviceScaleFactor: 2,
+      });
+
+      // Fetch full analytics data to inject
+      const analyticsData = await this.getAnalytics(eventId);
+
+      // Inject data BEFORE navigation so it's available immediately
+      await page.evaluateOnNewDocument((data) => {
+        (window as any).__INITIAL_DATA__ = data;
+      }, analyticsData);
+
+      // Navigate to the report page
+      // Using localhost for now - in prod this should be an ENV var
+      const reportUrl = `http://localhost:3000/report/${event.slug}`;
+      console.log(`Generating ${format.toUpperCase()} from: ${reportUrl}`);
+
+      await page.goto(reportUrl, {
+        waitUntil: 'networkidle0', // Wait for likely hydration
+        timeout: 30000,
+      });
+
+      // Ensure the content is actually there
+      await page.waitForSelector('#report-content', { timeout: 5000 });
+
+      let buffer: Uint8Array;
+
+      if (format === 'pdf') {
+        buffer = await page.pdf({
+          printBackground: true,
+          width: '1200px',
+          height: '1850px',
+        });
+      } else {
+        buffer = await page.screenshot({
+          type: 'png',
+          fullPage: true, // Capture entire scrollable area (which is fixed to 1600px anyway)
+        });
+      }
+
+      await browser.close();
+
+      return new StreamableFile(buffer, {
+        type: format === 'pdf' ? 'application/pdf' : 'image/png',
+        disposition: `attachment; filename="analytics-report.${format}"`,
+      });
+    } catch (error) {
+      console.error('Report generation error:', error);
+      await browser.close();
+      throw new BadRequestException(`Failed to generate ${format} report`);
+    }
+  }
+
+  async exportAnalytics(eventId: string) {
+    const data = await this.getAnalytics(eventId);
+    const { stats, countryBreakdown, trafficSources } = data;
+
+    // Create subtle summary CSV
+    const rows = [
+      ['Metric', 'Value'],
+      ['Total Visits', stats.views],
+      ['Unique Visitors', stats.uniques],
+      ['Attendees', stats.attendees],
+      ['Card Generations', stats.generations],
+      ['Downloads', stats.downloads],
+      ['NFT Mints', stats.nftMints],
+      [],
+      ['Top Countries', 'Visits'],
+      // @ts-ignore
+      ...countryBreakdown.map((c) => [c.name, c.value]),
+      [],
+      ['Top Referrers', 'Visits'],
+      // @ts-ignore
+      ...trafficSources.map((s) => [s.name, s.value]),
+    ];
+
+    return rows.map((r) => r.join(',')).join('\n');
+  }
+
+  async exportAttendees(eventId: string) {
+    const attendees = await this.prisma.attendee.findMany({
+      where: { eventId },
+      include: {
+        cardGenerations: true,
+        nftMints: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const rows = [
+      ['Name', 'Email', 'Joined At', 'Cards Generated', 'NFTs Minted'],
+      ...attendees.map((a) => [
+        `"${a.name}"`,
+        a.email,
+        a.createdAt.toISOString().split('T')[0],
+        a.cardGenerations.length,
+        a.nftMints.length,
+      ]),
+    ];
+
+    return rows.map((r) => r.join(',')).join('\n');
   }
 }

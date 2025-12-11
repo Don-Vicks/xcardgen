@@ -17,6 +17,15 @@ export class CreateWorkspaceDto {
   @IsString()
   logo: string;
 
+  @IsString()
+  slug: string;
+
+  @IsString()
+  type: string;
+
+  @IsString()
+  description: string;
+
   @IsJSON()
   socialLinks: Record<string, any>;
 }

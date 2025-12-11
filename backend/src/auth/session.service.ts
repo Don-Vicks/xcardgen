@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { Session } from 'generated/client';
 import { PrismaService } from '../prisma.service';
-import { Session } from '../../generated/client';
 
 @Injectable()
 export class SessionService {
@@ -87,6 +87,20 @@ export class SessionService {
     await this.prisma.session.updateMany({
       where: {
         token,
+        isActive: true,
+      },
+      data: {
+        isActive: false,
+        revokedAt: new Date(),
+      },
+    });
+  }
+
+  async revokeSessionById(sessionId: string, userId: string): Promise<void> {
+    await this.prisma.session.updateMany({
+      where: {
+        id: sessionId,
+        userId, // Ensure user owns the session
         isActive: true,
       },
       data: {

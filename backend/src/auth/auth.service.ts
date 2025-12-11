@@ -7,8 +7,6 @@ import { LoginDto, LoginLogDto } from './dto/login.dto';
 // import { loginSchema } from '@xcardgen/types';
 import { SessionService } from './session.service';
 // import { loginSchema } from '@xcardgen/types';
-import { User } from '@prisma/client';
-import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 
 @Injectable()
 export class AuthService {
@@ -85,6 +83,11 @@ export class AuthService {
 
   generateToken(user: any): string {
     const payload = { email: user.email, sub: user.id };
+    const secret = process.env.JWT_SECRET;
+    console.log('AuthService: Signing token with secret:', {
+      secretLength: secret?.length,
+      isDefined: !!secret,
+    });
     return this.jwtService.sign(payload);
   }
 
@@ -113,6 +116,26 @@ export class AuthService {
         email: true,
         createdAt: true,
         updatedAt: true,
+        workspaceMemberships: {
+          select: {
+            workspace: {
+              select: {
+                id: true,
+                name: true,
+                //slug: true,
+                logo: true,
+              },
+            },
+          },
+        },
+        workspaceOwnerships: {
+          select: {
+            id: true,
+            name: true,
+            //slug: true,
+            logo: true,
+          },
+        },
       },
     });
 
@@ -137,27 +160,19 @@ export class AuthService {
     return this.sessionService.revokeAllUserSessions(userId);
   }
 
+  async revokeSession(sessionId: string, userId: string): Promise<void> {
+    await this.sessionService.revokeSessionById(sessionId, userId);
+  }
+
   async getUserSessions(userId: string) {
     return this.sessionService.getUserActiveSessions(userId);
   }
 
-  async createWorkspace(createWorkspaceDto: CreateWorkspaceDto, user: User) {
-    const workspace = await this.prisma.workspace.create({
-      data: {
-        ...createWorkspaceDto,
-        ownerId: user.id,
-      },
+  async getUserLoginLogs(userId: string) {
+    return this.prisma.loginLog.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      take: 20,
     });
-
-    await this.prisma.workspaceMember.create({
-      data: {
-        userId: user.id,
-        workspaceId: workspace.id,
-        role: 'OWNER',
-        acceptedAt: new Date(),
-      },
-    });
-
-    return workspace;
   }
 }

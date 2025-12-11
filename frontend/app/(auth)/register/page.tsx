@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { LoadingScreen } from '@/components/ui/loading-screen';
+import { getErrorMessage } from '@/lib/utils';
 import { useAuth } from '@/stores/auth-store';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
@@ -25,7 +26,7 @@ const formSchema = z.object({
   name: z.string().min(2, {
     message: 'Name must be at least 2 characters.',
   }),
-  email: z.email({
+  email: z.string().email({
     message: 'Please enter a valid email address.',
   }),
   password: z.string().min(6, {
@@ -72,8 +73,9 @@ export default function RegisterPage() {
       })
     } catch (error) {
       console.error(error);
+      const message = getErrorMessage(error);
       toast.error("Registration failed", {
-        description: "This email might already be in use.",
+        description: message,
       })
     } finally {
       setIsLoading(false);

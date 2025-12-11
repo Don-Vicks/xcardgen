@@ -1,0 +1,72 @@
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CurrentUser } from 'src/auth/decorators/user.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { User } from 'src/users/entities/user.entity';
+import { CreateWorkspaceDto } from './dto/create-workspace.dto';
+import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
+import { WorkspacesService } from './workspaces.service';
+
+@Controller('workspaces')
+@UseGuards(JwtAuthGuard)
+export class WorkspacesController {
+  constructor(
+    private readonly workspacesService: WorkspacesService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
+
+  @Post('upload-logo')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadLogo(@UploadedFile() file: any) {
+    return this.cloudinaryService.uploadImage(file, 'workspaces');
+  }
+
+  @Post()
+  create(
+    @Body() createWorkspaceDto: CreateWorkspaceDto,
+    @CurrentUser() user: User,
+  ) {
+    return this.workspacesService.create(user.id, createWorkspaceDto);
+  }
+
+  @Get()
+  findAll(@CurrentUser() user: User) {
+    return this.workspacesService.findAll();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string, @CurrentUser() user: User) {
+    return this.workspacesService.findOne(user.id);
+  }
+
+  @Patch(':id')
+  update(
+    @Param('id') id: string,
+    @Body() updateWorkspaceDto: UpdateWorkspaceDto,
+    @CurrentUser() user: User,
+  ) {
+    return this.workspacesService.update(id, user.id, updateWorkspaceDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string, @CurrentUser() user: User) {
+    return this.workspacesService.remove(id, user.id);
+  }
+
+  @Get('check-slug/:slug')
+  checkSlug(@Param('slug') slug: string) {
+    return this.workspacesService.checkSlug(slug);
+  }
+}

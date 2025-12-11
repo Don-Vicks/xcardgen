@@ -18,6 +18,11 @@ export class CreateEventDto {
   @IsString()
   date: string;
 
+  @IsDateString()
+  @IsString()
+  @IsOptional()
+  endDate?: string;
+
   @IsString()
   @IsOptional()
   description?: string;
@@ -25,4 +30,7 @@ export class CreateEventDto {
   @IsString()
   @IsOptional()
   coverImage?: string;
+
+  @IsString()
+  workspaceId: string;
 }

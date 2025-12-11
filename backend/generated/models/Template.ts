@@ -9,8 +9,8 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/client"
-import type * as $Enums from "../enums.js"
-import type * as Prisma from "../internal/prismaNamespace.js"
+import type * as $Enums from "../enums"
+import type * as Prisma from "../internal/prismaNamespace"
 
 /**
  * Model Template
@@ -29,6 +29,7 @@ export type TemplateMinAggregateOutputType = {
   userId: string | null
   workspaceId: string | null
   name: string | null
+  description: string | null
   backgroundImage: string | null
   status: $Enums.TemplateStatus | null
   createdAt: Date | null
@@ -40,6 +41,7 @@ export type TemplateMaxAggregateOutputType = {
   userId: string | null
   workspaceId: string | null
   name: string | null
+  description: string | null
   backgroundImage: string | null
   status: $Enums.TemplateStatus | null
   createdAt: Date | null
@@ -51,6 +53,7 @@ export type TemplateCountAggregateOutputType = {
   userId: number
   workspaceId: number
   name: number
+  description: number
   backgroundImage: number
   canvasData: number
   sampleData: number
@@ -67,6 +70,7 @@ export type TemplateMinAggregateInputType = {
   userId?: true
   workspaceId?: true
   name?: true
+  description?: true
   backgroundImage?: true
   status?: true
   createdAt?: true
@@ -78,6 +82,7 @@ export type TemplateMaxAggregateInputType = {
   userId?: true
   workspaceId?: true
   name?: true
+  description?: true
   backgroundImage?: true
   status?: true
   createdAt?: true
@@ -89,6 +94,7 @@ export type TemplateCountAggregateInputType = {
   userId?: true
   workspaceId?: true
   name?: true
+  description?: true
   backgroundImage?: true
   canvasData?: true
   sampleData?: true
@@ -176,6 +182,7 @@ export type TemplateGroupByOutputType = {
   userId: string
   workspaceId: string | null
   name: string
+  description: string | null
   backgroundImage: string
   canvasData: runtime.JsonValue | null
   sampleData: runtime.JsonValue | null
@@ -211,6 +218,7 @@ export type TemplateWhereInput = {
   userId?: Prisma.StringFilter<"Template"> | string
   workspaceId?: Prisma.StringNullableFilter<"Template"> | string | null
   name?: Prisma.StringFilter<"Template"> | string
+  description?: Prisma.StringNullableFilter<"Template"> | string | null
   backgroundImage?: Prisma.StringFilter<"Template"> | string
   canvasData?: Prisma.JsonNullableFilter<"Template">
   sampleData?: Prisma.JsonNullableFilter<"Template">
@@ -228,6 +236,7 @@ export type TemplateOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
   workspaceId?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
   backgroundImage?: Prisma.SortOrder
   canvasData?: Prisma.SortOrderInput | Prisma.SortOrder
   sampleData?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -248,6 +257,7 @@ export type TemplateWhereUniqueInput = Prisma.AtLeast<{
   userId?: Prisma.StringFilter<"Template"> | string
   workspaceId?: Prisma.StringNullableFilter<"Template"> | string | null
   name?: Prisma.StringFilter<"Template"> | string
+  description?: Prisma.StringNullableFilter<"Template"> | string | null
   backgroundImage?: Prisma.StringFilter<"Template"> | string
   canvasData?: Prisma.JsonNullableFilter<"Template">
   sampleData?: Prisma.JsonNullableFilter<"Template">
@@ -265,6 +275,7 @@ export type TemplateOrderByWithAggregationInput = {
   userId?: Prisma.SortOrder
   workspaceId?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
   backgroundImage?: Prisma.SortOrder
   canvasData?: Prisma.SortOrderInput | Prisma.SortOrder
   sampleData?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -285,6 +296,7 @@ export type TemplateScalarWhereWithAggregatesInput = {
   userId?: Prisma.StringWithAggregatesFilter<"Template"> | string
   workspaceId?: Prisma.StringNullableWithAggregatesFilter<"Template"> | string | null
   name?: Prisma.StringWithAggregatesFilter<"Template"> | string
+  description?: Prisma.StringNullableWithAggregatesFilter<"Template"> | string | null
   backgroundImage?: Prisma.StringWithAggregatesFilter<"Template"> | string
   canvasData?: Prisma.JsonNullableWithAggregatesFilter<"Template">
   sampleData?: Prisma.JsonNullableWithAggregatesFilter<"Template">
@@ -297,6 +309,7 @@ export type TemplateScalarWhereWithAggregatesInput = {
 export type TemplateCreateInput = {
   id?: string
   name?: string
+  description?: string | null
   backgroundImage: string
   canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sampleData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -314,6 +327,7 @@ export type TemplateUncheckedCreateInput = {
   userId: string
   workspaceId?: string | null
   name?: string
+  description?: string | null
   backgroundImage: string
   canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sampleData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -327,6 +341,7 @@ export type TemplateUncheckedCreateInput = {
 export type TemplateUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundImage?: Prisma.StringFieldUpdateOperationsInput | string
   canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sampleData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -344,6 +359,7 @@ export type TemplateUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   workspaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundImage?: Prisma.StringFieldUpdateOperationsInput | string
   canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sampleData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -359,6 +375,7 @@ export type TemplateCreateManyInput = {
   userId: string
   workspaceId?: string | null
   name?: string
+  description?: string | null
   backgroundImage: string
   canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sampleData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -371,6 +388,7 @@ export type TemplateCreateManyInput = {
 export type TemplateUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundImage?: Prisma.StringFieldUpdateOperationsInput | string
   canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sampleData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -385,6 +403,7 @@ export type TemplateUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   workspaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundImage?: Prisma.StringFieldUpdateOperationsInput | string
   canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sampleData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -414,6 +433,7 @@ export type TemplateCountOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   workspaceId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   backgroundImage?: Prisma.SortOrder
   canvasData?: Prisma.SortOrder
   sampleData?: Prisma.SortOrder
@@ -428,6 +448,7 @@ export type TemplateMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   workspaceId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   backgroundImage?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -439,6 +460,7 @@ export type TemplateMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   workspaceId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   backgroundImage?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -552,6 +574,7 @@ export type EnumTemplateStatusFieldUpdateOperationsInput = {
 export type TemplateCreateWithoutWorkspaceInput = {
   id?: string
   name?: string
+  description?: string | null
   backgroundImage: string
   canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sampleData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -567,6 +590,7 @@ export type TemplateUncheckedCreateWithoutWorkspaceInput = {
   id?: string
   userId: string
   name?: string
+  description?: string | null
   backgroundImage: string
   canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sampleData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -611,6 +635,7 @@ export type TemplateScalarWhereInput = {
   userId?: Prisma.StringFilter<"Template"> | string
   workspaceId?: Prisma.StringNullableFilter<"Template"> | string | null
   name?: Prisma.StringFilter<"Template"> | string
+  description?: Prisma.StringNullableFilter<"Template"> | string | null
   backgroundImage?: Prisma.StringFilter<"Template"> | string
   canvasData?: Prisma.JsonNullableFilter<"Template">
   sampleData?: Prisma.JsonNullableFilter<"Template">
@@ -623,6 +648,7 @@ export type TemplateScalarWhereInput = {
 export type TemplateCreateWithoutUserInput = {
   id?: string
   name?: string
+  description?: string | null
   backgroundImage: string
   canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sampleData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -638,6 +664,7 @@ export type TemplateUncheckedCreateWithoutUserInput = {
   id?: string
   workspaceId?: string | null
   name?: string
+  description?: string | null
   backgroundImage: string
   canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sampleData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -677,6 +704,7 @@ export type TemplateUpdateManyWithWhereWithoutUserInput = {
 export type TemplateCreateWithoutEventInput = {
   id?: string
   name?: string
+  description?: string | null
   backgroundImage: string
   canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sampleData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -693,6 +721,7 @@ export type TemplateUncheckedCreateWithoutEventInput = {
   userId: string
   workspaceId?: string | null
   name?: string
+  description?: string | null
   backgroundImage: string
   canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sampleData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -721,6 +750,7 @@ export type TemplateUpdateToOneWithWhereWithoutEventInput = {
 export type TemplateUpdateWithoutEventInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundImage?: Prisma.StringFieldUpdateOperationsInput | string
   canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sampleData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -737,6 +767,7 @@ export type TemplateUncheckedUpdateWithoutEventInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   workspaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundImage?: Prisma.StringFieldUpdateOperationsInput | string
   canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sampleData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -750,6 +781,7 @@ export type TemplateCreateManyWorkspaceInput = {
   id?: string
   userId: string
   name?: string
+  description?: string | null
   backgroundImage: string
   canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sampleData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -762,6 +794,7 @@ export type TemplateCreateManyWorkspaceInput = {
 export type TemplateUpdateWithoutWorkspaceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundImage?: Prisma.StringFieldUpdateOperationsInput | string
   canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sampleData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -777,6 +810,7 @@ export type TemplateUncheckedUpdateWithoutWorkspaceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundImage?: Prisma.StringFieldUpdateOperationsInput | string
   canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sampleData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -791,6 +825,7 @@ export type TemplateUncheckedUpdateManyWithoutWorkspaceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundImage?: Prisma.StringFieldUpdateOperationsInput | string
   canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sampleData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -804,6 +839,7 @@ export type TemplateCreateManyUserInput = {
   id?: string
   workspaceId?: string | null
   name?: string
+  description?: string | null
   backgroundImage: string
   canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sampleData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -816,6 +852,7 @@ export type TemplateCreateManyUserInput = {
 export type TemplateUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundImage?: Prisma.StringFieldUpdateOperationsInput | string
   canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sampleData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -831,6 +868,7 @@ export type TemplateUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   workspaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundImage?: Prisma.StringFieldUpdateOperationsInput | string
   canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sampleData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -845,6 +883,7 @@ export type TemplateUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   workspaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   backgroundImage?: Prisma.StringFieldUpdateOperationsInput | string
   canvasData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sampleData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -861,6 +900,7 @@ export type TemplateSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   userId?: boolean
   workspaceId?: boolean
   name?: boolean
+  description?: boolean
   backgroundImage?: boolean
   canvasData?: boolean
   sampleData?: boolean
@@ -878,6 +918,7 @@ export type TemplateSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   userId?: boolean
   workspaceId?: boolean
   name?: boolean
+  description?: boolean
   backgroundImage?: boolean
   canvasData?: boolean
   sampleData?: boolean
@@ -894,6 +935,7 @@ export type TemplateSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   userId?: boolean
   workspaceId?: boolean
   name?: boolean
+  description?: boolean
   backgroundImage?: boolean
   canvasData?: boolean
   sampleData?: boolean
@@ -910,6 +952,7 @@ export type TemplateSelectScalar = {
   userId?: boolean
   workspaceId?: boolean
   name?: boolean
+  description?: boolean
   backgroundImage?: boolean
   canvasData?: boolean
   sampleData?: boolean
@@ -919,7 +962,7 @@ export type TemplateSelectScalar = {
   updatedAt?: boolean
 }
 
-export type TemplateOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "workspaceId" | "name" | "backgroundImage" | "canvasData" | "sampleData" | "properties" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["template"]>
+export type TemplateOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "workspaceId" | "name" | "description" | "backgroundImage" | "canvasData" | "sampleData" | "properties" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["template"]>
 export type TemplateInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   event?: boolean | Prisma.Template$eventArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -946,6 +989,7 @@ export type $TemplatePayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     userId: string
     workspaceId: string | null
     name: string
+    description: string | null
     backgroundImage: string
     canvasData: runtime.JsonValue | null
     sampleData: runtime.JsonValue | null
@@ -1383,6 +1427,7 @@ export interface TemplateFieldRefs {
   readonly userId: Prisma.FieldRef<"Template", 'String'>
   readonly workspaceId: Prisma.FieldRef<"Template", 'String'>
   readonly name: Prisma.FieldRef<"Template", 'String'>
+  readonly description: Prisma.FieldRef<"Template", 'String'>
   readonly backgroundImage: Prisma.FieldRef<"Template", 'String'>
   readonly canvasData: Prisma.FieldRef<"Template", 'Json'>
   readonly sampleData: Prisma.FieldRef<"Template", 'Json'>

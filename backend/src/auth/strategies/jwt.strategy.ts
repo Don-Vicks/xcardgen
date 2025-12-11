@@ -1,4 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AuthService } from '../auth.service';
@@ -9,6 +10,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private authService: AuthService,
     private sessionService: SessionService,
+    private configService: ConfigService,
   ) {
     super({
       jwtFromRequest: (req) => {
@@ -16,11 +18,25 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         if (req && req.cookies) {
           token = req.cookies['access_token'];
         }
-        return token || ExtractJwt.fromAuthHeaderAsBearerToken()(req);
+        console.log('Token', token);
+        const finalToken =
+          token || ExtractJwt.fromAuthHeaderAsBearerToken()(req);
+        console.log('JwtStrategy: Extracting token...', {
+          cookieToken: !!token,
+          headerToken: !!ExtractJwt.fromAuthHeaderAsBearerToken()(req),
+          finalTokenPresent: !!finalToken,
+        });
+        return finalToken;
       },
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_SECRET || 'your-secret-key',
+      secretOrKey: configService.get<string>('JWT_SECRET') || 'your-secret-key',
       passReqToCallback: true, // Pass request to validate method
+    });
+    const secret = configService.get<string>('JWT_SECRET');
+    console.log('JwtStrategy: Initialized with secret:', {
+      secretLength: secret?.length,
+      isDefined: !!secret,
+      usingFallback: !secret,
     });
   }
 

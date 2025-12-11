@@ -9,16 +9,20 @@ import { PrismaService } from './prisma.service';
 import { TemplatesModule } from './templates/templates.module';
 import { UsersModule } from './users/users.module';
 import { XcardModule } from './xcard/xcard.module';
+import { WorkspacesModule } from './workspaces/workspaces.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     UsersModule,
     XcardModule,
     AuthModule,
     EventsModule,
     TemplatesModule,
-    ConfigModule.forRoot({ isGlobal: true }),
     CacheModule.register(),
+    WorkspacesModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

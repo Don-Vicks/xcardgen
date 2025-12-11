@@ -1,7 +1,25 @@
+"use client"
+
 import { CanvasEditor } from "@/components/editor/canvas-editor"
+import { TemplatePicker } from "@/components/template-picker"
+import { useState } from "react"
+import { toast } from "sonner"
 
 export default function EditorPage({ params }: { params: { slug: string } }) {
-  // We can fetch initial template data here using params.slug later
+  // TODO: Fetch real event state to check if template exists
+  const [hasTemplate, setHasTemplate] = useState(false)
+
+  const handleTemplateSelect = async (templateId: string) => {
+    // TODO: Call API to link template to event
+    console.log("Selected template:", templateId)
+    toast.success("Template applied!")
+    setHasTemplate(true)
+  }
+
+  if (!hasTemplate) {
+    return <TemplatePicker onSelect={handleTemplateSelect} />
+  }
+
   return (
     <div className="flex h-full w-full flex-col">
       <header className="flex h-14 items-center justify-between border-b px-6">

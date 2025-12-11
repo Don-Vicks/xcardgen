@@ -17,8 +17,8 @@
 
 import * as runtime from "@prisma/client/runtime/index-browser"
 
-export type * from '../models.js'
-export type * from './prismaNamespace.js'
+export type * from '../models'
+export type * from './prismaNamespace'
 
 export const Decimal = runtime.Decimal
 
@@ -88,7 +88,10 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 export const WorkspaceScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  description: 'description',
   logo: 'logo',
+  slug: 'slug',
+  type: 'type',
   socialLinks: 'socialLinks',
   ownerId: 'ownerId',
   createdAt: 'createdAt',
@@ -133,13 +136,15 @@ export const EventScalarFieldEnum = {
   name: 'name',
   slug: 'slug',
   date: 'date',
+  endDate: 'endDate',
   description: 'description',
   coverImage: 'coverImage',
   templateId: 'templateId',
   status: 'status',
   properties: 'properties',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
 } as const
 
 export type EventScalarFieldEnum = (typeof EventScalarFieldEnum)[keyof typeof EventScalarFieldEnum]
@@ -150,6 +155,7 @@ export const TemplateScalarFieldEnum = {
   userId: 'userId',
   workspaceId: 'workspaceId',
   name: 'name',
+  description: 'description',
   backgroundImage: 'backgroundImage',
   canvasData: 'canvasData',
   sampleData: 'sampleData',
@@ -181,6 +187,8 @@ export const EventStatsScalarFieldEnum = {
   views: 'views',
   uniques: 'uniques',
   generations: 'generations',
+  attendees: 'attendees',
+  downloads: 'downloads',
   shares: 'shares',
   updatedAt: 'updatedAt'
 } as const
@@ -315,6 +323,13 @@ export const SortOrder = {
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const JsonNullValueInput = {
+  JsonNull: 'JsonNull'
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const NullableJsonNullValueInput = {

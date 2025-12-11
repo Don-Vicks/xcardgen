@@ -16,10 +16,10 @@
  */
 
 import * as runtime from "@prisma/client/runtime/client"
-import type * as Prisma from "../models.js"
-import { type PrismaClient } from "./class.js"
+import type * as Prisma from "../models"
+import { type PrismaClient } from "./class"
 
-export type * from '../models.js'
+export type * from '../models'
 
 export type DMMF = typeof runtime.DMMF
 
@@ -1645,7 +1645,10 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 export const WorkspaceScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  description: 'description',
   logo: 'logo',
+  slug: 'slug',
+  type: 'type',
   socialLinks: 'socialLinks',
   ownerId: 'ownerId',
   createdAt: 'createdAt',
@@ -1690,13 +1693,15 @@ export const EventScalarFieldEnum = {
   name: 'name',
   slug: 'slug',
   date: 'date',
+  endDate: 'endDate',
   description: 'description',
   coverImage: 'coverImage',
   templateId: 'templateId',
   status: 'status',
   properties: 'properties',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
 } as const
 
 export type EventScalarFieldEnum = (typeof EventScalarFieldEnum)[keyof typeof EventScalarFieldEnum]
@@ -1707,6 +1712,7 @@ export const TemplateScalarFieldEnum = {
   userId: 'userId',
   workspaceId: 'workspaceId',
   name: 'name',
+  description: 'description',
   backgroundImage: 'backgroundImage',
   canvasData: 'canvasData',
   sampleData: 'sampleData',
@@ -1738,6 +1744,8 @@ export const EventStatsScalarFieldEnum = {
   views: 'views',
   uniques: 'uniques',
   generations: 'generations',
+  attendees: 'attendees',
+  downloads: 'downloads',
   shares: 'shares',
   updatedAt: 'updatedAt'
 } as const
@@ -1874,6 +1882,13 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
 export const NullableJsonNullValueInput = {
   DbNull: DbNull,
   JsonNull: JsonNull
@@ -1924,6 +1939,20 @@ export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 
  * Reference to a field of type 'String[]'
  */
 export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>
+    
+
+
+/**
+ * Reference to a field of type 'WorkspaceType'
+ */
+export type EnumWorkspaceTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WorkspaceType'>
+    
+
+
+/**
+ * Reference to a field of type 'WorkspaceType[]'
+ */
+export type ListEnumWorkspaceTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WorkspaceType[]'>
     
 
 

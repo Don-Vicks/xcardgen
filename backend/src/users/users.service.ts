@@ -127,36 +127,4 @@ export class UsersService {
 
     return { message: `User with ID ${id} has been deleted` };
   }
-
-  // Workspace Routes\
-
-  // Get a user workspace
-  async getWorkspace(userId: string) {
-    return await this.prisma.workspace.findFirst({
-      where: {
-        ownerId: userId,
-      },
-    });
-  }
-
-  // Create a workspace for the user
-  async createWorkspace(userId: string, createWorkspace: CreateWorkspaceDto) {
-    // Check if the user already owns a workspace
-    const existingWorkspace = await this.prisma.workspace.findFirst({
-      where: {
-        ownerId: userId,
-      },
-    });
-
-    if (existingWorkspace) {
-      throw new BadRequestException('User already owns a workspace.');
-    }
-
-    return await this.prisma.workspace.create({
-      data: {
-        ownerId: userId,
-        ...createWorkspace,
-      },
-    });
-  }
 }

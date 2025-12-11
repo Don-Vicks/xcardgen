@@ -22,5 +22,25 @@ export class apiRequest {
     return api.post('/auth/logout')
   }
 
+  async logoutAll() {
+    return api.post('/auth/logout-all')
+  }
+
+  async getSessions() {
+    return api.get('/auth/sessions')
+  }
+
+  async revokeSession(id: string) {
+    return api.delete(`/auth/sessions/${id}`)
+  }
+
+  async getLoginLogs() {
+    return api.get('/auth/logs')
+  }
+
+  async updateProfile(data: { name?: string; email?: string }) {
+    return api.patch('/users/me', data)
+  }
+
   async forgotPassword() {}
 }

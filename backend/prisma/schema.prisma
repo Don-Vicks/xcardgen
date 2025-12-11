@@ -10,8 +10,11 @@ datasource db {
 model Workspace {
   id          String            @id @default(uuid())
   name        String            @unique
-  logo        String?
-  socialLinks Json?
+  description String
+  logo        String
+  slug        String?           @unique
+  type        WorkspaceType     @default(EVENT_ORGANIZER)
+  socialLinks Json
   ownerId     String
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
@@ -20,7 +23,7 @@ model Workspace {
   owner       User              @relation("WorkspaceOwner", fields: [ownerId], references: [id])
   members     WorkspaceMember[]
 
-  @@index([ownerId])
+  @@index([ownerId, slug])
 }
 
 model WorkspaceMember {
@@ -69,6 +72,7 @@ model Event {
   name            String
   slug            String           @unique
   date            DateTime
+  endDate         DateTime?
   description     String?
   coverImage      String?
   templateId      String?          @unique
@@ -84,6 +88,7 @@ model Event {
   template        Template?        @relation("EventTemplate", fields: [templateId], references: [id])
   user            User             @relation("UserEvents", fields: [userId], references: [id])
   workspace       Workspace?       @relation(fields: [workspaceId], references: [id])
+  deletedAt       DateTime?
   // generations Generation[] // Removed
 
   @@unique([userId, name])
@@ -96,6 +101,7 @@ model Template {
   userId          String
   workspaceId     String?
   name            String         @default("Untitled Template")
+  description     String?
   backgroundImage String
   canvasData      Json?          @db.JsonB // Konva/Canvas JSON data
   sampleData      Json?          @db.JsonB // Sample data for previewing
@@ -134,6 +140,8 @@ model EventStats {
   views       Int      @default(0)
   uniques     Int      @default(0)
   generations Int      @default(0)
+  attendees   Int      @default(0)
+  downloads   Int      @default(0)
   shares      Int      @default(0)
   updatedAt   DateTime @updatedAt
   event       Event    @relation(fields: [eventId], references: [id])
@@ -264,6 +272,16 @@ model Session {
   @@index([userId, isActive])
   @@index([token, isActive])
   @@index([expiresAt])
+}
+
+enum WorkspaceType {
+  PERSONAL
+  ORGANIZATION
+  AGENCY
+  EVENT_ORGANIZER
+  CORPORATE_TEAM
+  COMMUNITY_DAO
+  CREATOR_INFLUENCER
 }
 
 enum WorkspaceRole {

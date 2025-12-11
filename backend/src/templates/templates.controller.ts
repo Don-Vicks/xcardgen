@@ -1,45 +1,56 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
+import { Prisma } from 'generated/client';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { TemplatesService } from './templates.service';
-import { CreateTemplateDto } from './dto/create-template.dto';
-import { UpdateTemplateDto } from './dto/update-template.dto';
 
 @Controller('templates')
+@UseGuards(JwtAuthGuard)
 export class TemplatesController {
   constructor(private readonly templatesService: TemplatesService) {}
 
   @Post()
-  create(@Body() createTemplateDto: CreateTemplateDto) {
-    return this.templatesService.create(createTemplateDto);
+  create(@Request() req, @Body() createTemplateDto: any) {
+    const userId = req.user.id;
+    const { workspaceId, ...rest } = createTemplateDto;
+
+    return this.templatesService.create({
+      ...rest,
+      user: { connect: { id: userId } },
+      workspace: workspaceId ? { connect: { id: workspaceId } } : undefined,
+    });
   }
 
   @Get()
-  findAll() {
-    return this.templatesService.findAll();
+  findAll(@Request() req, @Query('workspaceId') workspaceId?: string) {
+    return this.templatesService.findAll(req.user.userId, workspaceId);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.templatesService.findOne(+id);
+    return this.templatesService.findOne(id);
   }
 
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() updateTemplateDto: UpdateTemplateDto,
+    @Body() updateTemplateDto: Prisma.TemplateUpdateInput,
   ) {
-    return this.templatesService.update(+id, updateTemplateDto);
+    return this.templatesService.update(id, updateTemplateDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.templatesService.remove(+id);
+    return this.templatesService.remove(id);
   }
 }

@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "EventStats" ADD COLUMN     "attendees" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "downloads" INTEGER NOT NULL DEFAULT 0;

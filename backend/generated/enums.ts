@@ -9,6 +9,19 @@
 * 🟢 You can import this file directly.
 */
 
+export const WorkspaceType = {
+  PERSONAL: 'PERSONAL',
+  ORGANIZATION: 'ORGANIZATION',
+  AGENCY: 'AGENCY',
+  EVENT_ORGANIZER: 'EVENT_ORGANIZER',
+  CORPORATE_TEAM: 'CORPORATE_TEAM',
+  COMMUNITY_DAO: 'COMMUNITY_DAO',
+  CREATOR_INFLUENCER: 'CREATOR_INFLUENCER'
+} as const
+
+export type WorkspaceType = (typeof WorkspaceType)[keyof typeof WorkspaceType]
+
+
 export const WorkspaceRole = {
   OWNER: 'OWNER',
   ADMIN: 'ADMIN',
