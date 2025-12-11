@@ -51,7 +51,6 @@ export const useAuth = create<AuthState>((set, get) => ({
     try {
       console.log('Store: checkAuth starting...')
       const response = await authRequestInstance.getProfile()
-      console.log('Store: checkAuth success', response.data)
       set({ user: response.data, loading: false })
     } catch (error) {
       console.error('Store: checkAuth Failed:', error)

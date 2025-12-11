@@ -695,4 +695,142 @@ export class EventsService {
       'xcardgen_assets',
     );
   }
+  async getDashboardStats(userId: string, workspaceId: string) {
+    try {
+      // 1. Get all events for user
+      const events = await this.prisma.event.findMany({
+        where: { userId, deletedAt: null, workspaceId },
+        include: {
+          stats: true,
+        },
+      });
+      const eventIds = events.map((e) => e.id);
+
+      // 2. Global Aggregates
+      const stats = events.reduce(
+        (acc, event) => ({
+          views: acc.views + (event.stats?.views || 0),
+          generations: acc.generations + (event.stats?.generations || 0),
+          attendees: acc.attendees + (event.stats?.attendees || 0),
+        }),
+        { views: 0, generations: 0, attendees: 0 },
+      );
+
+      // 3. Activity Over Time (Last 30 Days)
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+      const [visits, generations] = await Promise.all([
+        this.prisma.eventVisit.findMany({
+          where: {
+            eventId: { in: eventIds },
+            createdAt: { gte: thirtyDaysAgo },
+          },
+          select: { createdAt: true },
+        }),
+        this.prisma.cardGeneration.findMany({
+          where: {
+            eventId: { in: eventIds },
+            createdAt: { gte: thirtyDaysAgo },
+          },
+          select: { createdAt: true },
+        }),
+      ]);
+
+      // Group by Date
+      const timelineMap = new Map<
+        string,
+        { date: string; views: number; generations: number }
+      >();
+
+      // Initialize map for last 30 days to ensure continuous line
+      for (let i = 0; i < 30; i++) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const dateStr = d.toISOString().split('T')[0];
+        timelineMap.set(dateStr, { date: dateStr, views: 0, generations: 0 });
+      }
+
+      visits.forEach((v) => {
+        const date = v.createdAt.toISOString().split('T')[0];
+        if (timelineMap.has(date)) {
+          timelineMap.get(date)!.views++;
+        }
+      });
+
+      generations.forEach((g) => {
+        const date = g.createdAt.toISOString().split('T')[0];
+        if (timelineMap.has(date)) {
+          timelineMap.get(date)!.generations++;
+        }
+      });
+
+      const activityTrend = Array.from(timelineMap.values()).sort((a, b) =>
+        a.date.localeCompare(b.date),
+      );
+
+      // 4. Global Recent Activity (Feed)
+      // Fetch latest 10 generations across ALL events
+      const recentActivity = await this.prisma.cardGeneration.findMany({
+        where: { eventId: { in: eventIds } },
+        orderBy: { createdAt: 'desc' },
+        take: 10,
+        include: {
+          attendee: true,
+          event: { select: { name: true, slug: true } },
+        },
+      });
+
+      const feed = recentActivity.map((r) => ({
+        id: r.id,
+        type: 'GENERATION',
+        user: r.attendee?.name || 'Visitor',
+        event: r.event?.name,
+        timestamp: r.createdAt,
+        details: `generated a card`,
+        avatar:
+          (r.attendee?.data as any)?.avatar ||
+          `https://avatar.vercel.sh/${r.attendee?.id || 'guest'}`,
+      }));
+
+      // 5. Global Audience (Countries & Devices) purely from Visits
+      const allVisits = await this.prisma.eventVisit.findMany({
+        where: { eventId: { in: eventIds } },
+        select: { country: true, device: true },
+        take: 5000, // Limit sample size for performance if needed
+      });
+
+      const countryMap = new Map<string, number>();
+      const deviceMap = new Map<string, number>();
+
+      allVisits.forEach((v) => {
+        const c = v.country || 'Unknown';
+        countryMap.set(c, (countryMap.get(c) || 0) + 1);
+        const d = v.device || 'Unknown';
+        deviceMap.set(d, (deviceMap.get(d) || 0) + 1);
+      });
+
+      const topCountries = Array.from(countryMap.entries())
+        .map(([name, value]) => ({ name, value }))
+        .sort((a, b) => b.value - a.value)
+        .slice(0, 5);
+
+      const devices = Array.from(deviceMap.entries())
+        .map(([name, value]) => ({ name, value }))
+        .sort((a, b) => b.value - a.value);
+
+      return {
+        stats,
+        activityTrend,
+        feed,
+        audience: {
+          countries: topCountries,
+          devices,
+        },
+      };
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error);
+      throw error;
+    }
+  }
 }

@@ -32,8 +32,9 @@ import { useEffect, useState } from "react"
 export function SidebarNav({ className, setOpen }: { className?: string, setOpen?: (open: boolean) => void }) {
   const pathname = usePathname()
   const { logout, user } = useAuth()
-  const { currentWorkspace, setCurrentWorkspace } = useWorkspace()
+  const { currentWorkspace, setCurrentWorkspace, setIsSwitching } = useWorkspace()
   const [showCreateDialog, setShowCreateDialog] = useState(false)
+  const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false)
 
   // Combine owned and member workspaces
   const allWorkspaces = [
@@ -69,7 +70,7 @@ export function SidebarNav({ className, setOpen }: { className?: string, setOpen
           </div>
 
           <div className="mb-4 px-2">
-            <DropdownMenu>
+            <DropdownMenu open={isWorkspaceOpen} onOpenChange={setIsWorkspaceOpen}>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" role="combobox" className="w-full justify-between">
                   {currentWorkspace ? (
@@ -99,7 +100,12 @@ export function SidebarNav({ className, setOpen }: { className?: string, setOpen
                         key={workspace.id}
                         value={workspace.name}
                         onSelect={() => {
-                          setCurrentWorkspace(workspace)
+                          setIsSwitching(true)
+                          setIsWorkspaceOpen(false) // Close dropdown
+                          setTimeout(() => {
+                            setCurrentWorkspace(workspace)
+                            setTimeout(() => setIsSwitching(false), 1000)
+                          }, 100)
                           setOpen?.(false)
                         }}
                       >

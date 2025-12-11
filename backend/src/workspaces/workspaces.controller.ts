@@ -11,6 +11,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Public } from 'src/auth/decorators/public.decorator';
 import { CurrentUser } from 'src/auth/decorators/user.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
@@ -68,5 +69,11 @@ export class WorkspacesController {
   @Get('check-slug/:slug')
   checkSlug(@Param('slug') slug: string) {
     return this.workspacesService.checkSlug(slug);
+  }
+
+  @Public()
+  @Get('public/:slug')
+  getPublic(@Param('slug') slug: string) {
+    return this.workspacesService.findPublic(slug);
   }
 }

@@ -12,6 +12,8 @@ interface Workspace {
 interface WorkspaceState {
   currentWorkspace: Workspace | null
   setCurrentWorkspace: (workspace: Workspace | null) => void
+  isSwitching: boolean
+  setIsSwitching: (isSwitching: boolean) => void
 }
 
 export const useWorkspace = create<WorkspaceState>()(
@@ -19,6 +21,8 @@ export const useWorkspace = create<WorkspaceState>()(
     (set) => ({
       currentWorkspace: null,
       setCurrentWorkspace: (workspace) => set({ currentWorkspace: workspace }),
+      isSwitching: false,
+      setIsSwitching: (isSwitching) => set({ isSwitching }),
     }),
     {
       name: 'workspace-storage',

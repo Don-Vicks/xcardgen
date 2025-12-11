@@ -1,6 +1,6 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { CreateWorkspaceDto, WorkspaceType } from './dto/create-workspace.dto';
+import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
 
 @Injectable()
@@ -84,6 +84,35 @@ export class WorkspacesService {
         ownerId: userId,
       },
     });
+  }
+
+  async findPublic(slug: string) {
+    const workspace = await this.prisma.workspace.findUnique({
+      where: { slug },
+      include: {
+        events: {
+          where: {
+            // status: 'PUBLISHED', // Assuming we only show published events, but Schema defaults to DRAFT.
+            // For now, let's show all non-deleted events or stick to status if implemented.
+            // Using deletedAt check as basic filter.
+            deletedAt: null,
+          },
+          orderBy: { date: 'asc' },
+          include: {
+            stats: true,
+          },
+        },
+        _count: {
+          select: { templates: true, events: true },
+        },
+      },
+    });
+
+    if (!workspace) {
+      throw new BadRequestException('Workspace not found');
+    }
+
+    return workspace;
   }
 
   async checkSlug(slug: string) {

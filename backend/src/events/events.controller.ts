@@ -54,6 +54,15 @@ export class EventsController {
     });
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('insights/dashboard')
+  getDashboardStats(
+    @CurrentUser() user: User,
+    @Query('workspaceId') workspaceId: string,
+  ) {
+    return this.eventsService.getDashboardStats(user.id, workspaceId);
+  }
+
   @Get(':id/analytics')
   getAnalytics(
     @Param('id') id: string,

@@ -10,6 +10,8 @@ import { ModeToggle } from "@/components/mode-toggle"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
+import { useWorkspace } from "@/stores/workspace-store"; // Add import
+
 import { usePathname } from "next/navigation"
 
 export default function DashboardLayout({
@@ -20,6 +22,7 @@ export default function DashboardLayout({
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
   const isEditor = pathname?.includes('/editor') || pathname?.includes('/design')
+  const { isSwitching } = useWorkspace()
 
   return (
     <AuthGuard>
@@ -46,11 +49,11 @@ export default function DashboardLayout({
                 </SheetContent>
               </Sheet>
 
-              <h1 className="text-xl font-semibold tracking-tight">Dashboard</h1>
+              {/* <h1 className="text-xl font-semibold tracking-tight">Dashboard</h1> */}
             </div>
             <div className="flex items-center gap-4">
               <ModeToggle />
-              <CreateEventDialog />
+              {/* <CreateEventDialog /> */}
             </div>
           </header>
           <div className={`flex-1 overflow-auto ${isEditor ? 'p-0 h-[calc(100vh-4rem)] overflow-hidden' : 'p-4 md:p-8'}`}>
@@ -58,6 +61,14 @@ export default function DashboardLayout({
           </div>
         </main>
       </div>
+      {isSwitching && (
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center animate-in fade-in duration-300">
+          <div className="flex flex-col items-center gap-2">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+            <p className="font-medium text-lg">Switching Workspace...</p>
+          </div>
+        </div>
+      )}
     </AuthGuard>
   )
 }

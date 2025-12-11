@@ -25,11 +25,14 @@ import { ChevronLeft, ChevronRight, Plus, Search, Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { useDebounce } from "use-debounce"
+import { useWorkspace } from "@/stores/workspace-store"
 
 export default function EventsPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
+
+  const { currentWorkspace } = useWorkspace()
 
   // Filters
   const [search, setSearch] = useState("")
@@ -46,7 +49,8 @@ export default function EventsPage() {
         search: debouncedSearch,
         sort,
         page,
-        limit: 8 // Fits grid nicely
+        limit: 8, // Fits grid nicely
+        workspaceId: currentWorkspace?.id || '',
       })
       // Handle the new structure { data, meta } vs old [ ... ]
       if (res.data && (res.data as any).data && Array.isArray((res.data as any).data)) {
@@ -70,7 +74,7 @@ export default function EventsPage() {
 
   useEffect(() => {
     fetchEvents()
-  }, [debouncedSearch, sort, page])
+  }, [debouncedSearch, sort, page, currentWorkspace])
 
   const handleDeleteClick = (e: React.MouseEvent, id: string) => {
     e.stopPropagation() // Prevent card click

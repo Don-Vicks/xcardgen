@@ -29,10 +29,11 @@ export interface Event {
     logo?: string
   }
   stats?: {
-    totalVisits: number
-    totalGenerations: number
-    totalDownloads: number
-    totalShares: number
+    views: number
+    generations: number
+    downloads: number
+    shares: number
+    attendees: number
   }
   _count?: {
     cards: number
@@ -78,6 +79,26 @@ export class EventsRequest {
     if (from) query.append('startDate', from.toISOString())
     if (to) query.append('endDate', to.toISOString())
     return api.get(`/events/${id}/analytics?${query.toString()}`)
+  }
+
+  async getDashboardStats(workspaceId: string) {
+    return api.get<{
+      stats: { views: number; generations: number; attendees: number }
+      activityTrend: { date: string; views: number; generations: number }[]
+      feed: {
+        id: string
+        type: string
+        user: string
+        event: string
+        timestamp: string
+        details: string
+        avatar: string
+      }[]
+      audience: {
+        countries: { name: string; value: number }[]
+        devices: { name: string; value: number }[]
+      }
+    }>(`/events/insights/dashboard?workspaceId=${workspaceId}`)
   }
 
   async exportAnalytics(id: string) {

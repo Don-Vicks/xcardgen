@@ -18,14 +18,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         if (req && req.cookies) {
           token = req.cookies['access_token'];
         }
-        console.log('Token', token);
         const finalToken =
           token || ExtractJwt.fromAuthHeaderAsBearerToken()(req);
-        console.log('JwtStrategy: Extracting token...', {
-          cookieToken: !!token,
-          headerToken: !!ExtractJwt.fromAuthHeaderAsBearerToken()(req),
-          finalTokenPresent: !!finalToken,
-        });
         return finalToken;
       },
       ignoreExpiration: false,
@@ -33,11 +27,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       passReqToCallback: true, // Pass request to validate method
     });
     const secret = configService.get<string>('JWT_SECRET');
-    console.log('JwtStrategy: Initialized with secret:', {
-      secretLength: secret?.length,
-      isDefined: !!secret,
-      usingFallback: !secret,
-    });
   }
 
   async validate(req: any, payload: any) {
@@ -46,8 +35,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       req.headers.authorization?.replace('Bearer ', '') ||
       req.cookies?.access_token;
 
-    console.log('JwtStrategy: Validating token...', { tokenFound: !!token });
-
     if (!token) {
       console.error('JwtStrategy: No token provided');
       throw new UnauthorizedException('No token provided');
@@ -55,9 +42,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     // Check if session is active
     const session = await this.sessionService.findActiveSession(token);
-    console.log('JwtStrategy: Session lookup result', {
-      sessionFound: !!session,
-    });
 
     if (!session) {
       console.error('JwtStrategy: Session expired or invalid');
@@ -69,10 +53,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     // Validate user
     const user = await this.authService.validateUserById(payload.sub);
-    console.log('JwtStrategy: User lookup result', {
-      userFound: !!user,
-      userId: payload.sub,
-    });
 
     if (!user) {
       console.error('JwtStrategy: User not found');

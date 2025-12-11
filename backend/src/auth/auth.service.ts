@@ -52,30 +52,8 @@ export class AuthService {
         email: user.email,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
-        workspaceMemberships: {
-          select: {
-            workspace: {
-              select: {
-                id: true,
-                name: true,
-                slug: true,
-                logo: true,
-              },
-            },
-          },
-        },
-        workspaceOwnerships: {
-          select: {
-            workspace: {
-              select: {
-                id: true,
-                name: true,
-                slug: true,
-                logo: true,
-              },
-            },
-          },
-        },
+        workspaceMemberships: user.workspaceMemberships,
+        workspaceOwnerships: user.workspaceOwnerships,
       },
       accessToken,
     };
@@ -118,6 +96,18 @@ export class AuthService {
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.prisma.user.findUnique({
       where: { email },
+      include: {
+        workspaceMemberships: {
+          select: {
+            workspace: {
+              select: { id: true, name: true, slug: true, logo: true },
+            },
+          },
+        },
+        workspaceOwnerships: {
+          select: { id: true, name: true, slug: true, logo: true },
+        },
+      },
     });
 
     if (

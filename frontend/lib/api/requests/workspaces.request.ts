@@ -27,6 +27,10 @@ export class WorkspacesRequest {
     return api.get<Workspace>(`/workspaces/${idOrSlug}`)
   }
 
+  async getPublic(slug: string) {
+    return api.get<Workspace & { events: any[] }>(`/workspaces/public/${slug}`)
+  }
+
   async update(id: string, data: UpdateWorkspace) {
     return api.patch<Workspace>(`/workspaces/${id}`, data)
   }
