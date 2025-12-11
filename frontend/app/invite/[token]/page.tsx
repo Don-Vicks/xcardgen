@@ -134,10 +134,10 @@ export default function InviteAcceptPage() {
               </p>
               <div className="flex gap-2 justify-center">
                 <Button asChild size="sm" variant="outline">
-                  <Link href={`/login?returnUrl=/invite/${token}`}>Sign In</Link>
+                  <Link href={`/login?returnUrl=/invite/${token}&email=${encodeURIComponent(inviteInfo?.inviteEmail || '')}`}>Sign In</Link>
                 </Button>
                 <Button asChild size="sm">
-                  <Link href={`/register?returnUrl=/invite/${token}`}>Create Account</Link>
+                  <Link href={`/register?returnUrl=/invite/${token}&email=${encodeURIComponent(inviteInfo?.inviteEmail || '')}`}>Create Account</Link>
                 </Button>
               </div>
             </div>

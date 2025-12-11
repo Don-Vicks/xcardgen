@@ -16,7 +16,7 @@ import { getErrorMessage } from '@/lib/utils';
 import { useAuth } from '@/stores/auth-store';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -38,19 +38,26 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const { register, loginWithGoogle, user, loading } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnUrl = searchParams.get('returnUrl');
+  const emailParam = searchParams.get('email');
 
   useEffect(() => {
     if (!loading && user) {
+      if (returnUrl) {
+        router.push(returnUrl);
+        return;
+      }
       router.push('/dashboard');
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, returnUrl]);
 
   // Define form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      email: '',
+      email: emailParam || '',
       password: '',
     },
   });
@@ -137,7 +144,7 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="m@example.com" {...field} />
+                      <Input placeholder="m@example.com" {...field} disabled={!!emailParam} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

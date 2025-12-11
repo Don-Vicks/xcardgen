@@ -30,12 +30,14 @@ import {
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { workspacesRequest } from "@/lib/api/requests/workspaces.request"
+import { useAuth } from "@/stores/auth-store"
 import { useWorkspace } from "@/stores/workspace-store"
 import { Copy, Crown, Loader2, MoreHorizontal, Plus, Settings, Trash2, Users } from "lucide-react"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
 export default function WorkspaceSettingsPage() {
+  const { user } = useAuth()
   const { currentWorkspace, setCurrentWorkspace } = useWorkspace()
   const [loading, setLoading] = useState(false)
   const [membersData, setMembersData] = useState<{
@@ -58,6 +60,17 @@ export default function WorkspaceSettingsPage() {
   const [removeDialogOpen, setRemoveDialogOpen] = useState(false)
   const [memberToRemove, setMemberToRemove] = useState<{ id: string; name: string } | null>(null)
   const [removing, setRemoving] = useState(false)
+  // Permissions
+  const [isWorkspaceAdmin, setIsWorkspaceAdmin] = useState(false)
+
+  useEffect(() => {
+    if (membersData.owner && user) {
+      const isOwner = membersData.owner.id === user.id
+      const currentUserMember = membersData.members.find((m) => m.user?.id === user.id)
+      const isAdminRole = currentUserMember?.role === 'ADMIN'
+      setIsWorkspaceAdmin(isOwner || isAdminRole)
+    }
+  }, [membersData, user])
 
   useEffect(() => {
     if (currentWorkspace) {
@@ -173,7 +186,7 @@ export default function WorkspaceSettingsPage() {
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Workspace Name</Label>
-            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
+            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} disabled={!isWorkspaceAdmin} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
@@ -182,12 +195,15 @@ export default function WorkspaceSettingsPage() {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="A brief description of your workspace..."
+              disabled={!isWorkspaceAdmin}
             />
           </div>
-          <Button onClick={handleSaveGeneral} disabled={loading}>
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Save Changes
-          </Button>
+          {isWorkspaceAdmin && (
+            <Button onClick={handleSaveGeneral} disabled={loading}>
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Save Changes
+            </Button>
+          )}
         </CardContent>
       </Card>
 
@@ -201,58 +217,60 @@ export default function WorkspaceSettingsPage() {
             </CardTitle>
             <CardDescription>Manage who has access to this workspace.</CardDescription>
           </div>
-          <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
-            <DialogTrigger asChild>
-              <Button size="sm" className="gap-2">
-                <Plus className="h-4 w-4" />
-                Invite Member
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Invite Team Member</DialogTitle>
-                <DialogDescription>
-                  Send an invite to add someone to your workspace.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email Address</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="colleague@example.com"
-                    value={inviteEmail}
-                    onChange={(e) => setInviteEmail(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="role">Role</Label>
-                  <Select value={inviteRole} onValueChange={(v) => setInviteRole(v as any)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="MEMBER">Member</SelectItem>
-                      <SelectItem value="ADMIN">Admin</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <p className="text-xs text-muted-foreground">
-                    {inviteRole === "MEMBER"
-                      ? "Members can view events, manage attendees, and generate xCards."
-                      : "Admins have full access including editing workspace settings and managing team members."}
-                  </p>
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setInviteOpen(false)}>Cancel</Button>
-                <Button onClick={handleInvite} disabled={inviting || !inviteEmail}>
-                  {inviting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Send Invite
+          {isWorkspaceAdmin && (
+            <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
+              <DialogTrigger asChild>
+                <Button size="sm" className="gap-2">
+                  <Plus className="h-4 w-4" />
+                  Invite Member
                 </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Invite Team Member</DialogTitle>
+                  <DialogDescription>
+                    Send an invite to add someone to your workspace.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email Address</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="colleague@example.com"
+                      value={inviteEmail}
+                      onChange={(e) => setInviteEmail(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="role">Role</Label>
+                    <Select value={inviteRole} onValueChange={(v) => setInviteRole(v as any)}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="MEMBER">Member</SelectItem>
+                        <SelectItem value="ADMIN">Admin</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <p className="text-xs text-muted-foreground">
+                      {inviteRole === "MEMBER"
+                        ? "Members can view events, manage attendees, and generate xCards."
+                        : "Admins have full access including editing workspace settings and managing team members."}
+                    </p>
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setInviteOpen(false)}>Cancel</Button>
+                  <Button onClick={handleInvite} disabled={inviting || !inviteEmail}>
+                    {inviting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Send Invite
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          )}
         </CardHeader>
         <CardContent>
           {loadingMembers ? (
@@ -281,62 +299,101 @@ export default function WorkspaceSettingsPage() {
               )}
 
               {/* Members */}
-              {membersData.members.map((member) => (
-                <div key={member.id} className="flex items-center justify-between p-3 rounded-lg border">
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10">
-                      <AvatarFallback>
-                        {(member.user?.name || member.inviteEmail)?.charAt(0)?.toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-medium">
-                        {member.user?.name || member.inviteEmail}
-                        {!member.acceptedAt && (
-                          <Badge variant="outline" className="ml-2 text-xs">Pending</Badge>
-                        )}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {member.user?.email || member.inviteEmail}
-                      </p>
+              {membersData.members.map((member) => {
+                const isOwner = user?.id === membersData.owner?.id;
+                // If the user is the owner, they can do everything.
+                // If the user is an admin, they can manage members but usually not other admins (logic can vary, assuming simple allow for now or check below).
+                // But typically we need to know the CURRENT user's role.
+                const currentUserMember = membersData.members.find(m => m.user?.id === user?.id);
+                const isCurrentUserAdmin = currentUserMember?.role === 'ADMIN';
+                const canManage = isOwner || isCurrentUserAdmin;
+
+                const isSelf = member.user?.id === user?.id;
+
+                return (
+                  <div key={member.id} className="flex items-center justify-between p-3 rounded-lg border">
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-10 w-10">
+                        <AvatarFallback>
+                          {(member.user?.name || member.inviteEmail)?.charAt(0)?.toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="font-medium flex items-center">
+                          {member.user?.name || member.inviteEmail}
+                          {!member.acceptedAt && (
+                            <Badge variant="outline" className="ml-2 text-xs">Pending</Badge>
+                          )}
+                          {isSelf && (
+                            <Badge className="ml-2 text-xs" variant="secondary">You</Badge>
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {member.user?.email || member.inviteEmail}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant={member.role === "ADMIN" ? "default" : "secondary"}>
+                        {member.role}
+                      </Badge>
+
+                      {/* Admin Actions for others */}
+                      {canManage && !isSelf && (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            {!member.acceptedAt && member.inviteToken && (
+                              <DropdownMenuItem onClick={() => copyInviteLink(member.inviteToken)}>
+                                <Copy className="mr-2 h-4 w-4" />
+                                Copy Invite Link
+                              </DropdownMenuItem>
+                            )}
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleChangeRole(member.id, member.role === "ADMIN" ? "MEMBER" : "ADMIN")
+                              }
+                            >
+                              Make {member.role === "ADMIN" ? "Member" : "Admin"}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              className="text-destructive"
+                              onClick={() => confirmRemoveMember(member)}
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Remove
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      )}
+
+                      {/* Self Action: Leave Workspace */}
+                      {isSelf && !isOwner && (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              className="text-destructive"
+                              onClick={() => confirmRemoveMember(member)}
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Leave Workspace
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      )}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant={member.role === "ADMIN" ? "default" : "secondary"}>
-                      {member.role}
-                    </Badge>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        {!member.acceptedAt && member.inviteToken && (
-                          <DropdownMenuItem onClick={() => copyInviteLink(member.inviteToken)}>
-                            <Copy className="mr-2 h-4 w-4" />
-                            Copy Invite Link
-                          </DropdownMenuItem>
-                        )}
-                        <DropdownMenuItem
-                          onClick={() =>
-                            handleChangeRole(member.id, member.role === "ADMIN" ? "MEMBER" : "ADMIN")
-                          }
-                        >
-                          Make {member.role === "ADMIN" ? "Member" : "Admin"}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="text-destructive"
-                          onClick={() => confirmRemoveMember(member)}
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Remove
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </div>
-              ))}
+                )
+              })}
 
               {membersData.members.length === 0 && (
                 <div className="text-center py-8 text-muted-foreground">

@@ -16,7 +16,7 @@ import { getErrorMessage } from '@/lib/utils';
 import { useAuth } from '@/stores/auth-store';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -36,21 +36,30 @@ export default function LoginPage() {
   const { login, loginWithGoogle, user, loading } = useAuth(); // Use context
   const router = useRouter();
 
+  const searchParams = useSearchParams();
+  const returnUrl = searchParams.get('returnUrl');
+  const emailParam = searchParams.get('email');
+
   useEffect(() => {
     if (!loading && user) {
+      if (returnUrl) {
+        router.push(returnUrl);
+        return;
+      }
+
       if ((user.workspaceMemberships && user.workspaceMemberships.length > 0) || (user.workspaceOwnerships && user.workspaceOwnerships.length > 0)) {
         router.push('/dashboard');
       } else {
         router.push('/onboarding');
       }
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, returnUrl]);
 
   // Define form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: '',
+      email: emailParam || '',
       password: '',
     },
   });

@@ -3,9 +3,14 @@ import { PrismaService } from 'src/prisma.service';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
 
+import { EmailService } from 'src/email/email.service';
+
 @Injectable()
 export class WorkspacesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private emailService: EmailService,
+  ) {}
 
   /**
    * Creates a new workspace for a user.
@@ -200,7 +205,7 @@ export class WorkspacesService {
     const workspace = await this.findOne(ownerId, workspaceId);
     if (!workspace) {
       throw new BadRequestException(
-        "Workspace not found or you don't have permission to invite members",
+        "You don't have permission to invite members",
       );
     }
 
@@ -236,7 +241,7 @@ export class WorkspacesService {
 
       // Reactivate if removed, or create new
       if (existingMember && existingMember.removedAt) {
-        return await this.prisma.workspaceMember.update({
+        const member = await this.prisma.workspaceMember.update({
           where: { id: existingMember.id },
           data: {
             removedAt: null,
@@ -249,10 +254,12 @@ export class WorkspacesService {
             workspace: { select: { id: true, name: true } },
           },
         });
+        await this.sendInviteEmail(memberEmail, workspace.name, inviteToken);
+        return member;
       }
 
       // Create pending membership for existing user
-      return await this.prisma.workspaceMember.create({
+      const member = await this.prisma.workspaceMember.create({
         data: {
           workspaceId,
           userId: userToInvite.id,
@@ -265,6 +272,8 @@ export class WorkspacesService {
           workspace: { select: { id: true, name: true } },
         },
       });
+      await this.sendInviteEmail(memberEmail, workspace.name, inviteToken);
+      return member;
     } else {
       // User doesn't exist - create invite with email only
       // Check for existing email invite
@@ -282,7 +291,7 @@ export class WorkspacesService {
         );
       }
 
-      return await this.prisma.workspaceMember.create({
+      const member = await this.prisma.workspaceMember.create({
         data: {
           workspaceId,
           role,
@@ -293,7 +302,53 @@ export class WorkspacesService {
           workspace: { select: { id: true, name: true } },
         },
       });
+      await this.sendInviteEmail(memberEmail, workspace.name, inviteToken);
+      return member;
     }
+  }
+
+  private async sendInviteEmail(
+    email: string,
+    workspaceName: string,
+    token: string,
+  ) {
+    const inviteUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/invite/${token}`;
+    const subject = `Join ${workspaceName} on xCardGen`;
+
+    // Simple, clean email styling
+    const html = `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background-color: #ffffff;">
+        <div style="text-align: center; margin-bottom: 32px;">
+          <h1 style="color: #0c0c0c; font-size: 24px; font-weight: 700; margin: 0;">xCardGen</h1>
+        </div>
+        
+        <div style="border: 1px solid #eaeaea; border-radius: 12px; padding: 40px; text-align: center;">
+          <h2 style="color: #111; font-size: 20px; margin-top: 0; margin-bottom: 16px;">You've been invited!</h2>
+          
+          <p style="color: #444; font-size: 16px; line-height: 24px; margin-bottom: 32px;">
+            You have been invited to join the <strong>${workspaceName}</strong> workspace. Collaborate with your team to create stunning event assets.
+          </p>
+
+          <div style="margin-bottom: 32px;">
+            <a href="${inviteUrl}" style="display: inline-block; background-color: #000000; color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px; transition: background-color 0.2s;">
+              Accept Invitation
+            </a>
+          </div>
+
+          <p style="color: #666; font-size: 14px; margin-bottom: 0;">
+            <a href="${inviteUrl}" style="color: #666; text-decoration: underline;">${inviteUrl}</a>
+          </p>
+        </div>
+
+        <div style="text-align: center; margin-top: 32px;">
+          <p style="color: #999; font-size: 12px; margin: 0;">
+            If you were not expecting this invitation, you can simply ignore this email.
+          </p>
+        </div>
+      </div>
+    `;
+
+    await this.emailService.sendEmail(email, subject, html);
   }
 
   /**
@@ -338,6 +393,16 @@ export class WorkspacesService {
       throw new BadRequestException('This invite is for a different user');
     }
 
+    // Verify email for new user invites
+    if (invite.inviteEmail) {
+      const user = await this.prisma.user.findUnique({ where: { id: userId } });
+      if (user?.email && user.email !== invite.inviteEmail) {
+        throw new BadRequestException(
+          `This invite was sent to ${invite.inviteEmail}. You are logged in as ${user.email}.`,
+        );
+      }
+    }
+
     // Accept the invite
     return await this.prisma.workspaceMember.update({
       where: { id: invite.id },
@@ -380,12 +445,35 @@ export class WorkspacesService {
    * Only workspace owner can remove members.
    */
   async removeMember(workspaceId: string, ownerId: string, memberId: string) {
-    // Verify ownership
-    const workspace = await this.findOne(ownerId, workspaceId);
-    if (!workspace) {
-      throw new BadRequestException(
-        "Workspace not found or you don't have permission to remove members",
-      );
+    // Verify ownership or self-removal
+    if (ownerId !== memberId) {
+      const workspace = await this.findOne(ownerId, workspaceId);
+      if (!workspace) {
+        // Double check: if the user is trying to remove *themselves*, ownerId passed in might be their own ID.
+        // The controller likely passes `req.user.id` as `ownerId`.
+        // So we need to check if the memberId being removed belongs to the requesting user.
+
+        // Let's resolve the memberId to a userId first to be safe, OR check if the memberId is the one requesting.
+        // Wait, memberId passed here is the workspaceMember ID, NOT the User ID.
+        // ownerId is the User ID of the requester.
+
+        const memberRecord = await this.prisma.workspaceMember.findUnique({
+          where: { id: memberId },
+          include: { user: true },
+        });
+
+        if (!memberRecord || memberRecord.userId !== ownerId) {
+          // If not self-removal (user IDs match), then we enforce workspace ownership.
+          const workspaceOwnerCheck = await this.prisma.workspace.findFirst({
+            where: { id: workspaceId, ownerId },
+          });
+          if (!workspaceOwnerCheck) {
+            throw new BadRequestException(
+              "You don't have permission to remove this member",
+            );
+          }
+        }
+      }
     }
 
     const member = await this.prisma.workspaceMember.findFirst({

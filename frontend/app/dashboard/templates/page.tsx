@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { LoadingScreen } from "@/components/ui/loading-screen"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useWorkspacePermissions } from "@/hooks/use-workspace-permissions"
 import { Template, templatesRequest } from "@/lib/api/requests/templates.request"
 import { useWorkspace } from "@/stores/workspace-store"
 import { ChevronLeft, ChevronRight, Loader2, Plus, Search, Trash2 } from "lucide-react"
@@ -27,6 +28,7 @@ export default function TemplatesPage() {
   const [meta, setMeta] = useState({ page: 1, lastPage: 1, total: 0 })
   const [loading, setLoading] = useState(true)
   const { currentWorkspace } = useWorkspace()
+  const { isAdmin } = useWorkspacePermissions()
   const router = useRouter()
 
   const [isCreating, setIsCreating] = useState(false)
@@ -127,10 +129,18 @@ export default function TemplatesPage() {
           <h2 className="text-3xl font-bold tracking-tight">Templates</h2>
           <p className="text-muted-foreground">Manage your reusable xCard designs.</p>
         </div>
-        <Button onClick={handleCreate} disabled={isCreating}>
+
+        <Button onClick={() => {
+          if (!isAdmin) {
+            toast.error("Permission denied", { description: "Only workspace admins can create templates." });
+            return;
+          }
+          handleCreate();
+        }} disabled={isCreating}>
           {isCreating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
           New Template
         </Button>
+
       </div>
 
       {/* Toolbar */}
@@ -162,7 +172,13 @@ export default function TemplatesPage() {
         {page === 1 && !search && (
           <Card
             className="flex flex-col items-center justify-center p-8 border-dashed border-2 hover:border-primary/50 hover:bg-muted/10 transition-all cursor-pointer h-full min-h-[250px] group"
-            onClick={handleCreate}
+            onClick={() => {
+              if (!isAdmin) {
+                toast.error("Permission denied", { description: "Only workspace admins can create templates." });
+                return;
+              }
+              handleCreate();
+            }}
           >
             <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 text-primary group-hover:scale-110 transition-transform">
               <Plus className="h-6 w-6" />

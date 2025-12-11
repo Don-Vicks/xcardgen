@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useWorkspacePermissions } from "@/hooks/use-workspace-permissions"
 import { Event, eventsRequest } from "@/lib/api/requests/events.request"
 import { useWorkspace } from "@/stores/workspace-store"
 import { ChevronLeft, ChevronRight, Plus, Search, Trash2 } from "lucide-react"
@@ -33,6 +34,7 @@ export default function EventsPage() {
   const [loading, setLoading] = useState(true)
 
   const { currentWorkspace } = useWorkspace()
+  const { isAdmin } = useWorkspacePermissions()
 
   // Filters
   const [search, setSearch] = useState("")
@@ -115,9 +117,17 @@ export default function EventsPage() {
           <h2 className="text-3xl font-bold tracking-tight">xCards</h2>
           <p className="text-muted-foreground">Manage your xCard portfolio.</p>
         </div>
-        <Button onClick={() => (document.querySelector('[data-dialog-trigger="create-event"]') as HTMLElement)?.click()}>
+
+        <Button onClick={() => {
+          if (!isAdmin) {
+            toast.error("Permission denied", { description: "Only workspace admins can create new xCards." });
+            return;
+          }
+          (document.querySelector('[data-dialog-trigger="create-event"]') as HTMLElement)?.click()
+        }}>
           <Plus className="mr-2 h-4 w-4" /> Create xCard
         </Button>
+
       </div>
 
       {/* Toolbar */}
@@ -169,7 +179,13 @@ export default function EventsPage() {
           <div className="h-full flex items-center justify-center min-h-[300px]">
             <Card
               className="flex flex-col items-center justify-center p-8 border-dashed border-2 hover:border-primary/50 hover:bg-muted/10 transition-all cursor-pointer h-full w-full"
-              onClick={() => (document.querySelector('[data-dialog-trigger="create-event"]') as HTMLElement)?.click()}
+              onClick={() => {
+                if (!isAdmin) {
+                  toast.error("Permission denied", { description: "Only workspace admins can create new xCards." });
+                  return;
+                }
+                (document.querySelector('[data-dialog-trigger="create-event"]') as HTMLElement)?.click()
+              }}
             >
               <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 text-primary">
                 <Plus className="h-6 w-6" />
@@ -179,7 +195,7 @@ export default function EventsPage() {
             </Card>
           </div>
         </div>
-      )}
+
 
       {/* Pagination */}
       {!loading && meta.totalPages > 1 && (
