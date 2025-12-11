@@ -2,10 +2,12 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import { LoadingScreen } from "@/components/ui/loading-screen"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Template, templatesRequest } from "@/lib/api/requests/templates.request"
 import { useWorkspace } from "@/stores/workspace-store"
-import { Loader2, Plus, Trash2 } from "lucide-react"
+import { ChevronLeft, ChevronRight, Loader2, Plus, Search, Trash2 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -14,16 +16,41 @@ import { toast } from "sonner"
 
 export default function TemplatesPage() {
   const [templates, setTemplates] = useState<Template[]>([])
+  const [meta, setMeta] = useState({ page: 1, lastPage: 1, total: 0 })
   const [loading, setLoading] = useState(true)
   const { currentWorkspace } = useWorkspace()
   const router = useRouter()
 
   const [isCreating, setIsCreating] = useState(false)
 
+  // Params
+  const [search, setSearch] = useState("")
+  const [debouncedSearch, setDebouncedSearch] = useState("")
+  const [sortBy, setSortBy] = useState("updatedAt")
+  const [page, setPage] = useState(1)
+
+  // Debounce Search
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 500)
+    return () => clearTimeout(timer)
+  }, [search])
+
+  // Reset page on search change
+  useEffect(() => {
+    setPage(1)
+  }, [debouncedSearch])
+
   const fetchTemplates = async () => {
+    setLoading(true)
     try {
-      const res = await templatesRequest.getAll(currentWorkspace?.id)
-      setTemplates(res.data)
+      const res = await templatesRequest.getAll(currentWorkspace?.id, {
+        page,
+        limit: 9,
+        search: debouncedSearch,
+        sortBy,
+      })
+      setTemplates(res.data.data)
+      setMeta(res.data.meta)
     } catch (error) {
       console.error(error)
       toast.error("Failed to fetch templates")
@@ -34,7 +61,7 @@ export default function TemplatesPage() {
 
   useEffect(() => {
     fetchTemplates()
-  }, [currentWorkspace])
+  }, [currentWorkspace, page, debouncedSearch, sortBy])
 
   const handleCreate = async () => {
     if (!currentWorkspace?.id) return
@@ -68,7 +95,7 @@ export default function TemplatesPage() {
     }
   }
 
-  if (loading) return <LoadingScreen />
+  if (loading && templates.length === 0) return <LoadingScreen />
 
   return (
     <div className="space-y-8 p-8 pt-6">
@@ -83,17 +110,62 @@ export default function TemplatesPage() {
         </Button>
       </div>
 
+      {/* Toolbar */}
+      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-muted/20 p-4 rounded-lg border">
+        <div className="relative w-full sm:w-[300px]">
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search templates..."
+            className="pl-8 bg-background"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <Select value={sortBy} onValueChange={setSortBy}>
+            <SelectTrigger className="w-[180px] bg-background">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="updatedAt">Newest First</SelectItem>
+              <SelectItem value="name">Name (A-Z)</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
       <div className="grid gap-6 md:grid-cols-3">
+        {/* Create New Card - Always First on Page 1 when not searching */}
+        {page === 1 && !search && (
+          <Card
+            className="flex flex-col items-center justify-center p-8 border-dashed border-2 hover:border-primary/50 hover:bg-muted/10 transition-all cursor-pointer h-full min-h-[250px] group"
+            onClick={handleCreate}
+          >
+            <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 text-primary group-hover:scale-110 transition-transform">
+              <Plus className="h-6 w-6" />
+            </div>
+            <h3 className="text-lg font-semibold">Create New Template</h3>
+            <p className="text-sm text-muted-foreground text-center mt-2 max-w-[200px]">Start designing a new xCard template</p>
+          </Card>
+        )}
+
         {templates.map((template) => (
           <Link href={`/dashboard/templates/${template.id}/editor`} key={template.id}>
-            <Card className="overflow-hidden hover:border-primary/50 transition-colors cursor-pointer group relative">
-              <div className="aspect-video relative bg-muted">
-                <Image
-                  src={template.backgroundImage}
-                  alt={template.name}
-                  fill
-                  className="object-cover"
-                />
+            <Card className="overflow-hidden hover:border-primary/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-md cursor-pointer group relative">
+              <div className="aspect-video relative bg-muted flex items-center justify-center">
+                {template.backgroundImage ? (
+                  <Image
+                    src={template.backgroundImage}
+                    alt={template.name}
+                    fill
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                ) : (
+                  <span className="text-muted-foreground text-sm flex flex-col items-center gap-2">
+                    <div className="h-8 w-8 rounded-full bg-background/50" />
+                    No Preview
+                  </span>
+                )}
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity flex justify-end">
                   <Button variant="destructive" size="icon" className="h-8 w-8" onClick={(e) => handleDelete(template.id, e)}>
                     <Trash2 className="h-4 w-4" />
@@ -109,12 +181,31 @@ export default function TemplatesPage() {
             </Card>
           </Link>
         ))}
-        {templates.length === 0 && (
-          <div className="col-span-full text-center py-12 text-muted-foreground">
-            No templates found. Create one to get started.
+
+        {/* Empty State for Search */}
+        {templates.length === 0 && search && (
+          <div className="col-span-full flex flex-col items-center justify-center py-12 text-muted-foreground">
+            <div className="h-12 w-12 rounded-full bg-muted/50 flex items-center justify-center mb-4">
+              <Search className="h-6 w-6 opacity-50" />
+            </div>
+            <h3 className="text-lg font-semibold text-foreground">No templates found</h3>
+            <p className="mt-1">Try adjusting your search terms</p>
           </div>
         )}
       </div>
+
+      {/* Pagination */}
+      {meta.lastPage > 1 && (
+        <div className="flex items-center justify-center gap-2 mt-8">
+          <Button variant="outline" size="sm" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <span className="text-sm text-muted-foreground">Page {meta.page} of {meta.lastPage}</span>
+          <Button variant="outline" size="sm" onClick={() => setPage(p => Math.min(meta.lastPage, p + 1))} disabled={page === meta.lastPage}>
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
     </div>
   )
 }

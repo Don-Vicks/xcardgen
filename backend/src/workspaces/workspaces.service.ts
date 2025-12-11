@@ -14,17 +14,11 @@ export class WorkspacesService {
    * @returns The created workspace.
    */
   async create(userId: string, createWorkspace: CreateWorkspaceDto) {
-    new Logger().log('Creating workspace for user ' + userId);
-    new Logger().log('Workspace data: ' + JSON.stringify(createWorkspace));
-    const existingWorkspace = await this.prisma.workspace.findFirst({
-      where: {
-        ownerId: userId,
-      },
-    });
-
-    if (existingWorkspace) {
-      throw new BadRequestException('User already owns a workspace.');
-    }
+    // const existingWorkspace = await this.prisma.workspace.findFirst({
+    //   where: {
+    //     ownerId: userId,
+    //   },
+    // });
 
     return await this.prisma.workspace.create({
       data: {

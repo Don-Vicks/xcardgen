@@ -1,16 +1,21 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
   Header,
   Param,
+  Patch,
   Post,
   Query,
   Req,
   Res,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { CurrentUser } from 'src/auth/decorators/user.decorator';
@@ -113,27 +118,76 @@ export class EventsController {
     const referrer = req.headers['referer'];
 
     // Parse device/OS simplisticly from UA for now
+    const country =
+      req.headers['x-vercel-ip-country'] || req.headers['cf-ipcountry'] || null;
+    const city =
+      req.headers['x-vercel-ip-city'] || req.headers['cf-ipcity'] || null;
+
     let device = 'Desktop';
     if (/mobile/i.test(userAgent)) device = 'Mobile';
 
     await this.eventsService.recordVisit(id, {
-      visitorId: body.visitorId || ip, // Fallback to IP as visitorId if not provided
+      visitorId: body.visitorId || ip,
       ip: ip,
       userAgent: userAgent,
       referrer: referrer,
       device: device,
+      country: country,
+      city: city,
     });
 
     return { success: true };
   }
 
+  @Public()
+  @Post(':id/download')
+  async recordDownload(@Param('id') id: string) {
+    await this.eventsService.recordDownload(id);
+    return { success: true };
+  }
+
+  @Public()
+  @Post(':id/share')
+  async recordShare(@Param('id') id: string) {
+    await this.eventsService.recordShare(id);
+    return { success: true };
+  }
+
   @UseGuards(JwtAuthGuard)
-  @Delete()
+  @Patch(':id')
+  update(
+    @CurrentUser() user: User,
+    @Param('id') id: string,
+    @Body() updateEventDto: any,
+  ) {
+    return this.eventsService.update(id, user.id, updateEventDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
   delete(
     @CurrentUser() user: User,
     @Param('id') id: string,
     @Param('workspaceId') workspaceId: string,
   ) {
     return this.eventsService.delete(id, user.id, workspaceId);
+  }
+
+  @Public()
+  @Post(':id/register')
+  async register(
+    @Param('id') id: string,
+    @Body() body: { name: string; email: string; data: Record<string, any> },
+  ) {
+    return this.eventsService.registerAttendee(id, body);
+  }
+
+  @Public()
+  @Post(':id/upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadAsset(@Param('id') id: string, @UploadedFile() file: any) {
+    if (!file) throw new BadRequestException('No file uploaded');
+    const res = await this.eventsService.uploadAsset(file);
+    return { url: res.secure_url };
   }
 }

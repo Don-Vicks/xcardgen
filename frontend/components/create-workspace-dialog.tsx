@@ -53,3 +53,4 @@ export function CreateWorkspaceDialog({ open: controlledOpen, onOpenChange: setC
     </Dialog>
   )
 }
+

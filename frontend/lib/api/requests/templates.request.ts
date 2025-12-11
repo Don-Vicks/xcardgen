@@ -11,14 +11,15 @@ export interface Template {
     width?: number
     height?: number
   }
+  workspaceId?: string
   createdAt: string
   updatedAt: string
 }
 
 export const templatesRequest = {
-  getAll: (workspaceId?: string) => {
-    return api.get<Template[]>('/templates', {
-      params: { workspaceId },
+  getAll: (workspaceId?: string, params?: any) => {
+    return api.get<{ data: Template[]; meta: any }>('/templates', {
+      params: { workspaceId, ...params },
     })
   },
   getOne: (id: string) => {
@@ -37,5 +38,12 @@ export const templatesRequest = {
   },
   delete: (id: string) => {
     return api.delete(`/templates/${id}`)
+  },
+  uploadAsset: (id: string, file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    return api.post<{ url: string }>(`/templates/${id}/upload`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
   },
 }

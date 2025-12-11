@@ -75,7 +75,7 @@ model Event {
   endDate         DateTime?
   description     String?
   coverImage      String?
-  templateId      String?          @unique
+  templateId      String?
   status          EventStatus      @default(DRAFT)
   properties      Json?
   createdAt       DateTime         @default(now())
@@ -109,7 +109,7 @@ model Template {
   status          TemplateStatus @default(DRAFT)
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
-  event           Event?         @relation("EventTemplate")
+  events          Event[]        @relation("EventTemplate")
   user            User           @relation(fields: [userId], references: [id])
   workspace       Workspace?     @relation(fields: [workspaceId], references: [id])
 

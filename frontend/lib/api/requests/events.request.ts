@@ -18,7 +18,16 @@ export interface Event {
   createdAt: string
   updatedAt: string
   userId: string
+  templateId?: string
   isActive: boolean
+  description?: string
+  coverImage?: string
+  template?: any
+  workspace?: {
+    id: string
+    name: string
+    logo?: string
+  }
   stats?: {
     totalVisits: number
     totalGenerations: number
@@ -33,6 +42,10 @@ export interface Event {
 export class EventsRequest {
   async create(data: CreateEventDto) {
     return api.post<Event>('/events', data)
+  }
+
+  async update(id: string, data: any) {
+    return api.patch<Event>(`/events/${id}`, data)
   }
 
   async getAll(
@@ -89,6 +102,33 @@ export class EventsRequest {
   exportPng(id: string) {
     return api.get(`/events/${id}/export/png`, {
       responseType: 'blob',
+    })
+  }
+
+  async register(
+    id: string,
+    data: { name: string; email: string; data: Record<string, any> }
+  ) {
+    return api.post<{ url: string }>(`/events/${id}/register`, data)
+  }
+
+  async recordVisit(id: string) {
+    return api.post<{ success: boolean }>(`/events/${id}/visit`, {})
+  }
+
+  async recordDownload(id: string) {
+    return api.post<{ success: boolean }>(`/events/${id}/download`, {})
+  }
+
+  async recordShare(id: string) {
+    return api.post<{ success: boolean }>(`/events/${id}/share`, {})
+  }
+
+  async uploadAsset(id: string, file: File) {
+    const formData = new FormData()
+    formData.append('file', file)
+    return api.post<{ url: string }>(`/events/${id}/upload`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
     })
   }
 }

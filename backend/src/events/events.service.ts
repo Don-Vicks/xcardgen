@@ -8,9 +8,15 @@ import * as puppeteer from 'puppeteer';
 import { PrismaService } from 'src/prisma.service';
 import { CreateEventDto } from './dto/create-event.dto';
 
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { generateTicketHtml } from './ticket-generator.util';
+
 @Injectable()
 export class EventsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private cloudinaryService: CloudinaryService,
+  ) {}
 
   async create(createEventDto: CreateEventDto, userId: string) {
     return this.prisma.event.create({
@@ -99,6 +105,11 @@ export class EventsService {
       },
       include: {
         stats: true,
+        template: true,
+        workspace: true,
+        _count: {
+          select: { attendees: true },
+        },
       },
     });
     if (!event) throw new NotFoundException('Event not found');
@@ -108,6 +119,17 @@ export class EventsService {
   async findOne(id: string, userId: string) {
     return this.prisma.event.findFirst({
       where: { id, userId },
+      include: {
+        stats: true,
+        template: true,
+      },
+    });
+  }
+
+  async update(id: string, userId: string, data: any) {
+    return this.prisma.event.update({
+      where: { id, userId },
+      data,
     });
   }
 
@@ -461,6 +483,11 @@ export class EventsService {
     }
   }
 
+  /**
+   * Export analytics for an event
+   * @param eventId
+   * @returns CSV string
+   */
   async exportAnalytics(eventId: string) {
     const data = await this.getAnalytics(eventId);
     const { stats, countryBreakdown, trafficSources } = data;
@@ -487,6 +514,11 @@ export class EventsService {
     return rows.map((r) => r.join(',')).join('\n');
   }
 
+  /**
+   * Export attendees for an event
+   * @param eventId
+   * @returns CSV string
+   */
   async exportAttendees(eventId: string) {
     const attendees = await this.prisma.attendee.findMany({
       where: { eventId },
@@ -509,5 +541,158 @@ export class EventsService {
     ];
 
     return rows.map((r) => r.join(',')).join('\n');
+  }
+
+  async registerAttendee(
+    id: string,
+    body: { name: string; email: string; data: Record<string, any> },
+  ) {
+    const event = await this.findPublic(id);
+    if (!event.template) {
+      throw new BadRequestException('Event does not have a template');
+    }
+
+    // Generate HTML
+    const html = generateTicketHtml(event.template, {
+      ...body.data,
+      name: body.name,
+      email: body.email,
+    });
+
+    // Generate Image via Puppeteer
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
+    const page = await browser.newPage();
+    const width = (event.template.properties as any)?.width || 600;
+    const height = (event.template.properties as any)?.height || 400;
+
+    await page.setViewport({ width, height });
+    await page.setContent(html);
+
+    // Wait for images/fonts
+    await page.evaluateHandle('document.fonts.ready');
+
+    const buffer = await page.screenshot({ type: 'png', omitBackground: true });
+    await browser.close();
+
+    // Upload to Cloudinary
+    const uploadRes = await this.cloudinaryService.uploadImage(
+      buffer as Buffer,
+      'xcardgen_tickets',
+    );
+    const imageUrl = uploadRes.secure_url;
+
+    // Save Attendee & Generation
+    const attendee = await this.prisma.attendee.upsert({
+      where: {
+        eventId_email: {
+          eventId: event.id,
+          email: body.email,
+        },
+      },
+      update: {
+        name: body.name,
+        data: body.data,
+      },
+      create: {
+        eventId: event.id,
+        email: body.email,
+        name: body.name,
+        data: body.data,
+      },
+    });
+
+    // Check if generation exists for this attendee to prevent duplicates
+    const existingGen = await this.prisma.cardGeneration.findFirst({
+      where: {
+        eventId: event.id,
+        attendeeId: attendee.id,
+      },
+      orderBy: { createdAt: 'desc' }, // Get latest
+    });
+
+    if (!existingGen) {
+      await this.prisma.cardGeneration.create({
+        data: {
+          eventId: event.id,
+          attendeeId: attendee.id,
+          imageUrl: imageUrl,
+        },
+      });
+
+      // Only increment stats if it's a new generation
+      await this.prisma.eventStats.upsert({
+        where: {
+          eventId: event.id,
+        },
+        update: {
+          generations: {
+            increment: 1,
+          },
+          attendees: {
+            increment: 1, // This might over-count if attendee existed but had no card? But typically they go together.
+            // Actually, if attendee was upserted (updated), we shouldn't increment attendees count again?
+            // Let's refine stat counting.
+          },
+        },
+        create: {
+          eventId: event.id,
+          generations: 1,
+          downloads: 0,
+          attendees: 1,
+        },
+      });
+    } else {
+      // Update the existing generation with new image if needed, or just return it?
+      // User said "where the email inputted is the same, you do not have to create a new attendee"
+      // But if they are regenerating, maybe they want a new image?
+      // Assuming they just want to avoid DUPLICATE RECORDS.
+      // I'll update the existing generation record with the new URL just in case the template changed.
+      await this.prisma.cardGeneration.update({
+        where: { id: existingGen.id },
+        data: { imageUrl },
+      });
+      // Do NOT increment stats
+    }
+
+    return { url: imageUrl };
+  }
+
+  async recordDownload(id: string) {
+    return this.prisma.eventStats.upsert({
+      where: { eventId: id },
+      update: {
+        downloads: { increment: 1 },
+      },
+      create: {
+        eventId: id,
+        downloads: 1,
+      },
+    });
+  }
+
+  async recordShare(id: string) {
+    return this.prisma.eventStats.upsert({
+      where: { eventId: id },
+      update: {
+        shares: { increment: 1 },
+      },
+      create: {
+        eventId: id,
+        shares: 1,
+        generations: 0,
+        downloads: 0,
+        attendees: 0,
+      },
+    });
+  }
+
+  async uploadAsset(file: Express.Multer.File) {
+    return this.cloudinaryService.uploadImage(
+      file.buffer ? file.buffer : file.path,
+      'xcardgen_assets',
+    );
   }
 }

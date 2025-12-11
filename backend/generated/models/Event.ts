@@ -297,7 +297,6 @@ export type EventOrderByWithRelationInput = {
 export type EventWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   slug?: string
-  templateId?: string
   userId_name?: Prisma.EventUserIdNameCompoundUniqueInput
   AND?: Prisma.EventWhereInput | Prisma.EventWhereInput[]
   OR?: Prisma.EventWhereInput[]
@@ -309,6 +308,7 @@ export type EventWhereUniqueInput = Prisma.AtLeast<{
   endDate?: Prisma.DateTimeNullableFilter<"Event"> | Date | string | null
   description?: Prisma.StringNullableFilter<"Event"> | string | null
   coverImage?: Prisma.StringNullableFilter<"Event"> | string | null
+  templateId?: Prisma.StringNullableFilter<"Event"> | string | null
   status?: Prisma.EnumEventStatusFilter<"Event"> | $Enums.EventStatus
   properties?: Prisma.JsonNullableFilter<"Event">
   createdAt?: Prisma.DateTimeFilter<"Event"> | Date | string
@@ -322,7 +322,7 @@ export type EventWhereUniqueInput = Prisma.AtLeast<{
   template?: Prisma.XOR<Prisma.TemplateNullableScalarRelationFilter, Prisma.TemplateWhereInput> | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   workspace?: Prisma.XOR<Prisma.WorkspaceNullableScalarRelationFilter, Prisma.WorkspaceWhereInput> | null
-}, "id" | "slug" | "templateId" | "userId_name">
+}, "id" | "slug" | "userId_name">
 
 export type EventOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -384,7 +384,7 @@ export type EventCreateInput = {
   cardGenerations?: Prisma.CardGenerationCreateNestedManyWithoutEventInput
   attendees?: Prisma.AttendeeCreateNestedManyWithoutEventInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutEventInput
-  template?: Prisma.TemplateCreateNestedOneWithoutEventInput
+  template?: Prisma.TemplateCreateNestedOneWithoutEventsInput
   user: Prisma.UserCreateNestedOneWithoutEventsInput
   workspace?: Prisma.WorkspaceCreateNestedOneWithoutEventsInput
 }
@@ -430,7 +430,7 @@ export type EventUpdateInput = {
   cardGenerations?: Prisma.CardGenerationUpdateManyWithoutEventNestedInput
   attendees?: Prisma.AttendeeUpdateManyWithoutEventNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutEventNestedInput
-  template?: Prisma.TemplateUpdateOneWithoutEventNestedInput
+  template?: Prisma.TemplateUpdateOneWithoutEventsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutEventsNestedInput
   workspace?: Prisma.WorkspaceUpdateOneWithoutEventsNestedInput
 }
@@ -576,11 +576,6 @@ export type EventMinOrderByAggregateInput = {
   deletedAt?: Prisma.SortOrder
 }
 
-export type EventNullableScalarRelationFilter = {
-  is?: Prisma.EventWhereInput | null
-  isNot?: Prisma.EventWhereInput | null
-}
-
 export type EventScalarRelationFilter = {
   is?: Prisma.EventWhereInput
   isNot?: Prisma.EventWhereInput
@@ -674,36 +669,46 @@ export type EnumEventStatusFieldUpdateOperationsInput = {
   set?: $Enums.EventStatus
 }
 
-export type EventCreateNestedOneWithoutTemplateInput = {
-  create?: Prisma.XOR<Prisma.EventCreateWithoutTemplateInput, Prisma.EventUncheckedCreateWithoutTemplateInput>
-  connectOrCreate?: Prisma.EventCreateOrConnectWithoutTemplateInput
-  connect?: Prisma.EventWhereUniqueInput
+export type EventCreateNestedManyWithoutTemplateInput = {
+  create?: Prisma.XOR<Prisma.EventCreateWithoutTemplateInput, Prisma.EventUncheckedCreateWithoutTemplateInput> | Prisma.EventCreateWithoutTemplateInput[] | Prisma.EventUncheckedCreateWithoutTemplateInput[]
+  connectOrCreate?: Prisma.EventCreateOrConnectWithoutTemplateInput | Prisma.EventCreateOrConnectWithoutTemplateInput[]
+  createMany?: Prisma.EventCreateManyTemplateInputEnvelope
+  connect?: Prisma.EventWhereUniqueInput | Prisma.EventWhereUniqueInput[]
 }
 
-export type EventUncheckedCreateNestedOneWithoutTemplateInput = {
-  create?: Prisma.XOR<Prisma.EventCreateWithoutTemplateInput, Prisma.EventUncheckedCreateWithoutTemplateInput>
-  connectOrCreate?: Prisma.EventCreateOrConnectWithoutTemplateInput
-  connect?: Prisma.EventWhereUniqueInput
+export type EventUncheckedCreateNestedManyWithoutTemplateInput = {
+  create?: Prisma.XOR<Prisma.EventCreateWithoutTemplateInput, Prisma.EventUncheckedCreateWithoutTemplateInput> | Prisma.EventCreateWithoutTemplateInput[] | Prisma.EventUncheckedCreateWithoutTemplateInput[]
+  connectOrCreate?: Prisma.EventCreateOrConnectWithoutTemplateInput | Prisma.EventCreateOrConnectWithoutTemplateInput[]
+  createMany?: Prisma.EventCreateManyTemplateInputEnvelope
+  connect?: Prisma.EventWhereUniqueInput | Prisma.EventWhereUniqueInput[]
 }
 
-export type EventUpdateOneWithoutTemplateNestedInput = {
-  create?: Prisma.XOR<Prisma.EventCreateWithoutTemplateInput, Prisma.EventUncheckedCreateWithoutTemplateInput>
-  connectOrCreate?: Prisma.EventCreateOrConnectWithoutTemplateInput
-  upsert?: Prisma.EventUpsertWithoutTemplateInput
-  disconnect?: Prisma.EventWhereInput | boolean
-  delete?: Prisma.EventWhereInput | boolean
-  connect?: Prisma.EventWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.EventUpdateToOneWithWhereWithoutTemplateInput, Prisma.EventUpdateWithoutTemplateInput>, Prisma.EventUncheckedUpdateWithoutTemplateInput>
+export type EventUpdateManyWithoutTemplateNestedInput = {
+  create?: Prisma.XOR<Prisma.EventCreateWithoutTemplateInput, Prisma.EventUncheckedCreateWithoutTemplateInput> | Prisma.EventCreateWithoutTemplateInput[] | Prisma.EventUncheckedCreateWithoutTemplateInput[]
+  connectOrCreate?: Prisma.EventCreateOrConnectWithoutTemplateInput | Prisma.EventCreateOrConnectWithoutTemplateInput[]
+  upsert?: Prisma.EventUpsertWithWhereUniqueWithoutTemplateInput | Prisma.EventUpsertWithWhereUniqueWithoutTemplateInput[]
+  createMany?: Prisma.EventCreateManyTemplateInputEnvelope
+  set?: Prisma.EventWhereUniqueInput | Prisma.EventWhereUniqueInput[]
+  disconnect?: Prisma.EventWhereUniqueInput | Prisma.EventWhereUniqueInput[]
+  delete?: Prisma.EventWhereUniqueInput | Prisma.EventWhereUniqueInput[]
+  connect?: Prisma.EventWhereUniqueInput | Prisma.EventWhereUniqueInput[]
+  update?: Prisma.EventUpdateWithWhereUniqueWithoutTemplateInput | Prisma.EventUpdateWithWhereUniqueWithoutTemplateInput[]
+  updateMany?: Prisma.EventUpdateManyWithWhereWithoutTemplateInput | Prisma.EventUpdateManyWithWhereWithoutTemplateInput[]
+  deleteMany?: Prisma.EventScalarWhereInput | Prisma.EventScalarWhereInput[]
 }
 
-export type EventUncheckedUpdateOneWithoutTemplateNestedInput = {
-  create?: Prisma.XOR<Prisma.EventCreateWithoutTemplateInput, Prisma.EventUncheckedCreateWithoutTemplateInput>
-  connectOrCreate?: Prisma.EventCreateOrConnectWithoutTemplateInput
-  upsert?: Prisma.EventUpsertWithoutTemplateInput
-  disconnect?: Prisma.EventWhereInput | boolean
-  delete?: Prisma.EventWhereInput | boolean
-  connect?: Prisma.EventWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.EventUpdateToOneWithWhereWithoutTemplateInput, Prisma.EventUpdateWithoutTemplateInput>, Prisma.EventUncheckedUpdateWithoutTemplateInput>
+export type EventUncheckedUpdateManyWithoutTemplateNestedInput = {
+  create?: Prisma.XOR<Prisma.EventCreateWithoutTemplateInput, Prisma.EventUncheckedCreateWithoutTemplateInput> | Prisma.EventCreateWithoutTemplateInput[] | Prisma.EventUncheckedCreateWithoutTemplateInput[]
+  connectOrCreate?: Prisma.EventCreateOrConnectWithoutTemplateInput | Prisma.EventCreateOrConnectWithoutTemplateInput[]
+  upsert?: Prisma.EventUpsertWithWhereUniqueWithoutTemplateInput | Prisma.EventUpsertWithWhereUniqueWithoutTemplateInput[]
+  createMany?: Prisma.EventCreateManyTemplateInputEnvelope
+  set?: Prisma.EventWhereUniqueInput | Prisma.EventWhereUniqueInput[]
+  disconnect?: Prisma.EventWhereUniqueInput | Prisma.EventWhereUniqueInput[]
+  delete?: Prisma.EventWhereUniqueInput | Prisma.EventWhereUniqueInput[]
+  connect?: Prisma.EventWhereUniqueInput | Prisma.EventWhereUniqueInput[]
+  update?: Prisma.EventUpdateWithWhereUniqueWithoutTemplateInput | Prisma.EventUpdateWithWhereUniqueWithoutTemplateInput[]
+  updateMany?: Prisma.EventUpdateManyWithWhereWithoutTemplateInput | Prisma.EventUpdateManyWithWhereWithoutTemplateInput[]
+  deleteMany?: Prisma.EventScalarWhereInput | Prisma.EventScalarWhereInput[]
 }
 
 export type EventCreateNestedOneWithoutAttendeesInput = {
@@ -794,7 +799,7 @@ export type EventCreateWithoutWorkspaceInput = {
   cardGenerations?: Prisma.CardGenerationCreateNestedManyWithoutEventInput
   attendees?: Prisma.AttendeeCreateNestedManyWithoutEventInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutEventInput
-  template?: Prisma.TemplateCreateNestedOneWithoutEventInput
+  template?: Prisma.TemplateCreateNestedOneWithoutEventsInput
   user: Prisma.UserCreateNestedOneWithoutEventsInput
 }
 
@@ -885,7 +890,7 @@ export type EventCreateWithoutUserInput = {
   cardGenerations?: Prisma.CardGenerationCreateNestedManyWithoutEventInput
   attendees?: Prisma.AttendeeCreateNestedManyWithoutEventInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutEventInput
-  template?: Prisma.TemplateCreateNestedOneWithoutEventInput
+  template?: Prisma.TemplateCreateNestedOneWithoutEventsInput
   workspace?: Prisma.WorkspaceCreateNestedOneWithoutEventsInput
 }
 
@@ -986,59 +991,25 @@ export type EventCreateOrConnectWithoutTemplateInput = {
   create: Prisma.XOR<Prisma.EventCreateWithoutTemplateInput, Prisma.EventUncheckedCreateWithoutTemplateInput>
 }
 
-export type EventUpsertWithoutTemplateInput = {
-  update: Prisma.XOR<Prisma.EventUpdateWithoutTemplateInput, Prisma.EventUncheckedUpdateWithoutTemplateInput>
-  create: Prisma.XOR<Prisma.EventCreateWithoutTemplateInput, Prisma.EventUncheckedCreateWithoutTemplateInput>
-  where?: Prisma.EventWhereInput
+export type EventCreateManyTemplateInputEnvelope = {
+  data: Prisma.EventCreateManyTemplateInput | Prisma.EventCreateManyTemplateInput[]
+  skipDuplicates?: boolean
 }
 
-export type EventUpdateToOneWithWhereWithoutTemplateInput = {
-  where?: Prisma.EventWhereInput
+export type EventUpsertWithWhereUniqueWithoutTemplateInput = {
+  where: Prisma.EventWhereUniqueInput
+  update: Prisma.XOR<Prisma.EventUpdateWithoutTemplateInput, Prisma.EventUncheckedUpdateWithoutTemplateInput>
+  create: Prisma.XOR<Prisma.EventCreateWithoutTemplateInput, Prisma.EventUncheckedCreateWithoutTemplateInput>
+}
+
+export type EventUpdateWithWhereUniqueWithoutTemplateInput = {
+  where: Prisma.EventWhereUniqueInput
   data: Prisma.XOR<Prisma.EventUpdateWithoutTemplateInput, Prisma.EventUncheckedUpdateWithoutTemplateInput>
 }
 
-export type EventUpdateWithoutTemplateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
-  properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  stats?: Prisma.EventStatsUpdateOneWithoutEventNestedInput
-  visits?: Prisma.EventVisitUpdateManyWithoutEventNestedInput
-  cardGenerations?: Prisma.CardGenerationUpdateManyWithoutEventNestedInput
-  attendees?: Prisma.AttendeeUpdateManyWithoutEventNestedInput
-  downloads?: Prisma.DownloadUpdateManyWithoutEventNestedInput
-  user?: Prisma.UserUpdateOneRequiredWithoutEventsNestedInput
-  workspace?: Prisma.WorkspaceUpdateOneWithoutEventsNestedInput
-}
-
-export type EventUncheckedUpdateWithoutTemplateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  workspaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
-  properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  stats?: Prisma.EventStatsUncheckedUpdateOneWithoutEventNestedInput
-  visits?: Prisma.EventVisitUncheckedUpdateManyWithoutEventNestedInput
-  cardGenerations?: Prisma.CardGenerationUncheckedUpdateManyWithoutEventNestedInput
-  attendees?: Prisma.AttendeeUncheckedUpdateManyWithoutEventNestedInput
-  downloads?: Prisma.DownloadUncheckedUpdateManyWithoutEventNestedInput
+export type EventUpdateManyWithWhereWithoutTemplateInput = {
+  where: Prisma.EventScalarWhereInput
+  data: Prisma.XOR<Prisma.EventUpdateManyMutationInput, Prisma.EventUncheckedUpdateManyWithoutTemplateInput>
 }
 
 export type EventCreateWithoutAttendeesInput = {
@@ -1058,7 +1029,7 @@ export type EventCreateWithoutAttendeesInput = {
   visits?: Prisma.EventVisitCreateNestedManyWithoutEventInput
   cardGenerations?: Prisma.CardGenerationCreateNestedManyWithoutEventInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutEventInput
-  template?: Prisma.TemplateCreateNestedOneWithoutEventInput
+  template?: Prisma.TemplateCreateNestedOneWithoutEventsInput
   user: Prisma.UserCreateNestedOneWithoutEventsInput
   workspace?: Prisma.WorkspaceCreateNestedOneWithoutEventsInput
 }
@@ -1118,7 +1089,7 @@ export type EventUpdateWithoutAttendeesInput = {
   visits?: Prisma.EventVisitUpdateManyWithoutEventNestedInput
   cardGenerations?: Prisma.CardGenerationUpdateManyWithoutEventNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutEventNestedInput
-  template?: Prisma.TemplateUpdateOneWithoutEventNestedInput
+  template?: Prisma.TemplateUpdateOneWithoutEventsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutEventsNestedInput
   workspace?: Prisma.WorkspaceUpdateOneWithoutEventsNestedInput
 }
@@ -1162,7 +1133,7 @@ export type EventCreateWithoutStatsInput = {
   cardGenerations?: Prisma.CardGenerationCreateNestedManyWithoutEventInput
   attendees?: Prisma.AttendeeCreateNestedManyWithoutEventInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutEventInput
-  template?: Prisma.TemplateCreateNestedOneWithoutEventInput
+  template?: Prisma.TemplateCreateNestedOneWithoutEventsInput
   user: Prisma.UserCreateNestedOneWithoutEventsInput
   workspace?: Prisma.WorkspaceCreateNestedOneWithoutEventsInput
 }
@@ -1222,7 +1193,7 @@ export type EventUpdateWithoutStatsInput = {
   cardGenerations?: Prisma.CardGenerationUpdateManyWithoutEventNestedInput
   attendees?: Prisma.AttendeeUpdateManyWithoutEventNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutEventNestedInput
-  template?: Prisma.TemplateUpdateOneWithoutEventNestedInput
+  template?: Prisma.TemplateUpdateOneWithoutEventsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutEventsNestedInput
   workspace?: Prisma.WorkspaceUpdateOneWithoutEventsNestedInput
 }
@@ -1266,7 +1237,7 @@ export type EventCreateWithoutVisitsInput = {
   cardGenerations?: Prisma.CardGenerationCreateNestedManyWithoutEventInput
   attendees?: Prisma.AttendeeCreateNestedManyWithoutEventInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutEventInput
-  template?: Prisma.TemplateCreateNestedOneWithoutEventInput
+  template?: Prisma.TemplateCreateNestedOneWithoutEventsInput
   user: Prisma.UserCreateNestedOneWithoutEventsInput
   workspace?: Prisma.WorkspaceCreateNestedOneWithoutEventsInput
 }
@@ -1326,7 +1297,7 @@ export type EventUpdateWithoutVisitsInput = {
   cardGenerations?: Prisma.CardGenerationUpdateManyWithoutEventNestedInput
   attendees?: Prisma.AttendeeUpdateManyWithoutEventNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutEventNestedInput
-  template?: Prisma.TemplateUpdateOneWithoutEventNestedInput
+  template?: Prisma.TemplateUpdateOneWithoutEventsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutEventsNestedInput
   workspace?: Prisma.WorkspaceUpdateOneWithoutEventsNestedInput
 }
@@ -1370,7 +1341,7 @@ export type EventCreateWithoutCardGenerationsInput = {
   visits?: Prisma.EventVisitCreateNestedManyWithoutEventInput
   attendees?: Prisma.AttendeeCreateNestedManyWithoutEventInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutEventInput
-  template?: Prisma.TemplateCreateNestedOneWithoutEventInput
+  template?: Prisma.TemplateCreateNestedOneWithoutEventsInput
   user: Prisma.UserCreateNestedOneWithoutEventsInput
   workspace?: Prisma.WorkspaceCreateNestedOneWithoutEventsInput
 }
@@ -1430,7 +1401,7 @@ export type EventUpdateWithoutCardGenerationsInput = {
   visits?: Prisma.EventVisitUpdateManyWithoutEventNestedInput
   attendees?: Prisma.AttendeeUpdateManyWithoutEventNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutEventNestedInput
-  template?: Prisma.TemplateUpdateOneWithoutEventNestedInput
+  template?: Prisma.TemplateUpdateOneWithoutEventsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutEventsNestedInput
   workspace?: Prisma.WorkspaceUpdateOneWithoutEventsNestedInput
 }
@@ -1474,7 +1445,7 @@ export type EventCreateWithoutDownloadsInput = {
   visits?: Prisma.EventVisitCreateNestedManyWithoutEventInput
   cardGenerations?: Prisma.CardGenerationCreateNestedManyWithoutEventInput
   attendees?: Prisma.AttendeeCreateNestedManyWithoutEventInput
-  template?: Prisma.TemplateCreateNestedOneWithoutEventInput
+  template?: Prisma.TemplateCreateNestedOneWithoutEventsInput
   user: Prisma.UserCreateNestedOneWithoutEventsInput
   workspace?: Prisma.WorkspaceCreateNestedOneWithoutEventsInput
 }
@@ -1534,7 +1505,7 @@ export type EventUpdateWithoutDownloadsInput = {
   visits?: Prisma.EventVisitUpdateManyWithoutEventNestedInput
   cardGenerations?: Prisma.CardGenerationUpdateManyWithoutEventNestedInput
   attendees?: Prisma.AttendeeUpdateManyWithoutEventNestedInput
-  template?: Prisma.TemplateUpdateOneWithoutEventNestedInput
+  template?: Prisma.TemplateUpdateOneWithoutEventsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutEventsNestedInput
   workspace?: Prisma.WorkspaceUpdateOneWithoutEventsNestedInput
 }
@@ -1596,7 +1567,7 @@ export type EventUpdateWithoutWorkspaceInput = {
   cardGenerations?: Prisma.CardGenerationUpdateManyWithoutEventNestedInput
   attendees?: Prisma.AttendeeUpdateManyWithoutEventNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutEventNestedInput
-  template?: Prisma.TemplateUpdateOneWithoutEventNestedInput
+  template?: Prisma.TemplateUpdateOneWithoutEventsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutEventsNestedInput
 }
 
@@ -1674,7 +1645,7 @@ export type EventUpdateWithoutUserInput = {
   cardGenerations?: Prisma.CardGenerationUpdateManyWithoutEventNestedInput
   attendees?: Prisma.AttendeeUpdateManyWithoutEventNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutEventNestedInput
-  template?: Prisma.TemplateUpdateOneWithoutEventNestedInput
+  template?: Prisma.TemplateUpdateOneWithoutEventsNestedInput
   workspace?: Prisma.WorkspaceUpdateOneWithoutEventsNestedInput
 }
 
@@ -1710,6 +1681,84 @@ export type EventUncheckedUpdateManyWithoutUserInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
+  properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type EventCreateManyTemplateInput = {
+  id?: string
+  userId: string
+  workspaceId?: string | null
+  name: string
+  slug: string
+  date: Date | string
+  endDate?: Date | string | null
+  description?: string | null
+  coverImage?: string | null
+  status?: $Enums.EventStatus
+  properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+}
+
+export type EventUpdateWithoutTemplateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
+  properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  stats?: Prisma.EventStatsUpdateOneWithoutEventNestedInput
+  visits?: Prisma.EventVisitUpdateManyWithoutEventNestedInput
+  cardGenerations?: Prisma.CardGenerationUpdateManyWithoutEventNestedInput
+  attendees?: Prisma.AttendeeUpdateManyWithoutEventNestedInput
+  downloads?: Prisma.DownloadUpdateManyWithoutEventNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutEventsNestedInput
+  workspace?: Prisma.WorkspaceUpdateOneWithoutEventsNestedInput
+}
+
+export type EventUncheckedUpdateWithoutTemplateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  workspaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
+  properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  stats?: Prisma.EventStatsUncheckedUpdateOneWithoutEventNestedInput
+  visits?: Prisma.EventVisitUncheckedUpdateManyWithoutEventNestedInput
+  cardGenerations?: Prisma.CardGenerationUncheckedUpdateManyWithoutEventNestedInput
+  attendees?: Prisma.AttendeeUncheckedUpdateManyWithoutEventNestedInput
+  downloads?: Prisma.DownloadUncheckedUpdateManyWithoutEventNestedInput
+}
+
+export type EventUncheckedUpdateManyWithoutTemplateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  workspaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string

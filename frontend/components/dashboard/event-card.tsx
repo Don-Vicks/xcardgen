@@ -57,6 +57,9 @@ export function EventCard({ event }: EventCardProps) {
   return (
     <Card className="overflow-hidden hover:border-primary/50 transition-colors group">
       <div className="relative aspect-video w-full bg-muted">
+        <Link href={`/dashboard/events/${event.slug}`} className="absolute inset-0 z-10 block" aria-label={`View ${event.name}`}>
+          <span className="sr-only">View Event</span>
+        </Link>
         {event.coverImage ? (
           <Image
             src={event.coverImage}
@@ -65,11 +68,12 @@ export function EventCard({ event }: EventCardProps) {
             className="object-cover"
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-muted-foreground">
-            No Cover Image
+          <div className="flex h-full flex-col items-center justify-center text-muted-foreground gap-2">
+            <CalendarIcon className="h-8 w-8 opacity-20" />
+            <span className="text-xs">No Cover Image</span>
           </div>
         )}
-        <div className="absolute top-2 right-2">
+        <div className="absolute top-2 right-2 z-20">
           <Badge variant={event.status === 'PUBLISHED' ? "default" : "secondary"}>
             {event.status}
           </Badge>
@@ -78,9 +82,11 @@ export function EventCard({ event }: EventCardProps) {
 
       <CardHeader className="p-4 pb-2">
         <div className="flex items-start justify-between">
-          <div className="space-y-1">
-            <h3 className="font-semibold leading-none tracking-tight line-clamp-1">
-              {event.name}
+          <div className="space-y-1 relative">
+            <h3 className="font-semibold leading-none tracking-tight line-clamp-1 hover:underline decoration-primary">
+              <Link href={`/dashboard/events/${event.slug}`}>
+                {event.name}
+              </Link>
             </h3>
             <p className="text-sm text-muted-foreground flex items-center">
               <CalendarIcon className="mr-1 h-3 w-3" />
@@ -89,7 +95,7 @@ export function EventCard({ event }: EventCardProps) {
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button variant="ghost" size="icon" className="h-8 w-8 relative z-20">
                 <MoreVertical className="h-4 w-4" />
                 <span className="sr-only">Open menu</span>
               </Button>
@@ -102,7 +108,7 @@ export function EventCard({ event }: EventCardProps) {
                 <Link href={`/dashboard/events/${event.slug}/analytics`}>View Analytics</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href={`/${event.slug}`} target="_blank">View Live Page</Link>
+                <Link href={`/x/${event.slug}`} target="_blank">View Live Page</Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

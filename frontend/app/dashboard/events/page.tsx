@@ -1,6 +1,7 @@
 "use client"
 
 import { EventCard } from "@/components/dashboard/event-card"
+import { TemplateSkeleton } from "@/components/skeletons/template-skeleton"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import {
@@ -12,7 +13,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { LoadingScreen } from "@/components/ui/loading-screen"
 import {
   Select,
   SelectContent,
@@ -143,7 +143,7 @@ export default function EventsPage() {
 
       {/* Grid */}
       {loading ? (
-        <LoadingScreen text="Updating list..." />
+        <TemplateSkeleton />
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {events.map((event) => (

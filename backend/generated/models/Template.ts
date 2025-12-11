@@ -226,7 +226,7 @@ export type TemplateWhereInput = {
   status?: Prisma.EnumTemplateStatusFilter<"Template"> | $Enums.TemplateStatus
   createdAt?: Prisma.DateTimeFilter<"Template"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Template"> | Date | string
-  event?: Prisma.XOR<Prisma.EventNullableScalarRelationFilter, Prisma.EventWhereInput> | null
+  events?: Prisma.EventListRelationFilter
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   workspace?: Prisma.XOR<Prisma.WorkspaceNullableScalarRelationFilter, Prisma.WorkspaceWhereInput> | null
 }
@@ -244,7 +244,7 @@ export type TemplateOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  event?: Prisma.EventOrderByWithRelationInput
+  events?: Prisma.EventOrderByRelationAggregateInput
   user?: Prisma.UserOrderByWithRelationInput
   workspace?: Prisma.WorkspaceOrderByWithRelationInput
 }
@@ -265,7 +265,7 @@ export type TemplateWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumTemplateStatusFilter<"Template"> | $Enums.TemplateStatus
   createdAt?: Prisma.DateTimeFilter<"Template"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Template"> | Date | string
-  event?: Prisma.XOR<Prisma.EventNullableScalarRelationFilter, Prisma.EventWhereInput> | null
+  events?: Prisma.EventListRelationFilter
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   workspace?: Prisma.XOR<Prisma.WorkspaceNullableScalarRelationFilter, Prisma.WorkspaceWhereInput> | null
 }, "id">
@@ -317,7 +317,7 @@ export type TemplateCreateInput = {
   status?: $Enums.TemplateStatus
   createdAt?: Date | string
   updatedAt?: Date | string
-  event?: Prisma.EventCreateNestedOneWithoutTemplateInput
+  events?: Prisma.EventCreateNestedManyWithoutTemplateInput
   user: Prisma.UserCreateNestedOneWithoutTemplatesInput
   workspace?: Prisma.WorkspaceCreateNestedOneWithoutTemplatesInput
 }
@@ -335,7 +335,7 @@ export type TemplateUncheckedCreateInput = {
   status?: $Enums.TemplateStatus
   createdAt?: Date | string
   updatedAt?: Date | string
-  event?: Prisma.EventUncheckedCreateNestedOneWithoutTemplateInput
+  events?: Prisma.EventUncheckedCreateNestedManyWithoutTemplateInput
 }
 
 export type TemplateUpdateInput = {
@@ -349,7 +349,7 @@ export type TemplateUpdateInput = {
   status?: Prisma.EnumTemplateStatusFieldUpdateOperationsInput | $Enums.TemplateStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  event?: Prisma.EventUpdateOneWithoutTemplateNestedInput
+  events?: Prisma.EventUpdateManyWithoutTemplateNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutTemplatesNestedInput
   workspace?: Prisma.WorkspaceUpdateOneWithoutTemplatesNestedInput
 }
@@ -367,7 +367,7 @@ export type TemplateUncheckedUpdateInput = {
   status?: Prisma.EnumTemplateStatusFieldUpdateOperationsInput | $Enums.TemplateStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  event?: Prisma.EventUncheckedUpdateOneWithoutTemplateNestedInput
+  events?: Prisma.EventUncheckedUpdateManyWithoutTemplateNestedInput
 }
 
 export type TemplateCreateManyInput = {
@@ -551,20 +551,20 @@ export type TemplateUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.TemplateScalarWhereInput | Prisma.TemplateScalarWhereInput[]
 }
 
-export type TemplateCreateNestedOneWithoutEventInput = {
-  create?: Prisma.XOR<Prisma.TemplateCreateWithoutEventInput, Prisma.TemplateUncheckedCreateWithoutEventInput>
-  connectOrCreate?: Prisma.TemplateCreateOrConnectWithoutEventInput
+export type TemplateCreateNestedOneWithoutEventsInput = {
+  create?: Prisma.XOR<Prisma.TemplateCreateWithoutEventsInput, Prisma.TemplateUncheckedCreateWithoutEventsInput>
+  connectOrCreate?: Prisma.TemplateCreateOrConnectWithoutEventsInput
   connect?: Prisma.TemplateWhereUniqueInput
 }
 
-export type TemplateUpdateOneWithoutEventNestedInput = {
-  create?: Prisma.XOR<Prisma.TemplateCreateWithoutEventInput, Prisma.TemplateUncheckedCreateWithoutEventInput>
-  connectOrCreate?: Prisma.TemplateCreateOrConnectWithoutEventInput
-  upsert?: Prisma.TemplateUpsertWithoutEventInput
+export type TemplateUpdateOneWithoutEventsNestedInput = {
+  create?: Prisma.XOR<Prisma.TemplateCreateWithoutEventsInput, Prisma.TemplateUncheckedCreateWithoutEventsInput>
+  connectOrCreate?: Prisma.TemplateCreateOrConnectWithoutEventsInput
+  upsert?: Prisma.TemplateUpsertWithoutEventsInput
   disconnect?: Prisma.TemplateWhereInput | boolean
   delete?: Prisma.TemplateWhereInput | boolean
   connect?: Prisma.TemplateWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.TemplateUpdateToOneWithWhereWithoutEventInput, Prisma.TemplateUpdateWithoutEventInput>, Prisma.TemplateUncheckedUpdateWithoutEventInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TemplateUpdateToOneWithWhereWithoutEventsInput, Prisma.TemplateUpdateWithoutEventsInput>, Prisma.TemplateUncheckedUpdateWithoutEventsInput>
 }
 
 export type EnumTemplateStatusFieldUpdateOperationsInput = {
@@ -582,7 +582,7 @@ export type TemplateCreateWithoutWorkspaceInput = {
   status?: $Enums.TemplateStatus
   createdAt?: Date | string
   updatedAt?: Date | string
-  event?: Prisma.EventCreateNestedOneWithoutTemplateInput
+  events?: Prisma.EventCreateNestedManyWithoutTemplateInput
   user: Prisma.UserCreateNestedOneWithoutTemplatesInput
 }
 
@@ -598,7 +598,7 @@ export type TemplateUncheckedCreateWithoutWorkspaceInput = {
   status?: $Enums.TemplateStatus
   createdAt?: Date | string
   updatedAt?: Date | string
-  event?: Prisma.EventUncheckedCreateNestedOneWithoutTemplateInput
+  events?: Prisma.EventUncheckedCreateNestedManyWithoutTemplateInput
 }
 
 export type TemplateCreateOrConnectWithoutWorkspaceInput = {
@@ -656,7 +656,7 @@ export type TemplateCreateWithoutUserInput = {
   status?: $Enums.TemplateStatus
   createdAt?: Date | string
   updatedAt?: Date | string
-  event?: Prisma.EventCreateNestedOneWithoutTemplateInput
+  events?: Prisma.EventCreateNestedManyWithoutTemplateInput
   workspace?: Prisma.WorkspaceCreateNestedOneWithoutTemplatesInput
 }
 
@@ -672,7 +672,7 @@ export type TemplateUncheckedCreateWithoutUserInput = {
   status?: $Enums.TemplateStatus
   createdAt?: Date | string
   updatedAt?: Date | string
-  event?: Prisma.EventUncheckedCreateNestedOneWithoutTemplateInput
+  events?: Prisma.EventUncheckedCreateNestedManyWithoutTemplateInput
 }
 
 export type TemplateCreateOrConnectWithoutUserInput = {
@@ -701,7 +701,7 @@ export type TemplateUpdateManyWithWhereWithoutUserInput = {
   data: Prisma.XOR<Prisma.TemplateUpdateManyMutationInput, Prisma.TemplateUncheckedUpdateManyWithoutUserInput>
 }
 
-export type TemplateCreateWithoutEventInput = {
+export type TemplateCreateWithoutEventsInput = {
   id?: string
   name?: string
   description?: string | null
@@ -716,7 +716,7 @@ export type TemplateCreateWithoutEventInput = {
   workspace?: Prisma.WorkspaceCreateNestedOneWithoutTemplatesInput
 }
 
-export type TemplateUncheckedCreateWithoutEventInput = {
+export type TemplateUncheckedCreateWithoutEventsInput = {
   id?: string
   userId: string
   workspaceId?: string | null
@@ -731,23 +731,23 @@ export type TemplateUncheckedCreateWithoutEventInput = {
   updatedAt?: Date | string
 }
 
-export type TemplateCreateOrConnectWithoutEventInput = {
+export type TemplateCreateOrConnectWithoutEventsInput = {
   where: Prisma.TemplateWhereUniqueInput
-  create: Prisma.XOR<Prisma.TemplateCreateWithoutEventInput, Prisma.TemplateUncheckedCreateWithoutEventInput>
+  create: Prisma.XOR<Prisma.TemplateCreateWithoutEventsInput, Prisma.TemplateUncheckedCreateWithoutEventsInput>
 }
 
-export type TemplateUpsertWithoutEventInput = {
-  update: Prisma.XOR<Prisma.TemplateUpdateWithoutEventInput, Prisma.TemplateUncheckedUpdateWithoutEventInput>
-  create: Prisma.XOR<Prisma.TemplateCreateWithoutEventInput, Prisma.TemplateUncheckedCreateWithoutEventInput>
+export type TemplateUpsertWithoutEventsInput = {
+  update: Prisma.XOR<Prisma.TemplateUpdateWithoutEventsInput, Prisma.TemplateUncheckedUpdateWithoutEventsInput>
+  create: Prisma.XOR<Prisma.TemplateCreateWithoutEventsInput, Prisma.TemplateUncheckedCreateWithoutEventsInput>
   where?: Prisma.TemplateWhereInput
 }
 
-export type TemplateUpdateToOneWithWhereWithoutEventInput = {
+export type TemplateUpdateToOneWithWhereWithoutEventsInput = {
   where?: Prisma.TemplateWhereInput
-  data: Prisma.XOR<Prisma.TemplateUpdateWithoutEventInput, Prisma.TemplateUncheckedUpdateWithoutEventInput>
+  data: Prisma.XOR<Prisma.TemplateUpdateWithoutEventsInput, Prisma.TemplateUncheckedUpdateWithoutEventsInput>
 }
 
-export type TemplateUpdateWithoutEventInput = {
+export type TemplateUpdateWithoutEventsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -762,7 +762,7 @@ export type TemplateUpdateWithoutEventInput = {
   workspace?: Prisma.WorkspaceUpdateOneWithoutTemplatesNestedInput
 }
 
-export type TemplateUncheckedUpdateWithoutEventInput = {
+export type TemplateUncheckedUpdateWithoutEventsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   workspaceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -802,7 +802,7 @@ export type TemplateUpdateWithoutWorkspaceInput = {
   status?: Prisma.EnumTemplateStatusFieldUpdateOperationsInput | $Enums.TemplateStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  event?: Prisma.EventUpdateOneWithoutTemplateNestedInput
+  events?: Prisma.EventUpdateManyWithoutTemplateNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutTemplatesNestedInput
 }
 
@@ -818,7 +818,7 @@ export type TemplateUncheckedUpdateWithoutWorkspaceInput = {
   status?: Prisma.EnumTemplateStatusFieldUpdateOperationsInput | $Enums.TemplateStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  event?: Prisma.EventUncheckedUpdateOneWithoutTemplateNestedInput
+  events?: Prisma.EventUncheckedUpdateManyWithoutTemplateNestedInput
 }
 
 export type TemplateUncheckedUpdateManyWithoutWorkspaceInput = {
@@ -860,7 +860,7 @@ export type TemplateUpdateWithoutUserInput = {
   status?: Prisma.EnumTemplateStatusFieldUpdateOperationsInput | $Enums.TemplateStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  event?: Prisma.EventUpdateOneWithoutTemplateNestedInput
+  events?: Prisma.EventUpdateManyWithoutTemplateNestedInput
   workspace?: Prisma.WorkspaceUpdateOneWithoutTemplatesNestedInput
 }
 
@@ -876,7 +876,7 @@ export type TemplateUncheckedUpdateWithoutUserInput = {
   status?: Prisma.EnumTemplateStatusFieldUpdateOperationsInput | $Enums.TemplateStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  event?: Prisma.EventUncheckedUpdateOneWithoutTemplateNestedInput
+  events?: Prisma.EventUncheckedUpdateManyWithoutTemplateNestedInput
 }
 
 export type TemplateUncheckedUpdateManyWithoutUserInput = {
@@ -894,6 +894,35 @@ export type TemplateUncheckedUpdateManyWithoutUserInput = {
 }
 
 
+/**
+ * Count Type TemplateCountOutputType
+ */
+
+export type TemplateCountOutputType = {
+  events: number
+}
+
+export type TemplateCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  events?: boolean | TemplateCountOutputTypeCountEventsArgs
+}
+
+/**
+ * TemplateCountOutputType without action
+ */
+export type TemplateCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TemplateCountOutputType
+   */
+  select?: Prisma.TemplateCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * TemplateCountOutputType without action
+ */
+export type TemplateCountOutputTypeCountEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EventWhereInput
+}
+
 
 export type TemplateSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -908,9 +937,10 @@ export type TemplateSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  event?: boolean | Prisma.Template$eventArgs<ExtArgs>
+  events?: boolean | Prisma.Template$eventsArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   workspace?: boolean | Prisma.Template$workspaceArgs<ExtArgs>
+  _count?: boolean | Prisma.TemplateCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["template"]>
 
 export type TemplateSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -964,9 +994,10 @@ export type TemplateSelectScalar = {
 
 export type TemplateOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "workspaceId" | "name" | "description" | "backgroundImage" | "canvasData" | "sampleData" | "properties" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["template"]>
 export type TemplateInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  event?: boolean | Prisma.Template$eventArgs<ExtArgs>
+  events?: boolean | Prisma.Template$eventsArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   workspace?: boolean | Prisma.Template$workspaceArgs<ExtArgs>
+  _count?: boolean | Prisma.TemplateCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TemplateIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -980,7 +1011,7 @@ export type TemplateIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
 export type $TemplatePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Template"
   objects: {
-    event: Prisma.$EventPayload<ExtArgs> | null
+    events: Prisma.$EventPayload<ExtArgs>[]
     user: Prisma.$UserPayload<ExtArgs>
     workspace: Prisma.$WorkspacePayload<ExtArgs> | null
   }
@@ -1391,7 +1422,7 @@ readonly fields: TemplateFieldRefs;
  */
 export interface Prisma__TemplateClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  event<T extends Prisma.Template$eventArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Template$eventArgs<ExtArgs>>): Prisma.Prisma__EventClient<runtime.Types.Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  events<T extends Prisma.Template$eventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Template$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   workspace<T extends Prisma.Template$workspaceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Template$workspaceArgs<ExtArgs>>): Prisma.Prisma__WorkspaceClient<runtime.Types.Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
@@ -1831,9 +1862,9 @@ export type TemplateDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
 }
 
 /**
- * Template.event
+ * Template.events
  */
-export type Template$eventArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Template$eventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the Event
    */
@@ -1847,6 +1878,11 @@ export type Template$eventArgs<ExtArgs extends runtime.Types.Extensions.Internal
    */
   include?: Prisma.EventInclude<ExtArgs> | null
   where?: Prisma.EventWhereInput
+  orderBy?: Prisma.EventOrderByWithRelationInput | Prisma.EventOrderByWithRelationInput[]
+  cursor?: Prisma.EventWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EventScalarFieldEnum | Prisma.EventScalarFieldEnum[]
 }
 
 /**

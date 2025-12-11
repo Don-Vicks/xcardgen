@@ -3,11 +3,14 @@
 import { Menu } from "lucide-react"
 import { useState } from "react"
 
+import { AuthGuard } from "@/components/auth-guard"
 import { CreateEventDialog } from "@/components/create-event-dialog"
 import { SidebarNav } from "@/components/dashboard/sidebar-nav"
+import { ModeToggle } from "@/components/mode-toggle"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { AuthGuard } from "@/components/auth-guard"
+
+import { usePathname } from "next/navigation"
 
 export default function DashboardLayout({
   children,
@@ -15,6 +18,8 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const [open, setOpen] = useState(false)
+  const pathname = usePathname()
+  const isEditor = pathname?.includes('/editor') || pathname?.includes('/design')
 
   return (
     <AuthGuard>
@@ -43,9 +48,12 @@ export default function DashboardLayout({
 
               <h1 className="text-xl font-semibold tracking-tight">Dashboard</h1>
             </div>
-            <CreateEventDialog />
+            <div className="flex items-center gap-4">
+              <ModeToggle />
+              <CreateEventDialog />
+            </div>
           </header>
-          <div className="p-4 md:p-8 flex-1 overflow-auto">
+          <div className={`flex-1 overflow-auto ${isEditor ? 'p-0 h-[calc(100vh-4rem)] overflow-hidden' : 'p-4 md:p-8'}`}>
             {children}
           </div>
         </main>

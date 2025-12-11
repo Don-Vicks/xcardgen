@@ -8,8 +8,11 @@ import {
   Post,
   Query,
   Request,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Prisma } from 'generated/client';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { TemplatesService } from './templates.service';
@@ -32,8 +35,22 @@ export class TemplatesController {
   }
 
   @Get()
-  findAll(@Request() req, @Query('workspaceId') workspaceId?: string) {
-    return this.templatesService.findAll(req.user.userId, workspaceId);
+  findAll(
+    @Request() req,
+    @Query('workspaceId') workspaceId: string,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+    @Query('search') search?: string,
+    @Query('sortBy') sortBy?: string,
+    @Query('sortOrder') sortOrder?: 'asc' | 'desc',
+  ) {
+    return this.templatesService.findAll(req.user.id, workspaceId, {
+      page,
+      limit,
+      search,
+      sortBy,
+      sortOrder,
+    });
   }
 
   @Get(':id')
@@ -52,5 +69,16 @@ export class TemplatesController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.templatesService.remove(id);
+  }
+
+  @Post(':id/upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadAsset(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) throw new Error('No file uploaded');
+    const res = await this.templatesService.uploadAsset(file);
+    return { url: res.secure_url };
   }
 }

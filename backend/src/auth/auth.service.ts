@@ -52,6 +52,30 @@ export class AuthService {
         email: user.email,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
+        workspaceMemberships: {
+          select: {
+            workspace: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                logo: true,
+              },
+            },
+          },
+        },
+        workspaceOwnerships: {
+          select: {
+            workspace: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                logo: true,
+              },
+            },
+          },
+        },
       },
       accessToken,
     };
@@ -122,7 +146,7 @@ export class AuthService {
               select: {
                 id: true,
                 name: true,
-                //slug: true,
+                slug: true,
                 logo: true,
               },
             },
@@ -132,7 +156,7 @@ export class AuthService {
           select: {
             id: true,
             name: true,
-            //slug: true,
+            slug: true,
             logo: true,
           },
         },
