@@ -4,8 +4,8 @@ import { Menu } from "lucide-react"
 import { useState } from "react"
 
 import { AuthGuard } from "@/components/auth-guard"
-import { CreateEventDialog } from "@/components/create-event-dialog"
 import { SidebarNav } from "@/components/dashboard/sidebar-nav"
+import { WorkspaceSwitcherModal, useWorkspaceSwitcherShortcut } from "@/components/dashboard/workspace-switcher-modal"
 import { ModeToggle } from "@/components/mode-toggle"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
@@ -23,6 +23,9 @@ export default function DashboardLayout({
   const pathname = usePathname()
   const isEditor = pathname?.includes('/editor') || pathname?.includes('/design')
   const { isSwitching } = useWorkspace()
+
+  // Workspace switcher modal with Cmd+K shortcut
+  const { open: workspaceSwitcherOpen, setOpen: setWorkspaceSwitcherOpen } = useWorkspaceSwitcherShortcut()
 
   return (
     <AuthGuard>
@@ -52,6 +55,18 @@ export default function DashboardLayout({
               {/* <h1 className="text-xl font-semibold tracking-tight">Dashboard</h1> */}
             </div>
             <div className="flex items-center gap-4">
+              {/* Keyboard shortcut hint */}
+              <Button
+                variant="outline"
+                size="sm"
+                className="hidden sm:flex gap-2 text-muted-foreground"
+                onClick={() => setWorkspaceSwitcherOpen(true)}
+              >
+                <span>Switch Workspace</span>
+                <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+                  ⌘K
+                </kbd>
+              </Button>
               <ModeToggle />
               {/* <CreateEventDialog /> */}
             </div>
@@ -61,6 +76,13 @@ export default function DashboardLayout({
           </div>
         </main>
       </div>
+
+      {/* Workspace Switcher Modal */}
+      <WorkspaceSwitcherModal
+        open={workspaceSwitcherOpen}
+        onOpenChange={setWorkspaceSwitcherOpen}
+      />
+
       {isSwitching && (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center animate-in fade-in duration-300">
           <div className="flex flex-col items-center gap-2">
@@ -72,3 +94,4 @@ export default function DashboardLayout({
     </AuthGuard>
   )
 }
+

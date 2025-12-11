@@ -49,7 +49,7 @@ export class WorkspacesController {
 
   @Get(':id')
   findOne(@Param('id') id: string, @CurrentUser() user: User) {
-    return this.workspacesService.findOne(user.id);
+    return this.workspacesService.findOne(user.id, id);
   }
 
   @Patch(':id')
@@ -75,5 +75,69 @@ export class WorkspacesController {
   @Get('public/:slug')
   getPublic(@Param('slug') slug: string) {
     return this.workspacesService.findPublic(slug);
+  }
+
+  // ===== MEMBER MANAGEMENT =====
+
+  @Get(':id/members')
+  getMembers(@Param('id') id: string, @CurrentUser() user: User) {
+    return this.workspacesService.findMembers(id, user.id);
+  }
+
+  @Post(':id/members/invite')
+  inviteMember(
+    @Param('id') id: string,
+    @Body() body: { email: string; role?: 'ADMIN' | 'MEMBER' },
+    @CurrentUser() user: User,
+  ) {
+    return this.workspacesService.inviteMember(
+      id,
+      user.id,
+      body.email,
+      body.role,
+    );
+  }
+
+  @Delete(':id/members/:memberId')
+  removeMember(
+    @Param('id') id: string,
+    @Param('memberId') memberId: string,
+    @CurrentUser() user: User,
+  ) {
+    return this.workspacesService.removeMember(id, user.id, memberId);
+  }
+
+  @Patch(':id/members/:memberId')
+  updateMemberRole(
+    @Param('id') id: string,
+    @Param('memberId') memberId: string,
+    @Body() body: { role: 'ADMIN' | 'MEMBER' },
+    @CurrentUser() user: User,
+  ) {
+    return this.workspacesService.updateMemberRole(
+      id,
+      user.id,
+      memberId,
+      body.role,
+    );
+  }
+
+  // ===== INVITE ENDPOINTS (PUBLIC) =====
+
+  @Public()
+  @Get('invite/:token')
+  getInviteInfo(@Param('token') token: string) {
+    return this.workspacesService.getInviteInfo(token);
+  }
+
+  @Post('invite/:token/accept')
+  acceptInvite(@Param('token') token: string, @CurrentUser() user: User) {
+    return this.workspacesService.acceptInvite(token, user.id);
+  }
+
+  @Public()
+  @Post('invite/:token/decline')
+  declineInvite(@Param('token') token: string) {
+    return this.workspacesService.declineInvite(token);
   }
 }

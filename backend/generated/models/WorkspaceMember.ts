@@ -32,6 +32,8 @@ export type WorkspaceMemberMinAggregateOutputType = {
   invitedAt: Date | null
   acceptedAt: Date | null
   removedAt: Date | null
+  inviteToken: string | null
+  inviteEmail: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -44,6 +46,8 @@ export type WorkspaceMemberMaxAggregateOutputType = {
   invitedAt: Date | null
   acceptedAt: Date | null
   removedAt: Date | null
+  inviteToken: string | null
+  inviteEmail: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -56,6 +60,8 @@ export type WorkspaceMemberCountAggregateOutputType = {
   invitedAt: number
   acceptedAt: number
   removedAt: number
+  inviteToken: number
+  inviteEmail: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -70,6 +76,8 @@ export type WorkspaceMemberMinAggregateInputType = {
   invitedAt?: true
   acceptedAt?: true
   removedAt?: true
+  inviteToken?: true
+  inviteEmail?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -82,6 +90,8 @@ export type WorkspaceMemberMaxAggregateInputType = {
   invitedAt?: true
   acceptedAt?: true
   removedAt?: true
+  inviteToken?: true
+  inviteEmail?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -94,6 +104,8 @@ export type WorkspaceMemberCountAggregateInputType = {
   invitedAt?: true
   acceptedAt?: true
   removedAt?: true
+  inviteToken?: true
+  inviteEmail?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -173,12 +185,14 @@ export type WorkspaceMemberGroupByArgs<ExtArgs extends runtime.Types.Extensions.
 
 export type WorkspaceMemberGroupByOutputType = {
   id: string
-  userId: string
+  userId: string | null
   workspaceId: string
   role: $Enums.WorkspaceRole
   invitedAt: Date
   acceptedAt: Date | null
   removedAt: Date | null
+  inviteToken: string | null
+  inviteEmail: string | null
   createdAt: Date
   updatedAt: Date
   _count: WorkspaceMemberCountAggregateOutputType | null
@@ -206,26 +220,30 @@ export type WorkspaceMemberWhereInput = {
   OR?: Prisma.WorkspaceMemberWhereInput[]
   NOT?: Prisma.WorkspaceMemberWhereInput | Prisma.WorkspaceMemberWhereInput[]
   id?: Prisma.StringFilter<"WorkspaceMember"> | string
-  userId?: Prisma.StringFilter<"WorkspaceMember"> | string
+  userId?: Prisma.StringNullableFilter<"WorkspaceMember"> | string | null
   workspaceId?: Prisma.StringFilter<"WorkspaceMember"> | string
   role?: Prisma.EnumWorkspaceRoleFilter<"WorkspaceMember"> | $Enums.WorkspaceRole
   invitedAt?: Prisma.DateTimeFilter<"WorkspaceMember"> | Date | string
   acceptedAt?: Prisma.DateTimeNullableFilter<"WorkspaceMember"> | Date | string | null
   removedAt?: Prisma.DateTimeNullableFilter<"WorkspaceMember"> | Date | string | null
+  inviteToken?: Prisma.StringNullableFilter<"WorkspaceMember"> | string | null
+  inviteEmail?: Prisma.StringNullableFilter<"WorkspaceMember"> | string | null
   createdAt?: Prisma.DateTimeFilter<"WorkspaceMember"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"WorkspaceMember"> | Date | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   workspace?: Prisma.XOR<Prisma.WorkspaceScalarRelationFilter, Prisma.WorkspaceWhereInput>
 }
 
 export type WorkspaceMemberOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  userId?: Prisma.SortOrderInput | Prisma.SortOrder
   workspaceId?: Prisma.SortOrder
   role?: Prisma.SortOrder
   invitedAt?: Prisma.SortOrder
   acceptedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   removedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  inviteToken?: Prisma.SortOrderInput | Prisma.SortOrder
+  inviteEmail?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
@@ -234,30 +252,34 @@ export type WorkspaceMemberOrderByWithRelationInput = {
 
 export type WorkspaceMemberWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  inviteToken?: string
   userId_workspaceId?: Prisma.WorkspaceMemberUserIdWorkspaceIdCompoundUniqueInput
   AND?: Prisma.WorkspaceMemberWhereInput | Prisma.WorkspaceMemberWhereInput[]
   OR?: Prisma.WorkspaceMemberWhereInput[]
   NOT?: Prisma.WorkspaceMemberWhereInput | Prisma.WorkspaceMemberWhereInput[]
-  userId?: Prisma.StringFilter<"WorkspaceMember"> | string
+  userId?: Prisma.StringNullableFilter<"WorkspaceMember"> | string | null
   workspaceId?: Prisma.StringFilter<"WorkspaceMember"> | string
   role?: Prisma.EnumWorkspaceRoleFilter<"WorkspaceMember"> | $Enums.WorkspaceRole
   invitedAt?: Prisma.DateTimeFilter<"WorkspaceMember"> | Date | string
   acceptedAt?: Prisma.DateTimeNullableFilter<"WorkspaceMember"> | Date | string | null
   removedAt?: Prisma.DateTimeNullableFilter<"WorkspaceMember"> | Date | string | null
+  inviteEmail?: Prisma.StringNullableFilter<"WorkspaceMember"> | string | null
   createdAt?: Prisma.DateTimeFilter<"WorkspaceMember"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"WorkspaceMember"> | Date | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   workspace?: Prisma.XOR<Prisma.WorkspaceScalarRelationFilter, Prisma.WorkspaceWhereInput>
-}, "id" | "userId_workspaceId">
+}, "id" | "inviteToken" | "userId_workspaceId">
 
 export type WorkspaceMemberOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  userId?: Prisma.SortOrderInput | Prisma.SortOrder
   workspaceId?: Prisma.SortOrder
   role?: Prisma.SortOrder
   invitedAt?: Prisma.SortOrder
   acceptedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   removedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  inviteToken?: Prisma.SortOrderInput | Prisma.SortOrder
+  inviteEmail?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.WorkspaceMemberCountOrderByAggregateInput
@@ -270,12 +292,14 @@ export type WorkspaceMemberScalarWhereWithAggregatesInput = {
   OR?: Prisma.WorkspaceMemberScalarWhereWithAggregatesInput[]
   NOT?: Prisma.WorkspaceMemberScalarWhereWithAggregatesInput | Prisma.WorkspaceMemberScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"WorkspaceMember"> | string
-  userId?: Prisma.StringWithAggregatesFilter<"WorkspaceMember"> | string
+  userId?: Prisma.StringNullableWithAggregatesFilter<"WorkspaceMember"> | string | null
   workspaceId?: Prisma.StringWithAggregatesFilter<"WorkspaceMember"> | string
   role?: Prisma.EnumWorkspaceRoleWithAggregatesFilter<"WorkspaceMember"> | $Enums.WorkspaceRole
   invitedAt?: Prisma.DateTimeWithAggregatesFilter<"WorkspaceMember"> | Date | string
   acceptedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"WorkspaceMember"> | Date | string | null
   removedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"WorkspaceMember"> | Date | string | null
+  inviteToken?: Prisma.StringNullableWithAggregatesFilter<"WorkspaceMember"> | string | null
+  inviteEmail?: Prisma.StringNullableWithAggregatesFilter<"WorkspaceMember"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"WorkspaceMember"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"WorkspaceMember"> | Date | string
 }
@@ -286,20 +310,24 @@ export type WorkspaceMemberCreateInput = {
   invitedAt?: Date | string
   acceptedAt?: Date | string | null
   removedAt?: Date | string | null
+  inviteToken?: string | null
+  inviteEmail?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutWorkspaceMembershipsInput
+  user?: Prisma.UserCreateNestedOneWithoutWorkspaceMembershipsInput
   workspace: Prisma.WorkspaceCreateNestedOneWithoutMembersInput
 }
 
 export type WorkspaceMemberUncheckedCreateInput = {
   id?: string
-  userId: string
+  userId?: string | null
   workspaceId: string
   role?: $Enums.WorkspaceRole
   invitedAt?: Date | string
   acceptedAt?: Date | string | null
   removedAt?: Date | string | null
+  inviteToken?: string | null
+  inviteEmail?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -310,32 +338,38 @@ export type WorkspaceMemberUpdateInput = {
   invitedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   removedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inviteToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutWorkspaceMembershipsNestedInput
+  user?: Prisma.UserUpdateOneWithoutWorkspaceMembershipsNestedInput
   workspace?: Prisma.WorkspaceUpdateOneRequiredWithoutMembersNestedInput
 }
 
 export type WorkspaceMemberUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   workspaceId?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
   invitedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   removedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inviteToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type WorkspaceMemberCreateManyInput = {
   id?: string
-  userId: string
+  userId?: string | null
   workspaceId: string
   role?: $Enums.WorkspaceRole
   invitedAt?: Date | string
   acceptedAt?: Date | string | null
   removedAt?: Date | string | null
+  inviteToken?: string | null
+  inviteEmail?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -346,18 +380,22 @@ export type WorkspaceMemberUpdateManyMutationInput = {
   invitedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   removedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inviteToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type WorkspaceMemberUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   workspaceId?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
   invitedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   removedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inviteToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -385,6 +423,8 @@ export type WorkspaceMemberCountOrderByAggregateInput = {
   invitedAt?: Prisma.SortOrder
   acceptedAt?: Prisma.SortOrder
   removedAt?: Prisma.SortOrder
+  inviteToken?: Prisma.SortOrder
+  inviteEmail?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -397,6 +437,8 @@ export type WorkspaceMemberMaxOrderByAggregateInput = {
   invitedAt?: Prisma.SortOrder
   acceptedAt?: Prisma.SortOrder
   removedAt?: Prisma.SortOrder
+  inviteToken?: Prisma.SortOrder
+  inviteEmail?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -409,6 +451,8 @@ export type WorkspaceMemberMinOrderByAggregateInput = {
   invitedAt?: Prisma.SortOrder
   acceptedAt?: Prisma.SortOrder
   removedAt?: Prisma.SortOrder
+  inviteToken?: Prisma.SortOrder
+  inviteEmail?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -511,18 +555,22 @@ export type WorkspaceMemberCreateWithoutWorkspaceInput = {
   invitedAt?: Date | string
   acceptedAt?: Date | string | null
   removedAt?: Date | string | null
+  inviteToken?: string | null
+  inviteEmail?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutWorkspaceMembershipsInput
+  user?: Prisma.UserCreateNestedOneWithoutWorkspaceMembershipsInput
 }
 
 export type WorkspaceMemberUncheckedCreateWithoutWorkspaceInput = {
   id?: string
-  userId: string
+  userId?: string | null
   role?: $Enums.WorkspaceRole
   invitedAt?: Date | string
   acceptedAt?: Date | string | null
   removedAt?: Date | string | null
+  inviteToken?: string | null
+  inviteEmail?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -558,12 +606,14 @@ export type WorkspaceMemberScalarWhereInput = {
   OR?: Prisma.WorkspaceMemberScalarWhereInput[]
   NOT?: Prisma.WorkspaceMemberScalarWhereInput | Prisma.WorkspaceMemberScalarWhereInput[]
   id?: Prisma.StringFilter<"WorkspaceMember"> | string
-  userId?: Prisma.StringFilter<"WorkspaceMember"> | string
+  userId?: Prisma.StringNullableFilter<"WorkspaceMember"> | string | null
   workspaceId?: Prisma.StringFilter<"WorkspaceMember"> | string
   role?: Prisma.EnumWorkspaceRoleFilter<"WorkspaceMember"> | $Enums.WorkspaceRole
   invitedAt?: Prisma.DateTimeFilter<"WorkspaceMember"> | Date | string
   acceptedAt?: Prisma.DateTimeNullableFilter<"WorkspaceMember"> | Date | string | null
   removedAt?: Prisma.DateTimeNullableFilter<"WorkspaceMember"> | Date | string | null
+  inviteToken?: Prisma.StringNullableFilter<"WorkspaceMember"> | string | null
+  inviteEmail?: Prisma.StringNullableFilter<"WorkspaceMember"> | string | null
   createdAt?: Prisma.DateTimeFilter<"WorkspaceMember"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"WorkspaceMember"> | Date | string
 }
@@ -574,6 +624,8 @@ export type WorkspaceMemberCreateWithoutUserInput = {
   invitedAt?: Date | string
   acceptedAt?: Date | string | null
   removedAt?: Date | string | null
+  inviteToken?: string | null
+  inviteEmail?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   workspace: Prisma.WorkspaceCreateNestedOneWithoutMembersInput
@@ -586,6 +638,8 @@ export type WorkspaceMemberUncheckedCreateWithoutUserInput = {
   invitedAt?: Date | string
   acceptedAt?: Date | string | null
   removedAt?: Date | string | null
+  inviteToken?: string | null
+  inviteEmail?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -618,11 +672,13 @@ export type WorkspaceMemberUpdateManyWithWhereWithoutUserInput = {
 
 export type WorkspaceMemberCreateManyWorkspaceInput = {
   id?: string
-  userId: string
+  userId?: string | null
   role?: $Enums.WorkspaceRole
   invitedAt?: Date | string
   acceptedAt?: Date | string | null
   removedAt?: Date | string | null
+  inviteToken?: string | null
+  inviteEmail?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -633,29 +689,35 @@ export type WorkspaceMemberUpdateWithoutWorkspaceInput = {
   invitedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   removedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inviteToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutWorkspaceMembershipsNestedInput
+  user?: Prisma.UserUpdateOneWithoutWorkspaceMembershipsNestedInput
 }
 
 export type WorkspaceMemberUncheckedUpdateWithoutWorkspaceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
   invitedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   removedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inviteToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type WorkspaceMemberUncheckedUpdateManyWithoutWorkspaceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
   invitedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   removedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inviteToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -667,6 +729,8 @@ export type WorkspaceMemberCreateManyUserInput = {
   invitedAt?: Date | string
   acceptedAt?: Date | string | null
   removedAt?: Date | string | null
+  inviteToken?: string | null
+  inviteEmail?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -677,6 +741,8 @@ export type WorkspaceMemberUpdateWithoutUserInput = {
   invitedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   removedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inviteToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   workspace?: Prisma.WorkspaceUpdateOneRequiredWithoutMembersNestedInput
@@ -689,6 +755,8 @@ export type WorkspaceMemberUncheckedUpdateWithoutUserInput = {
   invitedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   removedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inviteToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -700,6 +768,8 @@ export type WorkspaceMemberUncheckedUpdateManyWithoutUserInput = {
   invitedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   removedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inviteToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -714,9 +784,11 @@ export type WorkspaceMemberSelect<ExtArgs extends runtime.Types.Extensions.Inter
   invitedAt?: boolean
   acceptedAt?: boolean
   removedAt?: boolean
+  inviteToken?: boolean
+  inviteEmail?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.WorkspaceMember$userArgs<ExtArgs>
   workspace?: boolean | Prisma.WorkspaceDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["workspaceMember"]>
 
@@ -728,9 +800,11 @@ export type WorkspaceMemberSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   invitedAt?: boolean
   acceptedAt?: boolean
   removedAt?: boolean
+  inviteToken?: boolean
+  inviteEmail?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.WorkspaceMember$userArgs<ExtArgs>
   workspace?: boolean | Prisma.WorkspaceDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["workspaceMember"]>
 
@@ -742,9 +816,11 @@ export type WorkspaceMemberSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   invitedAt?: boolean
   acceptedAt?: boolean
   removedAt?: boolean
+  inviteToken?: boolean
+  inviteEmail?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.WorkspaceMember$userArgs<ExtArgs>
   workspace?: boolean | Prisma.WorkspaceDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["workspaceMember"]>
 
@@ -756,38 +832,42 @@ export type WorkspaceMemberSelectScalar = {
   invitedAt?: boolean
   acceptedAt?: boolean
   removedAt?: boolean
+  inviteToken?: boolean
+  inviteEmail?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type WorkspaceMemberOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "workspaceId" | "role" | "invitedAt" | "acceptedAt" | "removedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["workspaceMember"]>
+export type WorkspaceMemberOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "workspaceId" | "role" | "invitedAt" | "acceptedAt" | "removedAt" | "inviteToken" | "inviteEmail" | "createdAt" | "updatedAt", ExtArgs["result"]["workspaceMember"]>
 export type WorkspaceMemberInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.WorkspaceMember$userArgs<ExtArgs>
   workspace?: boolean | Prisma.WorkspaceDefaultArgs<ExtArgs>
 }
 export type WorkspaceMemberIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.WorkspaceMember$userArgs<ExtArgs>
   workspace?: boolean | Prisma.WorkspaceDefaultArgs<ExtArgs>
 }
 export type WorkspaceMemberIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.WorkspaceMember$userArgs<ExtArgs>
   workspace?: boolean | Prisma.WorkspaceDefaultArgs<ExtArgs>
 }
 
 export type $WorkspaceMemberPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "WorkspaceMember"
   objects: {
-    user: Prisma.$UserPayload<ExtArgs>
+    user: Prisma.$UserPayload<ExtArgs> | null
     workspace: Prisma.$WorkspacePayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    userId: string
+    userId: string | null
     workspaceId: string
     role: $Enums.WorkspaceRole
     invitedAt: Date
     acceptedAt: Date | null
     removedAt: Date | null
+    inviteToken: string | null
+    inviteEmail: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["workspaceMember"]>
@@ -1184,7 +1264,7 @@ readonly fields: WorkspaceMemberFieldRefs;
  */
 export interface Prisma__WorkspaceMemberClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  user<T extends Prisma.WorkspaceMember$userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkspaceMember$userArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   workspace<T extends Prisma.WorkspaceDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkspaceDefaultArgs<ExtArgs>>): Prisma.Prisma__WorkspaceClient<runtime.Types.Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1222,6 +1302,8 @@ export interface WorkspaceMemberFieldRefs {
   readonly invitedAt: Prisma.FieldRef<"WorkspaceMember", 'DateTime'>
   readonly acceptedAt: Prisma.FieldRef<"WorkspaceMember", 'DateTime'>
   readonly removedAt: Prisma.FieldRef<"WorkspaceMember", 'DateTime'>
+  readonly inviteToken: Prisma.FieldRef<"WorkspaceMember", 'String'>
+  readonly inviteEmail: Prisma.FieldRef<"WorkspaceMember", 'String'>
   readonly createdAt: Prisma.FieldRef<"WorkspaceMember", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"WorkspaceMember", 'DateTime'>
 }
@@ -1617,6 +1699,25 @@ export type WorkspaceMemberDeleteManyArgs<ExtArgs extends runtime.Types.Extensio
    * Limit how many WorkspaceMembers to delete.
    */
   limit?: number
+}
+
+/**
+ * WorkspaceMember.user
+ */
+export type WorkspaceMember$userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
 }
 
 /**

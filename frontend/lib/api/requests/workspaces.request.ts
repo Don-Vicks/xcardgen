@@ -7,6 +7,7 @@ import { api } from '../api'
 export interface Workspace {
   id: string
   name: string
+  description: string
   slug: string
   logo?: string
   createdAt: string
@@ -40,6 +41,69 @@ export class WorkspacesRequest {
   }
   async checkSlug(slug: string) {
     return api.get(`/workspaces/check-slug/${slug}`)
+  }
+
+  // ===== MEMBER MANAGEMENT =====
+
+  async getMembers(workspaceId: string) {
+    return api.get<{
+      owner: { id: string; name: string; email: string }
+      members: Array<{
+        id: string
+        userId: string
+        role: string
+        acceptedAt: string | null
+        inviteEmail: string | null
+        user: { id: string; name: string; email: string } | null
+      }>
+    }>(`/workspaces/${workspaceId}/members`)
+  }
+
+  async inviteMember(
+    workspaceId: string,
+    email: string,
+    role?: 'ADMIN' | 'MEMBER'
+  ) {
+    return api.post(`/workspaces/${workspaceId}/members/invite`, {
+      email,
+      role,
+    })
+  }
+
+  async removeMember(workspaceId: string, memberId: string) {
+    return api.delete(`/workspaces/${workspaceId}/members/${memberId}`)
+  }
+
+  async updateMemberRole(
+    workspaceId: string,
+    memberId: string,
+    role: 'ADMIN' | 'MEMBER'
+  ) {
+    return api.patch(`/workspaces/${workspaceId}/members/${memberId}`, { role })
+  }
+
+  // ===== INVITE ENDPOINTS =====
+
+  async getInviteInfo(token: string) {
+    return api.get<{
+      workspaceId: string
+      workspace: {
+        id: string
+        name: string
+        logo?: string
+        description?: string
+      }
+      role: string
+      inviteEmail: string | null
+    }>(`/workspaces/invite/${token}`)
+  }
+
+  async acceptInvite(token: string) {
+    return api.post(`/workspaces/invite/${token}/accept`)
+  }
+
+  async declineInvite(token: string) {
+    return api.post(`/workspaces/invite/${token}/decline`)
   }
 }
 

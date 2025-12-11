@@ -2,6 +2,14 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { LoadingScreen } from "@/components/ui/loading-screen"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -28,6 +36,11 @@ export default function TemplatesPage() {
   const [debouncedSearch, setDebouncedSearch] = useState("")
   const [sortBy, setSortBy] = useState("updatedAt")
   const [page, setPage] = useState(1)
+
+  // Delete dialog state
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [templateToDelete, setTemplateToDelete] = useState<{ id: string; name: string } | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   // Debounce Search
   useEffect(() => {
@@ -83,15 +96,25 @@ export default function TemplatesPage() {
     }
   }
 
-  const handleDelete = async (id: string, e: React.MouseEvent) => {
-    e.preventDefault() // Prevent navigation
-    if (!confirm("Are you sure?")) return
+  const confirmDelete = (template: Template, e: React.MouseEvent) => {
+    e.preventDefault()
+    setTemplateToDelete({ id: template.id, name: template.name })
+    setDeleteDialogOpen(true)
+  }
+
+  const handleDelete = async () => {
+    if (!templateToDelete) return
+    setIsDeleting(true)
     try {
-      await templatesRequest.delete(id)
+      await templatesRequest.delete(templateToDelete.id)
       toast.success("Template deleted")
+      setDeleteDialogOpen(false)
+      setTemplateToDelete(null)
       fetchTemplates()
     } catch (error) {
       toast.error("Failed to delete")
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -167,7 +190,7 @@ export default function TemplatesPage() {
                   </span>
                 )}
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity flex justify-end">
-                  <Button variant="destructive" size="icon" className="h-8 w-8" onClick={(e) => handleDelete(template.id, e)}>
+                  <Button variant="destructive" size="icon" className="h-8 w-8" onClick={(e) => confirmDelete(template, e)}>
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
@@ -206,6 +229,28 @@ export default function TemplatesPage() {
           </Button>
         </div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Template</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete <span className="font-semibold">{templateToDelete?.name}</span>?
+              This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)} disabled={isDeleting}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDelete} disabled={isDeleting}>
+              {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Delete Template
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

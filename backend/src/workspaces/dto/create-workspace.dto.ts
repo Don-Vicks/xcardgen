@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional, IsString, IsObject } from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 
 // Duplicate of Prisma Enum to avoid import issues
 export enum WorkspaceType {

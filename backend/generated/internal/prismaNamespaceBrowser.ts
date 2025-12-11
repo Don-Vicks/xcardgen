@@ -109,6 +109,8 @@ export const WorkspaceMemberScalarFieldEnum = {
   invitedAt: 'invitedAt',
   acceptedAt: 'acceptedAt',
   removedAt: 'removedAt',
+  inviteToken: 'inviteToken',
+  inviteEmail: 'inviteEmail',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

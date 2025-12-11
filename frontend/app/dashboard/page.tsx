@@ -80,7 +80,7 @@ export default function DashboardPage() {
           <Button asChild>
             <Link href="/dashboard/events/new">
               <Plus className="mr-2 h-4 w-4" />
-              Create Event
+              Create xCard
             </Link>
           </Button>
         </div>
@@ -90,22 +90,22 @@ export default function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Events</CardTitle>
+            <CardTitle className="text-sm font-medium">Active xCards</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{data.stats.activeEvents}</div>
-            <p className="text-xs text-muted-foreground">Total campaigns created</p>
+            <p className="text-xs text-muted-foreground">Total xCards created</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Attendees</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Registrations</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{data.stats.attendees}</div>
-            <p className="text-xs text-muted-foreground">Registered across all events</p>
+            <p className="text-xs text-muted-foreground">Registered across all xCards</p>
           </CardContent>
         </Card>
         <Card>
@@ -140,7 +140,7 @@ export default function DashboardPage() {
       {/* Quick Links Footer */}
       <div className="flex items-center justify-center pt-8 border-t">
         <Button variant="link" asChild className="text-muted-foreground">
-          <Link href="/dashboard/events">View All Events &rarr;</Link>
+          <Link href="/dashboard/events">View All xCards &rarr;</Link>
         </Button>
       </div>
     </div>

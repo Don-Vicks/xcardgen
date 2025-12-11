@@ -14,7 +14,7 @@ export const createWorkspace = z.object({
     'COMMUNITY_DAO',
     'CREATOR_INFLUENCER',
   ]),
-  description: z.string().min(3).max(255).trim(),
+  description: z.string().max(500).trim(),
   socialLinks: z.object({
     website: z
       .string()

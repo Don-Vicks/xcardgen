@@ -21,11 +21,11 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Event, eventsRequest } from "@/lib/api/requests/events.request"
+import { useWorkspace } from "@/stores/workspace-store"
 import { ChevronLeft, ChevronRight, Plus, Search, Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { useDebounce } from "use-debounce"
-import { useWorkspace } from "@/stores/workspace-store"
 
 export default function EventsPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null)
@@ -152,10 +152,10 @@ export default function EventsPage() {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {events.map((event) => (
             <div key={event.id} className="relative group">
-              {/* Delete Button Overlay */}
+              {/* Delete Button Overlay - positioned top-left to avoid status badge */}
               <button
                 onClick={(e) => handleDeleteClick(e, event.id)}
-                className="absolute top-2 right-2 z-10 p-2 bg-background/80 hover:bg-red-100 hover:text-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-sm border cursor-pointer"
+                className="absolute top-2 left-2 z-20 p-2 bg-background/80 hover:bg-red-100 hover:text-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-sm border cursor-pointer"
                 title="Delete xCard"
               >
                 <Trash2 className="h-4 w-4" />

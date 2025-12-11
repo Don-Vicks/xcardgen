@@ -32,6 +32,7 @@ import toast from 'react-hot-toast';
 interface Workspace {
   id: string;
   name: string;
+  description: string;
   slug: string;
   logo?: string;
 }
@@ -113,7 +114,7 @@ export default function WorkspaceDetailPage() {
     <div className="space-y-6">
       {/* Breadcrumb & Header */}
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => router.push('/dashboard/workspaces')}>
+        <Button variant="ghost" size="icon" className="cursor-pointer" onClick={() => router.push('/dashboard/workspaces')}>
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <div className="flex-1">

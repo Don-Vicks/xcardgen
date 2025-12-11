@@ -36,11 +36,20 @@ export function SidebarNav({ className, setOpen }: { className?: string, setOpen
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false)
 
-  // Combine owned and member workspaces
-  const allWorkspaces = [
-    ...(user?.workspaceOwnerships || []).map(w => ({ ...w, role: 'OWNER' })),
-    ...(user?.workspaceMemberships?.map(m => ({ ...m.workspace, role: 'MEMBER' })) || [])
+  // Combine owned and member workspaces, deduplicating by ID
+  const allWorkspacesRaw = [
+    ...(user?.workspaceOwnerships || []).map(w => ({ ...w, role: 'OWNER' as const })),
+    ...(user?.workspaceMemberships?.map(m => ({ ...m.workspace, role: 'MEMBER' as const })) || [])
   ]
+
+  // Deduplicate by workspace ID (prefer OWNER role if both exist)
+  const workspaceMap = new Map<string, typeof allWorkspacesRaw[0]>()
+  allWorkspacesRaw.forEach(ws => {
+    if (!workspaceMap.has(ws.id) || ws.role === 'OWNER') {
+      workspaceMap.set(ws.id, ws)
+    }
+  })
+  const allWorkspaces = Array.from(workspaceMap.values())
 
   // Set default workspace if none selected
   useEffect(() => {

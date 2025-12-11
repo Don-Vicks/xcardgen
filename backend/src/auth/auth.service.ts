@@ -100,12 +100,24 @@ export class AuthService {
         workspaceMemberships: {
           select: {
             workspace: {
-              select: { id: true, name: true, slug: true, logo: true },
+              select: {
+                id: true,
+                name: true,
+                description: true,
+                slug: true,
+                logo: true,
+              },
             },
           },
         },
         workspaceOwnerships: {
-          select: { id: true, name: true, slug: true, logo: true },
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            slug: true,
+            logo: true,
+          },
         },
       },
     });
@@ -136,6 +148,7 @@ export class AuthService {
               select: {
                 id: true,
                 name: true,
+                description: true,
                 slug: true,
                 logo: true,
               },
@@ -146,6 +159,7 @@ export class AuthService {
           select: {
             id: true,
             name: true,
+            description: true,
             slug: true,
             logo: true,
           },

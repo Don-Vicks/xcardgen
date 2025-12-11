@@ -163,7 +163,7 @@ export default function WorkspacesPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Workspaces</h1>
           <p className="text-muted-foreground">
-            Manage your workspaces and organize your events
+            Manage your workspaces and organize your xCards
           </p>
         </div>
         <Button onClick={() => setCreateDialogOpen(true)} className="gap-2">
@@ -179,7 +179,7 @@ export default function WorkspacesPage() {
             <Folder className="w-12 h-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-medium mb-2">No workspaces yet</h3>
             <p className="text-muted-foreground text-center mb-4">
-              Create your first workspace to start organizing events
+              Create your first workspace to start creating xCards
             </p>
             <Button onClick={() => setCreateDialogOpen(true)} className="gap-2">
               <Plus className="w-4 h-4" />
@@ -255,7 +255,7 @@ export default function WorkspacesPage() {
                   <div className="flex items-center gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Folder className="w-4 h-4" />
-                      <span>{workspace._count?.events || 0} events</span>
+                      <span>{workspace._count?.events || 0} xCards</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Users className="w-4 h-4" />
@@ -283,7 +283,7 @@ export default function WorkspacesPage() {
           <DialogHeader>
             <DialogTitle>Create New Workspace</DialogTitle>
             <DialogDescription>
-              Workspaces help you organize events and collaborate with team members.
+              Workspaces help you organize xCards and collaborate with team members.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -311,7 +311,7 @@ export default function WorkspacesPage() {
                 onChange={(e) => setFormData((prev) => ({ ...prev, slug: e.target.value }))}
               />
               <p className="text-xs text-muted-foreground">
-                This will be used in URLs for your events
+                This will be used in URLs for your xCards
               </p>
             </div>
           </div>

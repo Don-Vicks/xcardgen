@@ -13,6 +13,7 @@ interface User {
     workspace: {
       id: string
       name: string
+      description: string
       slug?: string
       logo?: string
     }
@@ -20,6 +21,7 @@ interface User {
   workspaceOwnerships?: Array<{
     id: string
     name: string
+    description: string
     slug?: string
     logo?: string
   }>
@@ -51,6 +53,7 @@ export const useAuth = create<AuthState>((set, get) => ({
     try {
       console.log('Store: checkAuth starting...')
       const response = await authRequestInstance.getProfile()
+      console.log('Store: checkAuth response', response)
       set({ user: response.data, loading: false })
     } catch (error) {
       console.error('Store: checkAuth Failed:', error)

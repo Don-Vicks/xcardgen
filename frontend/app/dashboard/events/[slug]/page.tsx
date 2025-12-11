@@ -2,19 +2,33 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { Separator } from "@/components/ui/separator"
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { eventsRequest } from "@/lib/api/requests/events.request"
-import { ArrowUpRight, BarChart, Calendar, Copy, Edit2, Globe, LayoutTemplate, Users } from "lucide-react"
+import { ArrowLeft, ArrowUpRight, BarChart, Calendar, Copy, Edit2, Globe, LayoutTemplate, Loader2, Trash2, Users } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { use, useEffect, useState } from "react"
 import { toast } from "sonner"
 
 export default function EventDashboardPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params)
+  const router = useRouter()
   const [event, setEvent] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+
+  // Delete dialog state
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -54,6 +68,19 @@ export default function EventDashboardPage({ params }: { params: Promise<{ slug:
     toast.success("Link copied to clipboard")
   }
 
+  const handleDelete = async () => {
+    setIsDeleting(true)
+    try {
+      await eventsRequest.delete(event.id)
+      toast.success("xCard deleted")
+      router.push("/dashboard/events")
+    } catch (error) {
+      toast.error("Failed to delete xCard")
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
   if (loading) return <div className="p-8 flex items-center justify-center">Loading event...</div>
   if (!event) return <div className="p-8 text-center text-muted-foreground">Event not found</div>
 
@@ -64,27 +91,34 @@ export default function EventDashboardPage({ params }: { params: Promise<{ slug:
     <div className="container max-w-6xl mx-auto py-8 space-y-8">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold tracking-tight">{event.name}</h1>
-            <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border ${isPublished
-              ? "bg-green-100 text-green-700 border-green-200"
-              : "bg-yellow-100 text-yellow-700 border-yellow-200"
-              }`}>
-              {event.status}
-            </span>
+        <div className="flex items-center gap-3">
+          <Link href="/dashboard/events">
+            <Button variant="ghost" size="icon" className="cursor-pointer">
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          </Link>
+          <div>
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-bold tracking-tight">{event.name}</h1>
+              <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border ${isPublished
+                ? "bg-green-100 text-green-700 border-green-200"
+                : "bg-yellow-100 text-yellow-700 border-yellow-200"
+                }`}>
+                {event.status}
+              </span>
+            </div>
+            <p className="text-muted-foreground mt-1 flex items-center gap-2">
+              <Globe className="h-3.5 w-3.5" />
+              {isPublished ? (
+                <Link href={publicUrl} target="_blank" className="hover:underline text-primary flex items-center gap-1">
+                  {window.location.host}/x/{event.slug}
+                  <ArrowUpRight className="h-3 w-3" />
+                </Link>
+              ) : (
+                <span className="opacity-70">Event is currently private</span>
+              )}
+            </p>
           </div>
-          <p className="text-muted-foreground mt-1 flex items-center gap-2">
-            <Globe className="h-3.5 w-3.5" />
-            {isPublished ? (
-              <Link href={publicUrl} target="_blank" className="hover:underline text-primary flex items-center gap-1">
-                {window.location.host}/x/{event.slug}
-                <ArrowUpRight className="h-3 w-3" />
-              </Link>
-            ) : (
-              <span className="opacity-70">Event is currently private</span>
-            )}
-          </p>
         </div>
 
         <div className="flex items-center gap-3">
@@ -109,6 +143,9 @@ export default function EventDashboardPage({ params }: { params: Promise<{ slug:
             <Link href={publicUrl} target="_blank" className={!isPublished ? "pointer-events-none opacity-50" : ""}>
               View Live Page
             </Link>
+          </Button>
+          <Button variant="destructive" size="icon" onClick={() => setDeleteDialogOpen(true)}>
+            <Trash2 className="h-4 w-4" />
           </Button>
         </div>
       </div>
@@ -225,6 +262,28 @@ export default function EventDashboardPage({ params }: { params: Promise<{ slug:
         </TabsContent>
       </Tabs>
 
-    </div>
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete xCard</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete <span className="font-semibold">{event?.name}</span>?
+              This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)} disabled={isDeleting}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDelete} disabled={isDeleting}>
+              {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Delete xCard
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+    </div >
   )
 }

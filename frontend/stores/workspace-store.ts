@@ -4,6 +4,7 @@ import { persist } from 'zustand/middleware'
 interface Workspace {
   id: string
   name: string
+  description: string
   slug?: string
   logo?: string
   // Add other properties as needed
