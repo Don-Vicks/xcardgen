@@ -132,19 +132,27 @@ export class EventsRequest {
     id: string,
     data: { name: string; email: string; data: Record<string, any> }
   ) {
-    return api.post<{ url: string }>(`/events/${id}/register`, data)
+    return api.post<{ url: string; generationId: string }>(
+      `/events/${id}/register`,
+      data
+    )
   }
 
   async recordVisit(id: string) {
     return api.post<{ success: boolean }>(`/events/${id}/visit`, {})
   }
 
-  async recordDownload(id: string) {
-    return api.post<{ success: boolean }>(`/events/${id}/download`, {})
+  async recordDownload(id: string, cardGenerationId?: string) {
+    return api.post<{ success: boolean }>(`/events/${id}/download`, {
+      cardGenerationId,
+    })
   }
 
-  async recordShare(id: string) {
-    return api.post<{ success: boolean }>(`/events/${id}/share`, {})
+  async recordShare(id: string, platform?: string, cardGenerationId?: string) {
+    return api.post<{ success: boolean }>(`/events/${id}/share`, {
+      platform,
+      cardGenerationId,
+    })
   }
 
   async uploadAsset(id: string, file: File) {

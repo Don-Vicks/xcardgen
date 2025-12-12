@@ -23,7 +23,7 @@ export class apiRequest {
   }
 
   async logoutAll() {
-    return api.post('/auth/logout-all')
+    return api.delete('/auth/sessions')
   }
 
   async getSessions() {
@@ -35,7 +35,7 @@ export class apiRequest {
   }
 
   async getLoginLogs() {
-    return api.get('/auth/logs')
+    return api.get('/auth/sessions/logs')
   }
 
   async updateProfile(data: { name?: string; email?: string }) {

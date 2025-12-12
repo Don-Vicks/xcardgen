@@ -142,17 +142,6 @@ export function EventRegistrationView({ event, template, isEmbed = false }: Even
     trackVisit()
   }, [event.id])
 
-  // Add debounced persistence for form values (optional, but good for UX)
-  // For now, let's persist on successful generation to keep it simple as store is "GeneratedCard" store.
-  // Although user asked for "persistence... so live preview will be up to date". 
-  // If they reload BEFORE generating, they might expect data to be there? 
-  // The current store is "generated-card.store", implying it stores AFTER generation. 
-  // But to support "live preview persistence", we should probably update checks.
-  // Let's stick to saving on generation first, as that confirms "intent". 
-  // OR: We can update store on every change if we want true draft persistence. 
-  // Let's do it on Generate success for now, as that's safe. If user wants draft, we need a separate store or logic.
-  // Re-reading request: "persistence... make it contain some data so that the live preview will be up to date". This usually implies AFTER they generate and come back, they see their card.
-
   const handleFileSelect = (key: string, file: File) => {
     const reader = new FileReader()
     reader.addEventListener("load", () => {
@@ -218,6 +207,7 @@ export function EventRegistrationView({ event, template, isEmbed = false }: Even
       // 2. Register
       const res = await eventsRequest.register(event.id, { name, email, data: finalValues })
       setGeneratedUrl(res.data.url)
+      setGenerationId(res.data.generationId)
 
       // Save full state to store
       addCard(event.id, {
@@ -257,7 +247,7 @@ export function EventRegistrationView({ event, template, isEmbed = false }: Even
       window.URL.revokeObjectURL(url)
 
       // Track Download
-      eventsRequest.recordDownload(event.id).catch(console.error)
+      eventsRequest.recordDownload(event.id, generationId || undefined).catch(console.error)
     } catch (e) {
       console.error(e)
       toast.error("Download failed. Try opening the image in a new tab.")
@@ -269,7 +259,7 @@ export function EventRegistrationView({ event, template, isEmbed = false }: Even
     if (!generatedUrl) return
 
     // Track Share
-    eventsRequest.recordShare(event.id).catch(console.error)
+    eventsRequest.recordShare(event.id, 'share_api', generationId || undefined).catch(console.error)
 
     const shareData = {
       title: event.name,

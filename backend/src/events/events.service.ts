@@ -646,14 +646,17 @@ export class EventsService {
       orderBy: { createdAt: 'desc' }, // Get latest
     });
 
+    let generationId = existingGen?.id;
+
     if (!existingGen) {
-      await this.prisma.cardGeneration.create({
+      const newGen = await this.prisma.cardGeneration.create({
         data: {
           eventId: event.id,
           attendeeId: attendee.id,
           imageUrl: imageUrl,
         },
       });
+      generationId = newGen.id;
 
       // Only increment stats if it's a new generation
       await this.prisma.eventStats.upsert({
@@ -678,11 +681,7 @@ export class EventsService {
         },
       });
     } else {
-      // Update the existing generation with new image if needed, or just return it?
-      // User said "where the email inputted is the same, you do not have to create a new attendee"
-      // But if they are regenerating, maybe they want a new image?
-      // Assuming they just want to avoid DUPLICATE RECORDS.
-      // I'll update the existing generation record with the new URL just in case the template changed.
+      // Update the existing generation with new URL just in case the template changed.
       await this.prisma.cardGeneration.update({
         where: { id: existingGen.id },
         data: { imageUrl },
@@ -693,8 +692,9 @@ export class EventsService {
     return { url: imageUrl };
   }
 
-  async recordDownload(id: string) {
-    return this.prisma.eventStats.upsert({
+  async recordDownload(id: string, cardGenerationId?: string) {
+    // 1. Increment aggregate
+    await this.prisma.eventStats.upsert({
       where: { eventId: id },
       update: {
         downloads: { increment: 1 },
@@ -704,10 +704,27 @@ export class EventsService {
         downloads: 1,
       },
     });
+
+    // 2. Detailed Tracking
+    if (cardGenerationId) {
+      // Verify existence to prevent foreign key errors
+      const gen = await this.prisma.cardGeneration.findUnique({
+        where: { id: cardGenerationId },
+      });
+      if (gen) {
+        await this.prisma.download.create({
+          data: {
+            eventId: id,
+            cardGenerationId,
+          },
+        });
+      }
+    }
   }
 
-  async recordShare(id: string) {
-    return this.prisma.eventStats.upsert({
+  async recordShare(id: string, platform?: string, cardGenerationId?: string) {
+    // 1. Increment aggregate
+    await this.prisma.eventStats.upsert({
       where: { eventId: id },
       update: {
         shares: { increment: 1 },
@@ -720,6 +737,21 @@ export class EventsService {
         attendees: 0,
       },
     });
+
+    // 2. Detailed Tracking
+    if (cardGenerationId && platform) {
+      const gen = await this.prisma.cardGeneration.findUnique({
+        where: { id: cardGenerationId },
+      });
+      if (gen) {
+        await this.prisma.socialShare.create({
+          data: {
+            cardGenerationId,
+            platform,
+          },
+        });
+      }
+    }
   }
 
   async uploadAsset(file: Express.Multer.File) {
