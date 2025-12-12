@@ -1,9 +1,12 @@
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
   StreamableFile,
 } from '@nestjs/common';
+import { Cache } from 'cache-manager';
 import * as puppeteer from 'puppeteer';
 import { PrismaService } from 'src/prisma.service';
 import { CreateEventDto } from './dto/create-event.dto';
@@ -16,6 +19,7 @@ export class EventsService {
   constructor(
     private prisma: PrismaService,
     private cloudinaryService: CloudinaryService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async create(createEventDto: CreateEventDto, userId: string) {
@@ -99,6 +103,12 @@ export class EventsService {
   }
 
   async findPublic(slugOrId: string) {
+    const cacheKey = `public_event_${slugOrId}`;
+    const cached = await this.cacheManager.get(cacheKey);
+    if (cached) {
+      return cached as any;
+    }
+
     const event = await this.prisma.event.findFirst({
       where: {
         OR: [{ slug: slugOrId }, { id: slugOrId }],
@@ -113,6 +123,9 @@ export class EventsService {
       },
     });
     if (!event) throw new NotFoundException('Event not found');
+
+    // Cache for 1 hour (3600000 ms)
+    await this.cacheManager.set(cacheKey, event, 3600000);
     return event;
   }
 
@@ -127,18 +140,38 @@ export class EventsService {
   }
 
   async update(id: string, userId: string, data: any) {
-    return this.prisma.event.update({
+    // 1. Update
+    const updated = await this.prisma.event.update({
       where: { id, userId },
       data,
     });
+
+    // 2. Invalidate Cache
+    // We invalidate both ID and Slug keys.
+    // Note: If slug *changed*, ideally we invalidate the old one too, but for now we invalidate the current one.
+    // Since `updated` has the current (possibly new) slug, we invalidate that.
+    await (this.cacheManager as any).del(`public_event_${id}`);
+    if (updated.slug) {
+      await (this.cacheManager as any).del(`public_event_${updated.slug}`);
+    }
+
+    return updated;
   }
 
   async delete(id: string, userId: string, workspaceId: string) {
-    // Soft delete
-    return this.prisma.event.update({
+    // 1. Soft delete
+    const deleted = await this.prisma.event.update({
       where: { id, userId, workspaceId },
       data: { deletedAt: new Date(), status: 'DRAFT' },
     });
+
+    // 2. Invalidate Cache
+    await (this.cacheManager as any).del(`public_event_${id}`);
+    if (deleted.slug) {
+      await (this.cacheManager as any).del(`public_event_${deleted.slug}`);
+    }
+
+    return deleted;
   }
 
   async recordVisit(

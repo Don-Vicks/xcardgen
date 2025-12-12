@@ -33,11 +33,13 @@ import { workspacesRequest } from "@/lib/api/requests/workspaces.request"
 import { useAuth } from "@/stores/auth-store"
 import { useWorkspace } from "@/stores/workspace-store"
 import { Copy, Crown, Loader2, MoreHorizontal, Plus, Settings, Trash2, Users } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
 export default function WorkspaceSettingsPage() {
   const { user } = useAuth()
+  const router = useRouter()
   const { currentWorkspace, setCurrentWorkspace } = useWorkspace()
   const [loading, setLoading] = useState(false)
   const [membersData, setMembersData] = useState<{
@@ -132,13 +134,25 @@ export default function WorkspaceSettingsPage() {
   }
 
   const handleRemoveMember = async () => {
-    if (!currentWorkspace || !memberToRemove) return
+    if (!currentWorkspace || !memberToRemove || !user) return // Ensure user is defined
     setRemoving(true)
     try {
+      // Updated API call signature based on the instruction
       await workspacesRequest.removeMember(currentWorkspace.id, memberToRemove.id)
+
+      // Check if the removed member is the current user
+      const currentUserMember = membersData.members.find(m => m.user?.id === user.id);
+
+      if (currentUserMember && currentUserMember.id === memberToRemove.id) {
+        toast.success("You have left the workspace.")
+        useWorkspace.getState().setCurrentWorkspace(null) // Directly update store
+        router.push("/onboarding")
+        return // Stop further execution if self-removed
+      }
+
       toast.success("Member removed")
       setRemoveDialogOpen(false)
-      setMemberToRemove(null)
+      setMemberToRemove(null) // Keep this for state cleanup
       fetchMembers()
     } catch (error: any) {
       toast.error(error?.response?.data?.message || "Failed to remove member")

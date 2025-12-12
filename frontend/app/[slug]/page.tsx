@@ -53,10 +53,10 @@ export default function WorkspacePublicPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background font-sans antialiased selection:bg-primary/20 selection:text-primary">
       {/* xCardGen Header */}
-      <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between max-w-6xl">
+      <header className="fixed top-0 inset-x-0 z-50 border-b bg-background/80 backdrop-blur-md transition-all">
+        <div className="container mx-auto px-6 h-16 flex items-center justify-between max-w-7xl">
           <Link href="/" className="flex items-center gap-2 font-bold text-lg tracking-tight">
             <div className="size-8 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/20">
               <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5 text-primary-foreground">
@@ -69,7 +69,7 @@ export default function WorkspacePublicPage() {
               xCardGen
             </span>
           </Link>
-          <Button asChild size="sm">
+          <Button asChild size="sm" className="rounded-full px-6 font-medium shadow-sm hover:shadow-md transition-all">
             <Link href="/login">Get Started</Link>
           </Button>
         </div>
@@ -79,35 +79,40 @@ export default function WorkspacePublicPage() {
       <WorkspaceHero workspace={workspace} />
 
       {/* Events Section */}
-      <section className="container mx-auto px-4 py-12 md:py-16 max-w-6xl">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold tracking-tight">Upcoming Events</h2>
+      <section className="container mx-auto px-6 py-16 md:py-24 max-w-7xl">
+        <div className="flex items-center justify-between mb-12">
+          <div className="space-y-1">
+            <h2 className="text-3xl font-bold tracking-tight">Upcoming Events</h2>
+            <p className="text-muted-foreground text-lg">Browse and register for our latest gatherings</p>
+          </div>
         </div>
         <EventsGrid events={workspace.events || []} />
       </section>
 
       {/* Footer */}
-      <footer className="border-t bg-muted/30">
-        <div className="container mx-auto px-4 py-12 max-w-6xl">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <Link href="/" className="flex items-center gap-2 font-bold text-lg tracking-tight">
-              <div className="size-7 bg-primary rounded-lg flex items-center justify-center">
-                <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4 text-primary-foreground">
+      <footer className="border-t bg-muted/20">
+        <div className="container mx-auto px-6 py-12 max-w-7xl">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <Link href="/" className="flex items-center gap-2 font-bold text-lg tracking-tight hover:opacity-80 transition-opacity">
+              <div className="size-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5 text-primary">
                   <path d="M12 2L2 7l10 5 10-5-10-5z" fill="currentColor" opacity="0.8" />
                   <path d="M2 17l10 5 10-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   <path d="M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </div>
-              <span className="bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">
-                xCardGen
-              </span>
+              <span>xCardGen</span>
             </Link>
-            <p className="text-sm text-muted-foreground">
-              Create stunning event cards in seconds. Powered by xCardGen.
+            <p className="text-sm text-muted-foreground text-center md:text-right">
+              Powered by <span className="font-semibold text-foreground">xCardGen</span>. <br className="hidden md:inline" /> Create stunning event pages in seconds.
             </p>
           </div>
-          <div className="mt-8 pt-8 border-t text-center text-xs text-muted-foreground">
-            © {new Date().getFullYear()} xCardGen. All rights reserved.
+          <div className="mt-8 pt-8 border-t flex flex-col md:flex-row justify-between items-center text-xs text-muted-foreground gap-4">
+            <p>© {new Date().getFullYear()} xCardGen. All rights reserved.</p>
+            <div className="flex gap-4">
+              <Link href="#" className="hover:text-foreground transition-colors">Privacy</Link>
+              <Link href="#" className="hover:text-foreground transition-colors">Terms</Link>
+            </div>
           </div>
         </div>
       </footer>

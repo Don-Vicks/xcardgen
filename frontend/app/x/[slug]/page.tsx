@@ -32,8 +32,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-export default async function PublicEventPage({ params }: PageProps) {
+export default async function PublicEventPage({ params, searchParams }: PageProps & { searchParams: Promise<{ embed?: string }> }) {
   const { slug } = await params
+  const { embed } = await searchParams
   const event = await getEvent(slug)
 
   if (!event) {
@@ -47,9 +48,11 @@ export default async function PublicEventPage({ params }: PageProps) {
     template = event.template
   }
 
+  const isEmbed = embed === 'true'
+
   return (
-    <main className="min-h-[100dvh] bg-neutral-50">
-      <EventRegistrationView event={event} template={template} />
+    <main className={`min-h-[100dvh] bg-neutral-50 ${isEmbed ? 'overflow-hidden' : ''}`}>
+      <EventRegistrationView event={event} template={template} isEmbed={isEmbed} />
     </main>
   )
 }

@@ -9,7 +9,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 import {
   Form,
@@ -31,23 +30,25 @@ import { eventsRequest } from "@/lib/api/requests/events.request"
 import { uploadToCloudinary } from "@/lib/cloudinary"
 import { cn } from "@/lib/utils"
 import { eventSchema } from "@/lib/validations/event.schema"
-import { useWorkspace } from "@/stores/workspace-store"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { format } from "date-fns"
-import { CalendarIcon, Loader2, Plus } from "lucide-react"
+import { CalendarIcon, Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import * as z from "zod"
 
 type EventFormValues = z.infer<typeof eventSchema>
 
+interface EditEventDialogProps {
+  event: any
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  onUpdate: (updatedEvent: any) => void
+}
 
-// ...
-
-export function CreateEventDialog() {
-  const [open, setOpen] = useState(false)
+export function EditEventDialog({ event, open, onOpenChange, onUpdate }: EditEventDialogProps) {
   const [loading, setLoading] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
 
@@ -67,14 +68,20 @@ export function CreateEventDialog() {
     },
   })
 
-  // Auto-generate slug from name
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    form.setValue("name", value)
-    if (!form.formState.dirtyFields.slug) {
-      form.setValue("slug", value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""))
+  useEffect(() => {
+    if (event) {
+      form.reset({
+        name: event.name,
+        slug: event.slug,
+        description: event.description || "",
+        coverImage: event.coverImage || "",
+        date: {
+          from: new Date(event.date),
+          to: event.endDate ? new Date(event.endDate) : undefined
+        }
+      })
     }
-  }
+  }, [event, form])
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -111,51 +118,38 @@ export function CreateEventDialog() {
     }
   }
 
-  const { currentWorkspace } = useWorkspace()
-
   const onSubmit = async (data: EventFormValues) => {
-    if (!currentWorkspace) {
-      toast.error("Please select a workspace first")
-      return
-    }
-
     setLoading(true)
     try {
-      const response = await eventsRequest.create({
+      const response = await eventsRequest.update(event.id, {
         ...data,
         date: data.date.from.toISOString(),
         endDate: data.date.to?.toISOString(),
-        workspaceId: currentWorkspace.id,
       })
-      setOpen(false)
-      form.reset()
-      toast("xCard created!")
-      // Redirect to template editor
-      router.push(`/dashboard/events/${response.data.slug}/design`)
+
+      onUpdate(response.data)
+      onOpenChange(false)
+      toast.success("Event updated successfully")
+
+      // If slug changed, we might need to redirect, but for now assuming slug edits are handled carefully or ignored
+      if (data.slug !== event.slug) {
+        router.push(`/dashboard/events/${data.slug}`)
+      }
     } catch (error) {
       console.error(error)
-      toast.error("Error creating event")
+      toast.error("Error updating event")
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button
-          size="sm"
-          className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
-          data-dialog-trigger="create-event"
-        >
-          <Plus className="h-4 w-4" /> New xCard
-        </Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Create New xCard</DialogTitle>
+          <DialogTitle>Edit Event Details</DialogTitle>
           <DialogDescription>
-            Give your xCard a name, date, and details.
+            Update your event information.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -167,12 +161,13 @@ export function CreateEventDialog() {
                 <FormItem>
                   <FormLabel>Event Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Solana Breakpoint 2025" {...field} onChange={handleNameChange} />
+                    <Input placeholder="Solana Breakpoint 2025" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+            {/* Slug editing - often risky but user requested editing details */}
             <FormField
               control={form.control}
               name="slug"
@@ -286,10 +281,10 @@ export function CreateEventDialog() {
             />
 
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
               <Button type="submit" disabled={loading || isUploading}>
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Create & Design
+                Save Changes
               </Button>
             </DialogFooter>
           </form>

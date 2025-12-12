@@ -112,16 +112,68 @@ export interface EventAppearance {
   backgroundColor?: string
 }
 
-// Helper to determine if a color is light or dark
-export function isLightColor(hex: string): boolean {
+// Helper to get relative luminance
+function getLuminance(r: number, g: number, b: number) {
+  const a = [r, g, b].map((v) => {
+    v /= 255
+    return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)
+  })
+  return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722
+}
+
+// Return true if color is light (needs dark text)
+export function isLightColor(color: string): boolean {
   try {
-    const c = hex.replace('#', '')
-    const r = parseInt(c.substring(0, 2), 16)
-    const g = parseInt(c.substring(2, 4), 16)
-    const b = parseInt(c.substring(4, 6), 16)
-    if (isNaN(r) || isNaN(g) || isNaN(b)) return true // Fallback
-    const brightness = (r * 299 + g * 587 + b * 114) / 1000
-    return brightness > 155
+    const clean = color.replace(/\s/g, '').toLowerCase()
+    let r = 0,
+      g = 0,
+      b = 0
+
+    if (clean.startsWith('#')) {
+      const hex = clean.replace('#', '')
+      if (hex.length === 3) {
+        r = parseInt(hex[0] + hex[0], 16)
+        g = parseInt(hex[1] + hex[1], 16)
+        b = parseInt(hex[2] + hex[2], 16)
+      } else if (hex.length === 6 || hex.length === 8) {
+        r = parseInt(hex.substring(0, 2), 16)
+        g = parseInt(hex.substring(2, 4), 16)
+        b = parseInt(hex.substring(4, 6), 16)
+        // ignore alpha for contrast check against background
+      } else {
+        return true // Default to light
+      }
+    } else if (clean.startsWith('rgb')) {
+      const match = clean.match(/(\d+),\s*(\d+),\s*(\d+)/)
+      if (match) {
+        r = parseInt(match[1])
+        g = parseInt(match[2])
+        b = parseInt(match[3])
+      } else {
+        return true
+      }
+    } else {
+      // Fallback for named colors - assume light unless known dark
+      if (
+        ['black', 'navy', 'dark', 'midnight', 'purple', 'brown', 'maroon'].some(
+          (c) => clean.includes(c)
+        )
+      )
+        return false
+      return true
+    }
+
+    if (isNaN(r) || isNaN(g) || isNaN(b)) return true
+
+    const lum = getLuminance(r, g, b)
+    // Threshold: WCAG recommends contrast ratio 4.5:1.
+    // Luminance of White is 1. Luminance of Black is 0.
+    // Contrast with Black: (L + 0.05) / 0.05
+    // Contrast with White: 1.05 / (L + 0.05)
+    // We want the one that gives higher contrast.
+    // Intersection point is around L = 0.179 (approx).
+    // If L > 0.179, Black text provides better contrast.
+    return lum > 0.179
   } catch (e) {
     return true
   }
@@ -132,7 +184,8 @@ export function getThemeStyles(
 ): ThemeStyle & { primaryColor: string } {
   const theme = appearance?.theme || 'minimal'
   const primaryColor = appearance?.primaryColor || '#000000'
-  const backgroundColor = appearance?.backgroundColor
+  const rawBg = appearance?.backgroundColor
+  const backgroundColor = rawBg?.trim()
   const baseStyles = THEME_STYLES[theme] || THEME_STYLES.minimal
 
   // If background color is customized, we need to ensure contrast
@@ -143,10 +196,10 @@ export function getThemeStyles(
       // Light background -> Dark text
       contrastStyles = {
         textColor: '#09090b',
-        mutedColor: '#71717a',
+        mutedColor: '#52525b', // darker zinc-600 for better visibility
         borderColor: '#e4e4e7',
         cardBg: '#ffffff',
-        // Keep shadow/radius from theme but ensure card is legible
+        overlay: undefined, // Remove theme overlay to show custom color
       }
     } else {
       // Dark background -> Light text
@@ -155,6 +208,7 @@ export function getThemeStyles(
         mutedColor: '#94a3b8',
         borderColor: 'rgba(255, 255, 255, 0.1)',
         cardBg: 'rgba(255, 255, 255, 0.05)',
+        overlay: undefined, // Remove theme overlay to show custom color
       }
     }
   }

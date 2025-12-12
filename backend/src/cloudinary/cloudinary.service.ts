@@ -20,7 +20,11 @@ export class CloudinaryService {
           resolve(result);
         },
       );
-      Readable.from(file.buffer).pipe(upload);
+      const buffer = Buffer.isBuffer(file.buffer)
+        ? file.buffer
+        : Buffer.from(file.buffer);
+
+      Readable.from(buffer).pipe(upload);
     });
   }
 }

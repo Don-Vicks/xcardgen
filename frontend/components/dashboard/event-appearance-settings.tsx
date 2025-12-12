@@ -312,58 +312,117 @@ export function EventAppearanceSettings({ event, onUpdate }: EventAppearanceSett
         </CardHeader>
         <CardContent>
           <div
-            className="rounded-xl overflow-hidden border relative isolate"
+            className="rounded-xl overflow-hidden border relative isolate font-sans"
             style={{
               background: previewStyles.background,
               color: previewStyles.textColor,
-              minHeight: "400px",
-            }}
+              height: "600px",
+              display: "flex",
+              flexDirection: "column",
+              '--placeholder-color': previewStyles.mutedColor,
+            } as React.CSSProperties}
           >
             <AnimatedBackground theme={selectedTheme} primaryColor={primaryColor} />
 
-            {previewStyles.overlay && (
-              <div
-                className="absolute inset-0 z-0 pointer-events-none opacity-50"
-                style={{ backgroundImage: previewStyles.overlay }}
-              />
-            )}
+            {/* Content Container - Mimicking EventRegistrationView Left Side */}
+            <div className="relative z-10 w-full h-full overflow-y-auto custom-scrollbar p-6 md:p-8 flex flex-col items-center">
+              <div className="w-full max-w-md space-y-8">
 
-            <div className="p-8 space-y-6 relative z-10 flex flex-col items-center justify-center h-full w-full">
-              {/* Mock Content Wrapper */}
-              <div className="w-full max-w-sm space-y-4">
-                {/* Mock Card */}
-                <div
-                  className="rounded-lg p-8 w-full backdrop-blur-sm transition-all flex flex-col gap-6"
-                  style={cardStyle}
-                >
-                  <div>
-                    <h3 className="text-2xl font-bold mb-2">Winter Design Summit</h3>
-                    <div className="flex items-center gap-2 opacity-70 text-sm">
-                      <div className="w-4 h-4 bg-current opacity-50 rounded-full" />
-                      <span>Wed, Dec 25 • 6:00 PM</span>
-                    </div>
-                  </div>
+                {/* Header Section */}
+                <div className="space-y-4 text-center sm:text-left">
+                  {/* Title */}
+                  <h1
+                    className="text-3xl md:text-4xl font-extrabold tracking-tight font-heading"
+                    style={{ color: previewStyles.textColor }}
+                  >
+                    {(event as any).name || "Event Name"}
+                  </h1>
 
-                  <div className="space-y-4">
-                    <div className="space-y-1">
-                      <Label className="text-xs uppercase opacity-70 tracking-wider">Name</Label>
-                      <div
-                        className="h-10 w-full rounded border flex items-center px-3 text-sm opacity-50"
-                        style={{ borderColor: previewStyles.borderColor, backgroundColor: previewStyles.cardBg }}
-                      >
-                        Jane Doe
-                      </div>
-                    </div>
+                  {/* Description */}
+                  <p className="text-base md:text-lg leading-relaxed line-clamp-3" style={{ color: previewStyles.mutedColor }}>
+                    {(event as any).description || "Event description will appear here. Join us for an amazing experience!"}
+                  </p>
 
-                    {/* Mock Button */}
-                    <button
-                      className="w-full h-12 flex items-center justify-center border-0 cursor-default"
-                      style={buttonStyle}
+                  {/* Date Badge */}
+                  <div className="flex items-center justify-center sm:justify-start gap-4 text-sm pt-2" style={{ color: previewStyles.mutedColor }}>
+                    <div
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border shadow-sm backdrop-blur-sm"
+                      style={{
+                        backgroundColor: previewStyles.cardBg,
+                        borderColor: previewStyles.borderColor
+                      }}
                     >
-                      Register Now
-                    </button>
+                      <span style={{ color: previewStyles.textColor }}>
+                        {(event as any).date ? new Date((event as any).date).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' }) : "December 25, 2025"}
+                      </span>
+                    </div>
                   </div>
                 </div>
+
+                {/* Social Proof & Countdown Stub */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-6 border-y border-border/50">
+                  <div className="flex items-center gap-3">
+                    <div className="flex -space-x-3">
+                      {[1, 2, 3].map(i => (
+                        <div key={i} className="w-8 h-8 rounded-full bg-muted border-2 border-background flex items-center justify-center text-[8px]" style={{ borderColor: previewStyles.cardBg }}>
+                          👤
+                        </div>
+                      ))}
+                    </div>
+                    <div className="text-xs" style={{ color: previewStyles.textColor }}>
+                      <span className="font-bold">128+</span> Attendees
+                    </div>
+                  </div>
+                  {/* Mock Countdown */}
+                  <div className="flex gap-1" style={{ color: previewStyles.textColor }}>
+                    {['05', '23', '11'].map((t, i) => (
+                      <div key={i} className="px-2 py-1 rounded border text-xs font-bold" style={{ backgroundColor: previewStyles.cardBg, borderColor: previewStyles.borderColor }}>{t}</div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Form Card */}
+                <Card
+                  className="overflow-hidden relative isolate transition-all w-full"
+                  style={cardStyle}
+                >
+                  <CardContent className="p-6 space-y-4">
+                    <div className="space-y-2">
+                      <Label style={{ color: previewStyles.textColor }}>Full Name</Label>
+                      <Input
+                        placeholder="e.g. Jane Doe"
+                        className="h-10 border-0"
+                        style={{
+                          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                          color: previewStyles.textColor,
+                          outline: `1px solid ${previewStyles.borderColor}`
+                        }}
+                        readOnly
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label style={{ color: previewStyles.textColor }}>Email Address</Label>
+                      <Input
+                        placeholder="jane@example.com"
+                        className="h-10 border-0"
+                        style={{
+                          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                          color: previewStyles.textColor,
+                          outline: `1px solid ${previewStyles.borderColor}`
+                        }}
+                        readOnly
+                      />
+                    </div>
+
+                    <Button
+                      style={buttonStyle}
+                      className="w-full h-10 font-semibold mt-4"
+                    >
+                      Generate xCard
+                    </Button>
+                  </CardContent>
+                </Card>
+
               </div>
             </div>
           </div>
@@ -377,7 +436,7 @@ export function EventAppearanceSettings({ event, onUpdate }: EventAppearanceSett
           Save Appearance
         </Button>
       </div>
-    </div>
+    </div >
   )
 }
 // Basic helper for contrast in settings component

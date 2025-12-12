@@ -4,6 +4,7 @@ import { Menu } from "lucide-react"
 import { useState } from "react"
 
 import { AuthGuard } from "@/components/auth-guard"
+import { CreateEventDialog } from "@/components/create-event-dialog"
 import { SidebarNav } from "@/components/dashboard/sidebar-nav"
 import { WorkspaceSwitcherModal, useWorkspaceSwitcherShortcut } from "@/components/dashboard/workspace-switcher-modal"
 import { ModeToggle } from "@/components/mode-toggle"
@@ -54,6 +55,9 @@ export default function DashboardLayout({
 
               {/* <h1 className="text-xl font-semibold tracking-tight">Dashboard</h1> */}
             </div>
+
+            {/* ... */}
+
             <div className="flex items-center gap-4">
               {/* Keyboard shortcut hint */}
               <Button
@@ -68,7 +72,7 @@ export default function DashboardLayout({
                 </kbd>
               </Button>
               <ModeToggle />
-              {/* <CreateEventDialog /> */}
+              <CreateEventDialog />
             </div>
           </header>
           <div className={`flex-1 overflow-auto ${isEditor ? 'p-0 h-[calc(100vh-4rem)] overflow-hidden' : 'p-4 md:p-8'}`}>

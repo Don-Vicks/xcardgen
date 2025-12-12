@@ -13,6 +13,7 @@ import { format } from "date-fns"
 import {
   BarChart,
   CalendarIcon,
+  Code,
   Download,
   ExternalLink,
   Eye,
@@ -43,9 +44,10 @@ interface EventCardProps {
       cards: number
     }
   }
+  onEmbed?: (slug: string) => void
 }
 
-export function EventCard({ event }: EventCardProps) {
+export function EventCard({ event, onEmbed }: EventCardProps) {
   const stats = event.stats || {
     views: 0,
     uniques: 0,
@@ -110,6 +112,11 @@ export function EventCard({ event }: EventCardProps) {
               <DropdownMenuItem asChild>
                 <Link href={`/x/${event.slug}`} target="_blank">View Live Page</Link>
               </DropdownMenuItem>
+              {onEmbed && (
+                <DropdownMenuItem onClick={() => onEmbed(event.slug)}>
+                  <Code className="mr-2 h-4 w-4" /> Embed Event
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

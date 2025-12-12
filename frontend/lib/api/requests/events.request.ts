@@ -20,6 +20,7 @@ export interface Event {
   userId: string
   templateId?: string
   isActive: boolean
+  status: string
   description?: string
   coverImage?: string
   template?: any
@@ -34,6 +35,7 @@ export interface Event {
     downloads: number
     shares: number
     attendees: number
+    uniques: number
   }
   _count?: {
     cards: number
@@ -148,9 +150,7 @@ export class EventsRequest {
   async uploadAsset(id: string, file: File) {
     const formData = new FormData()
     formData.append('file', file)
-    return api.post<{ url: string }>(`/events/${id}/upload`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    })
+    return api.post<{ url: string }>(`/events/${id}/upload`, formData)
   }
 }
 

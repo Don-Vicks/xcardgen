@@ -1,6 +1,8 @@
 "use client"
 
+import { EmbedEventDialog } from "@/components/dashboard/embed-event-dialog"
 import { EventAppearanceSettings } from "@/components/dashboard/event-appearance-settings"
+import { EditEventDialog } from "@/components/edit-event-dialog"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -15,7 +17,7 @@ import { Separator } from "@/components/ui/separator"
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { eventsRequest } from "@/lib/api/requests/events.request"
-import { ArrowLeft, ArrowUpRight, BarChart, Calendar, Copy, Edit2, Globe, LayoutTemplate, Loader2, Trash2, Users } from "lucide-react"
+import { ArrowLeft, ArrowUpRight, BarChart, Calendar, Code, Copy, Edit2, Globe, LayoutTemplate, Loader2, Trash2, Users } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { use, useEffect, useState } from "react"
@@ -26,6 +28,8 @@ export default function EventDashboardPage({ params }: { params: Promise<{ slug:
   const router = useRouter()
   const [event, setEvent] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [embedDialogOpen, setEmbedDialogOpen] = useState(false)
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
 
   // Delete dialog state
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -134,6 +138,10 @@ export default function EventDashboardPage({ params }: { params: Promise<{ slug:
             <Copy className="mr-2 h-4 w-4" />
             Copy Link
           </Button>
+          <Button variant="outline" onClick={() => setEmbedDialogOpen(true)} disabled={!isPublished}>
+            <Code className="mr-2 h-4 w-4" />
+            Embed Event
+          </Button>
           <Button variant="outline" asChild>
             <Link href={`/dashboard/events/${slug}/analytics`}>
               <BarChart className="mr-2 h-4 w-4" />
@@ -204,13 +212,16 @@ export default function EventDashboardPage({ params }: { params: Promise<{ slug:
 
             {/* Info Card */}
             <Card className="col-span-2 md:col-span-1">
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Calendar className="h-5 w-5 text-orange-500" />
                   Event Details
                 </CardTitle>
+                <Button variant="ghost" size="icon" onClick={() => setEditDialogOpen(true)}>
+                  <Edit2 className="h-4 w-4" />
+                </Button>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 pt-4">
                 <div className="grid gap-1">
                   <span className="text-xs font-medium text-muted-foreground uppercase">Date</span>
                   <span>{new Date(event.date).toLocaleDateString()}</span>
@@ -286,6 +297,18 @@ export default function EventDashboardPage({ params }: { params: Promise<{ slug:
         </DialogContent>
       </Dialog>
 
-    </div >
+      <EditEventDialog
+        event={event}
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        onUpdate={setEvent}
+      />
+
+      <EmbedEventDialog
+        open={embedDialogOpen}
+        onOpenChange={setEmbedDialogOpen}
+        slug={slug}
+      />
+    </div>
   )
 }

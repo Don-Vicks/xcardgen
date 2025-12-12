@@ -1,5 +1,6 @@
 "use client"
 
+import { EmbedEventDialog } from "@/components/dashboard/embed-event-dialog"
 import { EventCard } from "@/components/dashboard/event-card"
 import { TemplateSkeleton } from "@/components/skeletons/template-skeleton"
 import { Button } from "@/components/ui/button"
@@ -30,6 +31,7 @@ import { useDebounce } from "use-debounce"
 
 export default function EventsPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null)
+  const [embedSlug, setEmbedSlug] = useState<string | null>(null)
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -111,6 +113,12 @@ export default function EventsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <EmbedEventDialog
+        open={!!embedSlug}
+        onOpenChange={(open) => !open && setEmbedSlug(null)}
+        slug={embedSlug}
+      />
       {/* Header & Controls */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
@@ -171,7 +179,10 @@ export default function EventsPage() {
                 <Trash2 className="h-4 w-4" />
               </button>
               {/* @ts-ignore */}
-              <EventCard event={{ ...event, status: event.status || 'DRAFT' }} />
+              <EventCard
+                event={{ ...event, status: event.status || 'DRAFT' }}
+                onEmbed={(slug) => setEmbedSlug(slug)}
+              />
             </div>
           ))}
 
@@ -195,6 +206,7 @@ export default function EventsPage() {
             </Card>
           </div>
         </div>
+      )}
 
 
       {/* Pagination */}
