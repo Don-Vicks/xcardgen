@@ -10,9 +10,12 @@ import { toast } from "sonner"
 
 import { useRouter } from "next/navigation"
 
+import { useWorkspace } from "@/stores/workspace-store"; // Add import
+
 export default function EditorPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params)
   const router = useRouter()
+  const { currentWorkspace } = useWorkspace() // Hook
   const [template, setTemplate] = useState<Template | null>(null)
   const [loading, setLoading] = useState(true)
   const [event, setEvent] = useState<any>(null)
@@ -21,14 +24,12 @@ export default function EditorPage({ params }: { params: Promise<{ slug: string 
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const res = await eventsRequest.getAll({ search: slug }) // Use findOne/findPublic if available exposed. findPublic is by slug.
-        // eventsRequest.getById uses ID. We need by Slug.
-        // Or specific Endpoint? eventsRequest.getById(params.slug) calls /events/:id. Controller checks slug OR id.
-        const eventRes = await eventsRequest.getById(slug)
+        // eventsRequest.getById(params.slug) calls /events/:id. Controller checks slug OR id.
+        const eventRes = await eventsRequest.getById(slug, currentWorkspace?.id)
         setEvent(eventRes.data)
 
         if (eventRes.data.templateId) {
-          const tmplRes = await templatesRequest.getOne(eventRes.data.templateId)
+          const tmplRes = await templatesRequest.getOne(eventRes.data.templateId, currentWorkspace?.id)
           setTemplate(tmplRes.data)
         }
       } catch (error) {
@@ -38,8 +39,8 @@ export default function EditorPage({ params }: { params: Promise<{ slug: string 
         setLoading(false)
       }
     }
-    fetchEvent()
-  }, [slug])
+    if (currentWorkspace) fetchEvent()
+  }, [slug, currentWorkspace?.id])
 
   const handleTemplateSelect = async (templateId: string, isCustom?: boolean) => {
     if (!event) return
@@ -71,7 +72,7 @@ export default function EditorPage({ params }: { params: Promise<{ slug: string 
       await eventsRequest.update(event.id, { templateId })
 
       // Fetch the template data to load into editor
-      const templateRes = await templatesRequest.getOne(templateId)
+      const templateRes = await templatesRequest.getOne(templateId, currentWorkspace?.id)
       setTemplate(templateRes.data)
       toast.success("Template linked to event. You can now customize it.")
 

@@ -7,7 +7,8 @@ interface Workspace {
   description: string
   slug?: string
   logo?: string
-  // Add other properties as needed
+  coverImage?: string
+  socialLinks?: any
 }
 
 interface WorkspaceState {

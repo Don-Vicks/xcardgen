@@ -4,6 +4,7 @@ import { z } from 'zod'
 export const createWorkspace = z.object({
   name: z.string().min(3).max(255).trim(),
   logo: z.string().url(),
+  coverImage: z.string().url().optional(),
   slug: z.string().min(3).max(255).trim(),
   type: z.enum([
     'PERSONAL',
@@ -38,6 +39,7 @@ export const createWorkspace = z.object({
       })
       .optional()
       .or(z.literal('')),
+    instagram: z.string().optional().or(z.literal('')),
   }),
 })
 

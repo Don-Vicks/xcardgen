@@ -34,6 +34,12 @@ export class WorkspacesController {
     return this.cloudinaryService.uploadImage(file, 'workspaces');
   }
 
+  @Post('upload-cover')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadCover(@UploadedFile() file: any) {
+    return this.cloudinaryService.uploadImage(file, 'workspaces/covers');
+  }
+
   @Post()
   create(
     @Body() createWorkspaceDto: CreateWorkspaceDto,

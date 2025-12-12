@@ -56,10 +56,11 @@ export class EventsService {
     const { workspaceId, page = 1, limit = 50, search, sort } = options;
     const skip = (page - 1) * limit;
 
-    const whereClause: any = { userId, deletedAt: null };
-    if (workspaceId) {
-      whereClause.workspaceId = workspaceId;
-    }
+    const whereClause: any = {
+      userId,
+      deletedAt: null,
+      ...(workspaceId ? { workspaceId } : { workspaceId: null }), // Strict: If no workspaceId, assume Personal (null)
+    };
 
     if (search) {
       whereClause.OR = [
@@ -129,9 +130,17 @@ export class EventsService {
     return event;
   }
 
-  async findOne(id: string, userId: string) {
+  async findOne(idOrSlug: string, userId: string, workspaceId?: string) {
     return this.prisma.event.findFirst({
-      where: { id, userId },
+      where: {
+        AND: [
+          { userId },
+          {
+            OR: [{ id: idOrSlug }, { slug: idOrSlug }],
+          },
+          workspaceId ? { workspaceId } : { workspaceId: null },
+        ],
+      },
       include: {
         stats: true,
         template: true,
@@ -395,12 +404,12 @@ export class EventsService {
     const recentActivity = [
       ...recentGenerations.map((g) => ({
         type: 'GENERATION',
-        description: `${g.attendee?.name || 'Visitor'} generated a card`,
+        description: `${g.attendee?.name || 'Visitor'} generated a xCard`,
         createdAt: g.createdAt,
       })),
       ...recentMints.map((m) => ({
         type: 'MINT',
-        description: `${m.attendee?.name || 'Attendee'} minted an NFT`,
+        description: `${m.attendee?.name || 'Attendee'} minted an xCard NFT`,
         createdAt: m.createdAt,
       })),
     ]
@@ -852,7 +861,7 @@ export class EventsService {
         user: r.attendee?.name || 'Visitor',
         event: r.event?.name,
         timestamp: r.createdAt,
-        details: `generated a card`,
+        details: `generated a xCard`,
         avatar:
           (r.attendee?.data as any)?.avatar ||
           `https://avatar.vercel.sh/${r.attendee?.id || 'guest'}`,

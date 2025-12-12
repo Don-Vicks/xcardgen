@@ -12,6 +12,7 @@ model Workspace {
   name        String            @unique
   description String
   logo        String
+  coverImage  String?
   slug        String?           @unique
   type        WorkspaceType     @default(EVENT_ORGANIZER)
   socialLinks Json

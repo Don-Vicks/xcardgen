@@ -29,6 +29,7 @@ export type WorkspaceMinAggregateOutputType = {
   name: string | null
   description: string | null
   logo: string | null
+  coverImage: string | null
   slug: string | null
   type: $Enums.WorkspaceType | null
   ownerId: string | null
@@ -41,6 +42,7 @@ export type WorkspaceMaxAggregateOutputType = {
   name: string | null
   description: string | null
   logo: string | null
+  coverImage: string | null
   slug: string | null
   type: $Enums.WorkspaceType | null
   ownerId: string | null
@@ -53,6 +55,7 @@ export type WorkspaceCountAggregateOutputType = {
   name: number
   description: number
   logo: number
+  coverImage: number
   slug: number
   type: number
   socialLinks: number
@@ -68,6 +71,7 @@ export type WorkspaceMinAggregateInputType = {
   name?: true
   description?: true
   logo?: true
+  coverImage?: true
   slug?: true
   type?: true
   ownerId?: true
@@ -80,6 +84,7 @@ export type WorkspaceMaxAggregateInputType = {
   name?: true
   description?: true
   logo?: true
+  coverImage?: true
   slug?: true
   type?: true
   ownerId?: true
@@ -92,6 +97,7 @@ export type WorkspaceCountAggregateInputType = {
   name?: true
   description?: true
   logo?: true
+  coverImage?: true
   slug?: true
   type?: true
   socialLinks?: true
@@ -178,6 +184,7 @@ export type WorkspaceGroupByOutputType = {
   name: string
   description: string
   logo: string
+  coverImage: string | null
   slug: string | null
   type: $Enums.WorkspaceType
   socialLinks: runtime.JsonValue
@@ -212,6 +219,7 @@ export type WorkspaceWhereInput = {
   name?: Prisma.StringFilter<"Workspace"> | string
   description?: Prisma.StringFilter<"Workspace"> | string
   logo?: Prisma.StringFilter<"Workspace"> | string
+  coverImage?: Prisma.StringNullableFilter<"Workspace"> | string | null
   slug?: Prisma.StringNullableFilter<"Workspace"> | string | null
   type?: Prisma.EnumWorkspaceTypeFilter<"Workspace"> | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonFilter<"Workspace">
@@ -229,6 +237,7 @@ export type WorkspaceOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   logo?: Prisma.SortOrder
+  coverImage?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrderInput | Prisma.SortOrder
   type?: Prisma.SortOrder
   socialLinks?: Prisma.SortOrder
@@ -250,6 +259,7 @@ export type WorkspaceWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.WorkspaceWhereInput | Prisma.WorkspaceWhereInput[]
   description?: Prisma.StringFilter<"Workspace"> | string
   logo?: Prisma.StringFilter<"Workspace"> | string
+  coverImage?: Prisma.StringNullableFilter<"Workspace"> | string | null
   type?: Prisma.EnumWorkspaceTypeFilter<"Workspace"> | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonFilter<"Workspace">
   ownerId?: Prisma.StringFilter<"Workspace"> | string
@@ -266,6 +276,7 @@ export type WorkspaceOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   logo?: Prisma.SortOrder
+  coverImage?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrderInput | Prisma.SortOrder
   type?: Prisma.SortOrder
   socialLinks?: Prisma.SortOrder
@@ -285,6 +296,7 @@ export type WorkspaceScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"Workspace"> | string
   description?: Prisma.StringWithAggregatesFilter<"Workspace"> | string
   logo?: Prisma.StringWithAggregatesFilter<"Workspace"> | string
+  coverImage?: Prisma.StringNullableWithAggregatesFilter<"Workspace"> | string | null
   slug?: Prisma.StringNullableWithAggregatesFilter<"Workspace"> | string | null
   type?: Prisma.EnumWorkspaceTypeWithAggregatesFilter<"Workspace"> | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonWithAggregatesFilter<"Workspace">
@@ -298,6 +310,7 @@ export type WorkspaceCreateInput = {
   name: string
   description: string
   logo: string
+  coverImage?: string | null
   slug?: string | null
   type?: $Enums.WorkspaceType
   socialLinks: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -314,6 +327,7 @@ export type WorkspaceUncheckedCreateInput = {
   name: string
   description: string
   logo: string
+  coverImage?: string | null
   slug?: string | null
   type?: $Enums.WorkspaceType
   socialLinks: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -330,6 +344,7 @@ export type WorkspaceUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   logo?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkspaceTypeFieldUpdateOperationsInput | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -346,6 +361,7 @@ export type WorkspaceUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   logo?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkspaceTypeFieldUpdateOperationsInput | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -362,6 +378,7 @@ export type WorkspaceCreateManyInput = {
   name: string
   description: string
   logo: string
+  coverImage?: string | null
   slug?: string | null
   type?: $Enums.WorkspaceType
   socialLinks: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -375,6 +392,7 @@ export type WorkspaceUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   logo?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkspaceTypeFieldUpdateOperationsInput | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -387,6 +405,7 @@ export type WorkspaceUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   logo?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkspaceTypeFieldUpdateOperationsInput | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -400,6 +419,7 @@ export type WorkspaceCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   logo?: Prisma.SortOrder
+  coverImage?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   type?: Prisma.SortOrder
   socialLinks?: Prisma.SortOrder
@@ -413,6 +433,7 @@ export type WorkspaceMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   logo?: Prisma.SortOrder
+  coverImage?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   type?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
@@ -425,6 +446,7 @@ export type WorkspaceMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   logo?: Prisma.SortOrder
+  coverImage?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   type?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
@@ -561,6 +583,7 @@ export type WorkspaceCreateWithoutMembersInput = {
   name: string
   description: string
   logo: string
+  coverImage?: string | null
   slug?: string | null
   type?: $Enums.WorkspaceType
   socialLinks: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -576,6 +599,7 @@ export type WorkspaceUncheckedCreateWithoutMembersInput = {
   name: string
   description: string
   logo: string
+  coverImage?: string | null
   slug?: string | null
   type?: $Enums.WorkspaceType
   socialLinks: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -607,6 +631,7 @@ export type WorkspaceUpdateWithoutMembersInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   logo?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkspaceTypeFieldUpdateOperationsInput | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -622,6 +647,7 @@ export type WorkspaceUncheckedUpdateWithoutMembersInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   logo?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkspaceTypeFieldUpdateOperationsInput | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -637,6 +663,7 @@ export type WorkspaceCreateWithoutOwnerInput = {
   name: string
   description: string
   logo: string
+  coverImage?: string | null
   slug?: string | null
   type?: $Enums.WorkspaceType
   socialLinks: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -652,6 +679,7 @@ export type WorkspaceUncheckedCreateWithoutOwnerInput = {
   name: string
   description: string
   logo: string
+  coverImage?: string | null
   slug?: string | null
   type?: $Enums.WorkspaceType
   socialLinks: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -696,6 +724,7 @@ export type WorkspaceScalarWhereInput = {
   name?: Prisma.StringFilter<"Workspace"> | string
   description?: Prisma.StringFilter<"Workspace"> | string
   logo?: Prisma.StringFilter<"Workspace"> | string
+  coverImage?: Prisma.StringNullableFilter<"Workspace"> | string | null
   slug?: Prisma.StringNullableFilter<"Workspace"> | string | null
   type?: Prisma.EnumWorkspaceTypeFilter<"Workspace"> | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonFilter<"Workspace">
@@ -709,6 +738,7 @@ export type WorkspaceCreateWithoutEventsInput = {
   name: string
   description: string
   logo: string
+  coverImage?: string | null
   slug?: string | null
   type?: $Enums.WorkspaceType
   socialLinks: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -724,6 +754,7 @@ export type WorkspaceUncheckedCreateWithoutEventsInput = {
   name: string
   description: string
   logo: string
+  coverImage?: string | null
   slug?: string | null
   type?: $Enums.WorkspaceType
   socialLinks: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -755,6 +786,7 @@ export type WorkspaceUpdateWithoutEventsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   logo?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkspaceTypeFieldUpdateOperationsInput | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -770,6 +802,7 @@ export type WorkspaceUncheckedUpdateWithoutEventsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   logo?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkspaceTypeFieldUpdateOperationsInput | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -785,6 +818,7 @@ export type WorkspaceCreateWithoutTemplatesInput = {
   name: string
   description: string
   logo: string
+  coverImage?: string | null
   slug?: string | null
   type?: $Enums.WorkspaceType
   socialLinks: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -800,6 +834,7 @@ export type WorkspaceUncheckedCreateWithoutTemplatesInput = {
   name: string
   description: string
   logo: string
+  coverImage?: string | null
   slug?: string | null
   type?: $Enums.WorkspaceType
   socialLinks: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -831,6 +866,7 @@ export type WorkspaceUpdateWithoutTemplatesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   logo?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkspaceTypeFieldUpdateOperationsInput | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -846,6 +882,7 @@ export type WorkspaceUncheckedUpdateWithoutTemplatesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   logo?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkspaceTypeFieldUpdateOperationsInput | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -861,6 +898,7 @@ export type WorkspaceCreateManyOwnerInput = {
   name: string
   description: string
   logo: string
+  coverImage?: string | null
   slug?: string | null
   type?: $Enums.WorkspaceType
   socialLinks: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -873,6 +911,7 @@ export type WorkspaceUpdateWithoutOwnerInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   logo?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkspaceTypeFieldUpdateOperationsInput | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -888,6 +927,7 @@ export type WorkspaceUncheckedUpdateWithoutOwnerInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   logo?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkspaceTypeFieldUpdateOperationsInput | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -903,6 +943,7 @@ export type WorkspaceUncheckedUpdateManyWithoutOwnerInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   logo?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkspaceTypeFieldUpdateOperationsInput | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -964,6 +1005,7 @@ export type WorkspaceSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   name?: boolean
   description?: boolean
   logo?: boolean
+  coverImage?: boolean
   slug?: boolean
   type?: boolean
   socialLinks?: boolean
@@ -982,6 +1024,7 @@ export type WorkspaceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   name?: boolean
   description?: boolean
   logo?: boolean
+  coverImage?: boolean
   slug?: boolean
   type?: boolean
   socialLinks?: boolean
@@ -996,6 +1039,7 @@ export type WorkspaceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   name?: boolean
   description?: boolean
   logo?: boolean
+  coverImage?: boolean
   slug?: boolean
   type?: boolean
   socialLinks?: boolean
@@ -1010,6 +1054,7 @@ export type WorkspaceSelectScalar = {
   name?: boolean
   description?: boolean
   logo?: boolean
+  coverImage?: boolean
   slug?: boolean
   type?: boolean
   socialLinks?: boolean
@@ -1018,7 +1063,7 @@ export type WorkspaceSelectScalar = {
   updatedAt?: boolean
 }
 
-export type WorkspaceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "logo" | "slug" | "type" | "socialLinks" | "ownerId" | "createdAt" | "updatedAt", ExtArgs["result"]["workspace"]>
+export type WorkspaceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "logo" | "coverImage" | "slug" | "type" | "socialLinks" | "ownerId" | "createdAt" | "updatedAt", ExtArgs["result"]["workspace"]>
 export type WorkspaceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   events?: boolean | Prisma.Workspace$eventsArgs<ExtArgs>
   templates?: boolean | Prisma.Workspace$templatesArgs<ExtArgs>
@@ -1046,6 +1091,7 @@ export type $WorkspacePayload<ExtArgs extends runtime.Types.Extensions.InternalA
     name: string
     description: string
     logo: string
+    coverImage: string | null
     slug: string | null
     type: $Enums.WorkspaceType
     socialLinks: runtime.JsonValue
@@ -1483,6 +1529,7 @@ export interface WorkspaceFieldRefs {
   readonly name: Prisma.FieldRef<"Workspace", 'String'>
   readonly description: Prisma.FieldRef<"Workspace", 'String'>
   readonly logo: Prisma.FieldRef<"Workspace", 'String'>
+  readonly coverImage: Prisma.FieldRef<"Workspace", 'String'>
   readonly slug: Prisma.FieldRef<"Workspace", 'String'>
   readonly type: Prisma.FieldRef<"Workspace", 'WorkspaceType'>
   readonly socialLinks: Prisma.FieldRef<"Workspace", 'Json'>

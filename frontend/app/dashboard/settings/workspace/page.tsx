@@ -32,7 +32,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { workspacesRequest } from "@/lib/api/requests/workspaces.request"
 import { useAuth } from "@/stores/auth-store"
 import { useWorkspace } from "@/stores/workspace-store"
-import { Copy, Crown, Loader2, MoreHorizontal, Plus, Settings, Trash2, Users } from "lucide-react"
+import { Copy, Crown, Globe, Image as ImageIcon, Loader2, MoreHorizontal, Plus, Settings, Trash2, Upload, Users } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
@@ -51,6 +51,16 @@ export default function WorkspaceSettingsPage() {
   // Form state
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
+  const [logo, setLogo] = useState("")
+  const [coverImage, setCoverImage] = useState("")
+  const [socialLinks, setSocialLinks] = useState({
+    website: "",
+    twitter: "",
+    linkedin: "",
+    instagram: ""
+  })
+  const [uploadingLogo, setUploadingLogo] = useState(false)
+  const [uploadingCover, setUploadingCover] = useState(false)
 
   // Invite dialog
   const [inviteOpen, setInviteOpen] = useState(false)
@@ -74,13 +84,30 @@ export default function WorkspaceSettingsPage() {
     }
   }, [membersData, user])
 
+  // Fetch fresh workspace data
   useEffect(() => {
-    if (currentWorkspace) {
-      setName(currentWorkspace.name || "")
-      setDescription(currentWorkspace.description || "")
-      fetchMembers()
+    const refreshWorkspace = async () => {
+      if (!currentWorkspace?.id) return
+      try {
+        const res = await workspacesRequest.getOne(currentWorkspace.id)
+        const ws: any = res.data // Cast to any to handle new fields if types lag
+        setName(ws.name || "")
+        setDescription(ws.description || "")
+        setLogo(ws.logo || "")
+        setCoverImage(ws.coverImage || "")
+        setSocialLinks({
+          website: ws.socialLinks?.website || "",
+          twitter: ws.socialLinks?.twitter || "",
+          linkedin: ws.socialLinks?.linkedin || "",
+          instagram: ws.socialLinks?.instagram || ""
+        })
+        fetchMembers()
+      } catch (err) {
+        console.error("Failed to refresh workspace", err)
+      }
     }
-  }, [currentWorkspace])
+    refreshWorkspace()
+  }, [currentWorkspace?.id])
 
   const fetchMembers = async () => {
     if (!currentWorkspace) return
@@ -99,13 +126,49 @@ export default function WorkspaceSettingsPage() {
     if (!currentWorkspace) return
     setLoading(true)
     try {
-      const res = await workspacesRequest.update(currentWorkspace.id, { name, description })
+      const res = await workspacesRequest.update(currentWorkspace.id, {
+        name,
+        description,
+        logo,
+        coverImage,
+        socialLinks
+      })
       setCurrentWorkspace({ ...currentWorkspace, ...res.data })
-      toast.success("Workspace updated!")
+      toast.success("Workspace settings updated!")
     } catch (error: any) {
       toast.error(error?.response?.data?.message || "Failed to update workspace")
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploadingLogo(true)
+    try {
+      const res = await workspacesRequest.uploadLogo(file)
+      setLogo(res.data.url)
+      toast.success("Logo uploaded")
+    } catch (error) {
+      toast.error("Failed to upload logo")
+    } finally {
+      setUploadingLogo(false)
+    }
+  }
+
+  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploadingCover(true)
+    try {
+      const res = await workspacesRequest.uploadCover(file)
+      setCoverImage(res.data.url)
+      toast.success("Cover image uploaded")
+    } catch (error) {
+      toast.error("Failed to upload cover")
+    } finally {
+      setUploadingCover(false)
     }
   }
 
@@ -217,6 +280,148 @@ export default function WorkspaceSettingsPage() {
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Save Changes
             </Button>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* BRANDING */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <ImageIcon className="h-5 w-5" />
+            Branding
+          </CardTitle>
+          <CardDescription>Customize your workspace appearance.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* LOGO */}
+            <div className="space-y-4">
+              <Label>Workspace Logo</Label>
+              <div className="flex items-center gap-4">
+                <Avatar className="h-20 w-20 border">
+                  <AvatarFallback className="text-xl">
+                    {name?.charAt(0)?.toUpperCase()}
+                  </AvatarFallback>
+                  {logo && <img src={logo} alt="Logo" className="object-cover w-full h-full" />}
+                </Avatar>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Button variant="outline" size="sm" className="relative overflow-hidden" disabled={!isWorkspaceAdmin || uploadingLogo}>
+                      {uploadingLogo ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <Upload className="mr-2 h-4 w-4" />
+                      )}
+                      Upload Logo
+                      <input
+                        type="file"
+                        className="absolute inset-0 opacity-0 cursor-pointer"
+                        accept="image/*"
+                        onChange={handleLogoUpload}
+                        disabled={!isWorkspaceAdmin || uploadingLogo}
+                      />
+                    </Button>
+                    {logo && isWorkspaceAdmin && (
+                      <Button variant="ghost" size="sm" onClick={() => setLogo("")}>
+                        Remove
+                      </Button>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Recommended: 256x256px max.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* COVER IMAGE */}
+            <div className="space-y-4">
+              <Label>Cover Image</Label>
+              <div className="relative group rounded-md overflow-hidden border aspect-video bg-muted/30">
+                {coverImage ? (
+                  <img src={coverImage} alt="Cover" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="flex items-center justify-center w-full h-full text-muted-foreground text-sm">
+                    No cover image
+                  </div>
+                )}
+
+                {isWorkspaceAdmin && (
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <Button variant="secondary" size="sm" className="relative cursor-pointer">
+                      {uploadingCover ? <Loader2 className="animate-spin h-4 w-4" /> : "Change Cover"}
+                      <input
+                        type="file"
+                        className="absolute inset-0 opacity-0 cursor-pointer"
+                        accept="image/*"
+                        onChange={handleCoverUpload}
+                        disabled={uploadingCover}
+                      />
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* SOCIAL LINKS */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Globe className="h-5 w-5" />
+            Social Links
+          </CardTitle>
+          <CardDescription>Links displayed on your public profile.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Website</Label>
+              <Input
+                placeholder="https://example.com"
+                value={socialLinks.website}
+                onChange={e => setSocialLinks({ ...socialLinks, website: e.target.value })}
+                disabled={!isWorkspaceAdmin}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Twitter / X</Label>
+              <Input
+                placeholder="@username"
+                value={socialLinks.twitter}
+                onChange={e => setSocialLinks({ ...socialLinks, twitter: e.target.value })}
+                disabled={!isWorkspaceAdmin}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>LinkedIn</Label>
+              <Input
+                placeholder="LinkedIn URL"
+                value={socialLinks.linkedin}
+                onChange={e => setSocialLinks({ ...socialLinks, linkedin: e.target.value })}
+                disabled={!isWorkspaceAdmin}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Instagram</Label>
+              <Input
+                placeholder="@username"
+                value={socialLinks.instagram}
+                onChange={e => setSocialLinks({ ...socialLinks, instagram: e.target.value })}
+                disabled={!isWorkspaceAdmin}
+              />
+            </div>
+          </div>
+          {isWorkspaceAdmin && (
+            <div className="flex justify-end mt-4">
+              <Button onClick={handleSaveGeneral} disabled={loading}>
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Save Socials
+              </Button>
+            </div>
           )}
         </CardContent>
       </Card>

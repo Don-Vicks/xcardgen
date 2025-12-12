@@ -27,4 +27,22 @@ export class CloudinaryService {
       Readable.from(buffer).pipe(upload);
     });
   }
+
+  async deleteImageFromUrl(imageUrl: string): Promise<any> {
+    if (!imageUrl || !imageUrl.includes('cloudinary.com')) return;
+
+    // Extract public ID: matches /upload/v12345/folder/id.jpg -> folder/id
+    const regex = /\/v\d+\/(.+)\.\w+$/;
+    const match = imageUrl.match(regex);
+    if (!match || !match[1]) return;
+
+    const publicId = match[1];
+
+    return new Promise((resolve, reject) => {
+      cloudinary.uploader.destroy(publicId, (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      });
+    });
+  }
 }

@@ -19,6 +19,10 @@ export class CreateWorkspaceDto {
   logo: string;
 
   @IsString()
+  @IsOptional()
+  coverImage?: string;
+
+  @IsString()
   slug: string;
 
   @IsEnum(WorkspaceType)

@@ -10,6 +10,8 @@ export interface Workspace {
   description: string
   slug: string
   logo?: string
+  coverImage?: string
+  socialLinks?: any
   createdAt: string
   updatedAt: string
   ownerId: string
@@ -41,6 +43,18 @@ export class WorkspacesRequest {
   }
   async checkSlug(slug: string) {
     return api.get(`/workspaces/check-slug/${slug}`)
+  }
+
+  async uploadLogo(file: File) {
+    const formData = new FormData()
+    formData.append('file', file)
+    return api.post<{ url: string }>('/workspaces/upload-logo', formData)
+  }
+
+  async uploadCover(file: File) {
+    const formData = new FormData()
+    formData.append('file', file)
+    return api.post<{ url: string }>('/workspaces/upload-cover', formData)
   }
 
   // ===== MEMBER MANAGEMENT =====

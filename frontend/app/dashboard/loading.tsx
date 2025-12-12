@@ -1,3 +1,9 @@
-import { LoadingScreen } from "@/components/ui/loading-screen";
+import { Loader2 } from "lucide-react"
 
-export default LoadingScreen
+export default function DashboardLoading() {
+  return (
+    <div className="flex h-[80vh] w-full items-center justify-center">
+      <Loader2 className="h-8 w-8 animate-spin text-primary/60" />
+    </div>
+  )
+}

@@ -54,8 +54,8 @@ export class TemplatesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.templatesService.findOne(id);
+  findOne(@Param('id') id: string, @Query('workspaceId') workspaceId: string) {
+    return this.templatesService.findOne(id, workspaceId);
   }
 
   @Patch(':id')

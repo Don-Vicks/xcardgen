@@ -1,4 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Inject, Injectable } from '@nestjs/common';
+import { Cache } from 'cache-manager';
 import { Prisma } from 'generated/client';
 import { PrismaService } from 'src/prisma.service';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
@@ -8,6 +10,7 @@ export class TemplatesService {
   constructor(
     private prisma: PrismaService,
     private cloudinaryService: CloudinaryService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async create(data: Prisma.TemplateCreateInput) {
@@ -32,8 +35,7 @@ export class TemplatesService {
     const skip = (page - 1) * limit;
 
     const where: Prisma.TemplateWhereInput = {
-      userId,
-      ...(workspaceId && { workspaceId }),
+      ...(workspaceId ? { workspaceId } : { userId, workspaceId: null }), // Strict isolation
       ...(params?.search && {
         OR: [
           { name: { contains: params.search, mode: 'insensitive' } },
@@ -64,18 +66,16 @@ export class TemplatesService {
     };
   }
 
-  async findOne(id: string) {
-    return this.prisma.template.findUnique({
-      where: { id },
+  async findOne(id: string, workspaceId?: string) {
+    return this.prisma.template.findFirst({
+      where: {
+        id,
+        ...(workspaceId ? { workspaceId } : { workspaceId: null }),
+      },
     });
   }
 
-  async update(id: string, data: Prisma.TemplateUpdateInput) {
-    return this.prisma.template.update({
-      where: { id },
-      data,
-    });
-  }
+  async update(id: string, data: Prisma.TemplateUpdateInput) {}
 
   async remove(id: string) {
     return this.prisma.template.delete({

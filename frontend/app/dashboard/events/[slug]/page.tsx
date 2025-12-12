@@ -23,9 +23,12 @@ import { useRouter } from "next/navigation"
 import { use, useEffect, useState } from "react"
 import { toast } from "sonner"
 
+import { useWorkspace } from "@/stores/workspace-store"; // Add import
+
 export default function EventDashboardPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params)
   const router = useRouter()
+  const { currentWorkspace } = useWorkspace() // Use hook
   const [event, setEvent] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [embedDialogOpen, setEmbedDialogOpen] = useState(false)
@@ -38,7 +41,7 @@ export default function EventDashboardPage({ params }: { params: Promise<{ slug:
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const res = await eventsRequest.getById(slug)
+        const res = await eventsRequest.getById(slug, currentWorkspace?.id)
         setEvent(res.data)
       } catch (error) {
         console.error(error)
@@ -47,8 +50,10 @@ export default function EventDashboardPage({ params }: { params: Promise<{ slug:
         setLoading(false)
       }
     }
-    fetchEvent()
-  }, [slug])
+    if (currentWorkspace) { // Only fetch when workspace is loaded
+      fetchEvent()
+    }
+  }, [slug, currentWorkspace?.id])
 
   const handlePublishToggle = async (checked: boolean) => {
     try {
@@ -93,7 +98,7 @@ export default function EventDashboardPage({ params }: { params: Promise<{ slug:
   const publicUrl = `/x/${event.slug}`
 
   return (
-    <div className="container max-w-6xl mx-auto py-8 space-y-8">
+    <div className="max-w-full space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">

@@ -72,6 +72,16 @@ export class EventsController {
     return this.eventsService.getAnalytics(id, startDate, endDate);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get(':id')
+  findOneEvent(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+    @Query('workspaceId') workspaceId: string,
+  ) {
+    return this.eventsService.findOne(id, user.id, workspaceId);
+  }
+
   @Public()
   @Get(':id/export/pdf')
   @Header('Content-Type', 'application/pdf')

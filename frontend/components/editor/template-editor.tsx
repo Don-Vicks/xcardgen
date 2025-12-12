@@ -1,6 +1,7 @@
 "use client"
 
 import { ElementProperties } from "@/app/dashboard/templates/[id]/editor/element-properties"
+import { CanvasRenderer } from "@/components/canvas-renderer"
 import { FontLoader } from "@/components/font-loader"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,19 +9,15 @@ import { Separator } from "@/components/ui/separator"
 import { useHistory } from "@/hooks/use-history"
 import { useSnapping } from "@/hooks/use-snapping"
 import { Template } from "@/lib/api/requests/templates.request"
-import { ArrowLeft, Braces, Check, Circle, Eye, Image as ImageIcon, Loader2, Minus, Monitor, Pencil, QrCode, Redo, Save, Square, Type, Undo, UserRound, ZoomIn, ZoomOut } from "lucide-react"
+import { GOOGLE_FONTS } from "@/lib/constants/fonts"
+import { toPng } from "html-to-image"
+import { ArrowLeft, Braces, Check, Circle, Download, Eye, Image as ImageIcon, Loader2, Minus, Monitor, Pencil, QrCode, Redo, Save, Square, Type, Undo, UserRound, ZoomIn, ZoomOut } from "lucide-react"
 import Link from "next/link"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import QRCode from "react-qr-code"
 import { Rnd } from "react-rnd"
 import { toast } from "sonner"
 import { v4 as uuidv4 } from "uuid"
-
-// ... (existing imports)
-
-// Inside TemplateEditor component...
-
-
 
 // Re-export or import types if shared
 export type CanvasElement = {
@@ -36,6 +33,7 @@ export type CanvasElement = {
   isDynamic?: boolean
   fieldName?: string
   fieldDescription?: string
+  fieldLabel?: string
 }
 
 interface TemplateEditorProps {
@@ -71,6 +69,42 @@ export function TemplateEditor({ initialData, onSave, onBack, backLink = "/dashb
   const [saving, setSaving] = useState(false)
   const [scale, setScale] = useState(1)
   const [isPreview, setIsPreview] = useState(false) // Preview Mode State
+  const hiddenCanvasRef = useRef<HTMLDivElement>(null)
+
+  // Sample values for testing
+  const sampleValues = useMemo(() => ({
+    name: "John Doe",
+    email: "john@example.com",
+    role: "Software Engineer",
+    company: "Acme Corp",
+    ticket_code: "XC-88219",
+    user_name: "John Doe",
+    user_email: "john@example.com",
+    user_role: "Software Engineer",
+    user_company: "Acme Corp",
+    user_avatar: `https://avatar.vercel.sh/${template.name}`
+  }), [template.name])
+
+  const handleDownloadSample = async () => {
+    if (!hiddenCanvasRef.current) return
+    const toastId = toast.loading("Generating sample...")
+    try {
+      // 1. Force fonts to be ready
+      await document.fonts.ready
+
+      // 2. Convert hidden renderer to PNG
+      const dataUrl = await toPng(hiddenCanvasRef.current, { cacheBust: true, pixelRatio: 2 })
+
+      const link = document.createElement('a')
+      link.download = `${template.name}-sample.png`
+      link.href = dataUrl
+      link.click()
+      toast.success("Sample downloaded", { id: toastId })
+    } catch (err) {
+      console.error(err)
+      toast.error("Failed to generate sample", { id: toastId })
+    }
+  }
 
   // Auto-save state
   const [lastSaved, setLastSaved] = useState<number>(Date.now())
@@ -104,9 +138,11 @@ export function TemplateEditor({ initialData, onSave, onBack, backLink = "/dashb
   }, [template?.properties, fitCanvas])
 
   const usedFonts = useMemo(() => {
-    return elements
+    const fromElements = elements
       .map(el => el.style?.fontFamily)
       .filter((f): f is string => !!f)
+    // Merge with all available fonts to ensure previews work in the dropdown
+    return [...fromElements, ...GOOGLE_FONTS]
   }, [elements])
 
   // Z-Index Handling
@@ -228,6 +264,8 @@ export function TemplateEditor({ initialData, onSave, onBack, backLink = "/dashb
     let content = undefined
     let style: React.CSSProperties = {}
     let isDynamic = false
+    let fieldName: string | undefined = undefined
+    let fieldDescription: string | undefined = undefined
 
     switch (preset) {
       case "text":
@@ -242,6 +280,8 @@ export function TemplateEditor({ initialData, onSave, onBack, backLink = "/dashb
         content = "{{ name }}"
         style = { fontSize: 32, color: "#000000", fontWeight: "bold", textAlign: "left", fontFamily: "Roboto" }
         isDynamic = true
+        fieldName = "user_name"
+        fieldDescription = "Full Name"
         break
       case "image":
         type = "image"
@@ -255,6 +295,8 @@ export function TemplateEditor({ initialData, onSave, onBack, backLink = "/dashb
         height = 200
         style = { borderRadius: "50%", objectFit: "cover" }
         isDynamic = true
+        fieldName = "user_avatar"
+        fieldDescription = "User Avatar"
         break
       case "box":
         type = "shape"
@@ -292,7 +334,9 @@ export function TemplateEditor({ initialData, onSave, onBack, backLink = "/dashb
       height,
       content,
       style,
-      isDynamic
+      isDynamic,
+      fieldName,
+      fieldDescription
     }
     setElements([...elements, newEl])
     setSelectedId(newEl.id)
@@ -360,6 +404,20 @@ export function TemplateEditor({ initialData, onSave, onBack, backLink = "/dashb
     <div className="h-full w-full flex flex-col bg-neutral-100/50 overflow-hidden font-sans relative">
       <FontLoader fonts={usedFonts} />
 
+      {/* Hidden Renderer for clean export */}
+      <div style={{ position: 'absolute', top: -9999, left: -9999, visibility: 'hidden' }}>
+        <div ref={hiddenCanvasRef}>
+          <CanvasRenderer
+            elements={elements}
+            width={template.properties?.width || 600}
+            height={template.properties?.height || 400}
+            backgroundImage={template.backgroundImage}
+            values={sampleValues}
+            scale={1}
+          />
+        </div>
+      </div>
+
       {/* Header */}
       <header className="h-14 border-b bg-background flex items-center justify-between px-4 z-10 basis-14 shrink-0 shadow-sm">
         <div className="flex items-center gap-4">
@@ -401,6 +459,14 @@ export function TemplateEditor({ initialData, onSave, onBack, backLink = "/dashb
           </div>
         </div>
         <div className="flex items-center gap-2">
+
+          {/* Download Sample Button - Only in Preview */}
+          {isPreview && (
+            <Button variant="outline" size="sm" className="h-8 gap-2 mr-2" onClick={handleDownloadSample}>
+              <Download className="h-3.5 w-3.5" />
+              Download Sample
+            </Button>
+          )}
 
           {/* Preview Toggle */}
           <Button

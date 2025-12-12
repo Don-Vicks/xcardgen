@@ -22,8 +22,8 @@ export const templatesRequest = {
       params: { workspaceId, ...params },
     })
   },
-  getOne: (id: string) => {
-    return api.get<Template>(`/templates/${id}`)
+  getOne: (id: string, workspaceId?: string) => {
+    return api.get<Template>(`/templates/${id}`, { params: { workspaceId } })
   },
   create: (data: {
     name: string

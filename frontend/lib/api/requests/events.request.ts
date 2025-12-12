@@ -113,8 +113,9 @@ export class EventsRequest {
     })
   }
 
-  async getById(id: string) {
-    return api.get<Event>(`/events/${id}`)
+  async getById(id: string, workspaceId?: string) {
+    const query = workspaceId ? `?workspaceId=${workspaceId}` : ''
+    return api.get<Event>(`/events/${id}${query}`)
   }
   exportPdf(id: string) {
     return api.get(`/events/${id}/export/pdf`, {

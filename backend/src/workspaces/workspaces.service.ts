@@ -5,11 +5,14 @@ import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
 
 import { EmailService } from 'src/email/email.service';
 
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+
 @Injectable()
 export class WorkspacesService {
   constructor(
     private prisma: PrismaService,
     private emailService: EmailService,
+    private cloudinaryService: CloudinaryService,
   ) {}
 
   /**
@@ -74,6 +77,24 @@ export class WorkspacesService {
         "Workspace not found or you don't have permission to update it",
       );
     }
+    // Check for image replacements to delete old assets
+    if (
+      updateWorkspace.logo &&
+      workspace.logo &&
+      updateWorkspace.logo !== workspace.logo
+    ) {
+      // Extract public ID from URL strictly if it matches our Cloudinary URL structure
+      // Assuming URL format: .../upload/v1234/folder/id.jpg
+      await this.cloudinaryService.deleteImageFromUrl(workspace.logo);
+    }
+    if (
+      updateWorkspace.coverImage &&
+      workspace.coverImage &&
+      updateWorkspace.coverImage !== workspace.coverImage
+    ) {
+      await this.cloudinaryService.deleteImageFromUrl(workspace.coverImage);
+    }
+
     return await this.prisma.workspace.update({
       where: {
         id: workspaceId,

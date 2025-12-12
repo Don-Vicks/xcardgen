@@ -92,6 +92,7 @@ export function EventRegistrationView({ event, template, isEmbed = false }: Even
   const [values, setValues] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
   const [generatedUrl, setGeneratedUrl] = useState<string | null>(null)
+  const [generationId, setGenerationId] = useState<string | null>(null)
 
   const { addCard, getCard, removeCard } = useGeneratedCardStore()
 
@@ -261,20 +262,43 @@ export function EventRegistrationView({ event, template, isEmbed = false }: Even
     // Track Share
     eventsRequest.recordShare(event.id, 'share_api', generationId || undefined).catch(console.error)
 
-    const shareData = {
-      title: event.name,
-      text: `I just registered for ${event.name}! Get your xCard here:`,
-      url: window.location.href,
-    }
-
     try {
+      // Try to share the image file if possible
+      if (navigator.share && navigator.canShare && generatedUrl) {
+        try {
+          const response = await fetch(generatedUrl)
+          const blob = await response.blob()
+          const file = new File([blob], 'xcard.png', { type: 'image/png' })
+
+          const shareData = {
+            files: [file],
+            title: event.name,
+            text: `I just registered for ${event.name}! Check out my xCard!`,
+          }
+
+          if (navigator.canShare(shareData)) {
+            await navigator.share(shareData)
+            return
+          }
+        } catch (e) {
+          console.warn("File sharing failed, falling back to link", e)
+        }
+      }
+
+      // Fallback to link sharing
+      const shareData = {
+        title: event.name,
+        text: `I just registered for ${event.name}! Get your xCard here:`,
+        url: window.location.href,
+      }
+
       if (navigator.share && navigator.canShare(shareData)) {
         await navigator.share(shareData)
       } else {
         throw new Error("Share API not available")
       }
     } catch (e) {
-      // Fallback
+      // Fallback to clipboard
       try {
         await navigator.clipboard.writeText(window.location.href)
         toast.success("Link copied to clipboard!")
@@ -561,10 +585,13 @@ export function EventRegistrationView({ event, template, isEmbed = false }: Even
                         {dynamicFields.map((field: any) => {
                           if (field.fieldName === 'name' || field.content === '{{ name }}') return null;
                           const key = field.fieldName || (field.content ? field.content.replace(/[{}]/g, '').trim() : `field_${field.id}`)
+                          // Fallback to capitalizing the key if no label is provided
+                          const displayLabel = field.fieldLabel || key.split('_').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+
                           return (
                             <div key={field.id} className="space-y-2">
-                              <Label htmlFor={key} className="font-medium capitalize flex items-center gap-2" style={{ color: themeStyles.textColor }}>
-                                {key}
+                              <Label htmlFor={key} className="font-medium flex items-center gap-2" style={{ color: themeStyles.textColor }}>
+                                {displayLabel}
                                 {field.type === 'image' && <span className="text-xs font-normal opacity-70">(Image)</span>}
                               </Label>
 

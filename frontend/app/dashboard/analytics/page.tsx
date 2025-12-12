@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/table"
 import { eventsRequest } from "@/lib/api/requests/events.request"
 import { useWorkspace } from "@/stores/workspace-store"
-import { ArrowRight, BarChart3, CreditCard, Download, Eye, Users } from "lucide-react"
+import { ArrowRight, BarChart3, CreditCard, Download, Eye, Share2, Users } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
@@ -116,6 +116,7 @@ export default function AnalyticsPage() {
 
   // Calculate totals from events
   const totalDownloads = events.reduce((sum, e) => sum + (e.stats?.downloads || 0), 0)
+  const totalShares = events.reduce((sum, e) => sum + (e.stats?.shares || 0), 0)
   const conversionRate = stats.views > 0 ? ((stats.generations / stats.views) * 100).toFixed(1) : "0"
 
   return (
@@ -143,45 +144,56 @@ export default function AnalyticsPage() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
+      {/* KPI Cards */}
+      <div className="flex flex-nowrap gap-4 overflow-x-auto pb-4">
+        <Card className="min-w-[240px] flex-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Views</CardTitle>
             <Eye className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.views.toLocaleString()}</div>
+            <div className="text-2xl font-bold text-foreground">{stats.views.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">Across all xCards</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="min-w-[240px] flex-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Cards Generated</CardTitle>
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.generations.toLocaleString()}</div>
+            <div className="text-2xl font-bold text-foreground">{stats.generations.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">{conversionRate}% conversion rate</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="min-w-[240px] flex-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Registrations</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.attendees.toLocaleString()}</div>
+            <div className="text-2xl font-bold text-foreground">{stats.attendees.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">Unique participants</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="min-w-[240px] flex-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Downloads</CardTitle>
             <Download className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalDownloads.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">Cards saved</p>
+            <div className="text-2xl font-bold text-foreground">{totalDownloads.toLocaleString()}</div>
+            <p className="text-xs text-muted-foreground">Cards saved to device</p>
+          </CardContent>
+        </Card>
+        <Card className="min-w-[240px] flex-1">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Shares</CardTitle>
+            <Share2 className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-foreground">{totalShares.toLocaleString()}</div>
+            <p className="text-xs text-muted-foreground">Shared on social media</p>
           </CardContent>
         </Card>
       </div>
@@ -246,7 +258,7 @@ export default function AnalyticsPage() {
                       paddingAngle={5}
                       dataKey="value"
                       nameKey="name"
-                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      label={({ name, percent }: { name?: string; percent?: number }) => `${name || 'Unknown'} ${((percent || 0) * 100).toFixed(0)}%`}
                     >
                       {devices.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -309,6 +321,8 @@ export default function AnalyticsPage() {
                     <TableHead className="text-right">Views</TableHead>
                     <TableHead className="text-right">Generations</TableHead>
                     <TableHead className="text-right">Attendees</TableHead>
+                    <TableHead className="text-right">Downloads</TableHead>
+                    <TableHead className="text-right">Shares</TableHead>
                     <TableHead></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -324,6 +338,8 @@ export default function AnalyticsPage() {
                       <TableCell className="text-right">{event.stats?.views || 0}</TableCell>
                       <TableCell className="text-right">{event.stats?.generations || 0}</TableCell>
                       <TableCell className="text-right">{event.stats?.attendees || 0}</TableCell>
+                      <TableCell className="text-right">{event.stats?.downloads || 0}</TableCell>
+                      <TableCell className="text-right">{event.stats?.shares || 0}</TableCell>
                       <TableCell>
                         <Link href={`/dashboard/events/${event.slug}/analytics`}>
                           <Button variant="ghost" size="sm" className="gap-1">
@@ -341,6 +357,7 @@ export default function AnalyticsPage() {
                 <p>No xCards yet. Create one to see analytics.</p>
               </div>
             )}
+
             {events.length > 5 && (
               <div className="mt-4 text-center">
                 <Link href="/dashboard/events">
