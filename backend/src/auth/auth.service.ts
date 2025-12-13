@@ -54,6 +54,7 @@ export class AuthService {
         updatedAt: user.updatedAt,
         workspaceMemberships: user.workspaceMemberships,
         workspaceOwnerships: user.workspaceOwnerships,
+        subscription: user.subscription,
       },
       accessToken,
     };
@@ -119,6 +120,24 @@ export class AuthService {
             logo: true,
           },
         },
+        Subscriptions: {
+          where: { status: 'ACTIVE' },
+          select: {
+            id: true,
+            status: true,
+            subscriptionPlan: {
+              select: {
+                id: true,
+                name: true,
+                features: true,
+                maxWorkspaces: true,
+                maxEvents: true,
+                maxMembers: true,
+                maxGenerations: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -127,8 +146,17 @@ export class AuthService {
       user.password &&
       (await bcrypt.compare(password, user.password))
     ) {
-      const { password: _, ...result } = user;
-      return result;
+      const { password: _, Subscriptions, ...result } = user;
+      return {
+        ...result,
+        subscription:
+          Subscriptions && Subscriptions.length > 0
+            ? {
+                ...Subscriptions[0],
+                plan: Subscriptions[0].subscriptionPlan,
+              }
+            : null,
+      };
     }
     return null;
   }
