@@ -21,6 +21,7 @@ async function bootstrap() {
       'http://localhost:3000',
       'http://127.0.0.1:3000',
       process.env.FRONTEND_URL,
+      'https://xcardgen.com',
     ].filter(Boolean) as string[],
     credentials: true,
   });
