@@ -65,12 +65,12 @@ DATABASE_URL="postgresql://user:password@localhost:5432/xcardgen"
 
 # Authentication
 JWT_SECRET="super_secure_secret_key"
-FRONTEND_URL="http://localhost:3000"
+FRONTEND_URL="http://localhost:3000" # or https://xcardgen.com in prod
 
 # OAuth
 GOOGLE_CLIENT_ID="..."
 GOOGLE_CLIENT_SECRET="..."
-GOOGLE_CALLBACK_URL="http://localhost:3001/auth/google/callback"
+GOOGLE_CALLBACK_URL="http://localhost:3001/auth/google/callback" # or https://api.xcardgen.com/...
 
 # Services
 CLOUDINARY_URL="..."

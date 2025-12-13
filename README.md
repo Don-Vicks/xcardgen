@@ -79,7 +79,8 @@ npm run dev
 
 ### 5. Access the App
 
-- **Web App**: [http://localhost:3000](http://localhost:3000)
+- **Production**: [https://xcardgen.com](https://xcardgen.com)
+- **Local Web App**: [http://localhost:3000](http://localhost:3000)
 - **API Health**: [http://localhost:3001/api/health](http://localhost:3001/api/health)
 - **Swagger Docs**: [http://localhost:3001/api](http://localhost:3001/api)
 

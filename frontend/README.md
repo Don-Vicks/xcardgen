@@ -72,6 +72,10 @@ npm run dev
 
 Access the app at `http://localhost:3000`.
 
+### Production
+
+Live at: [https://xcardgen.com](https://xcardgen.com)
+
 ## 🧩 Key Features & Modules
 
 ### 🎨 The Template Editor (`/dashboard/templates/[id]/editor`)

@@ -63,4 +63,6 @@ jobs:
             npm install --omit=dev
             export $(grep -v '^#' .env | xargs)
             npx prisma migrate deploy
-            PORT=3001 pm2 reload xcardgen-backend --update-env || PORT=3001 pm2 start dist/src/main.js --name xcardgen-backend
+            # Force restart to ensure new ENV is picked up
+            pm2 delete xcardgen-backend || true
+            PORT=3001 pm2 start dist/src/main.js --name xcardgen-backend
