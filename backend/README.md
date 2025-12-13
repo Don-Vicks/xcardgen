@@ -1,4 +1,4 @@
-# xCardGen Backend API
+# xCardGen Backend API 🔥
 
 Welcome to the **xCardGen Backend**, the powerhouse behind the xCardGen platform. This application is built with **NestJS**, following a modular, scalable architecture designed to handle high-throughput event registration and dynamic image generation.
 
