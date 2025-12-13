@@ -41,17 +41,17 @@ jobs:
           key: ${{ secrets.SSH_DEPLOY_KEY }}
           source: 'frontend/.next/*,frontend/public/*,frontend/package.json,frontend/next.config.ts,frontend/.env'
           target: '/var/www/xcardgen_frontend'
-          strip_components: 2
+          strip_components: 1
 
       - name: Restart Frontend via SSH
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
+          key: ${{ secrets.SSH_DEPLOY_KEY }}
           script: |
             export NVM_DIR=~/.nvm
-            source ~/.nvm/nvm.sh
+            source ~/.nvm/nvm.sh || true
             cd /var/www/xcardgen_frontend
-            npm ci --omit=dev
+            npm install --omit=dev
             PORT=3002 pm2 reload xcardgen-frontend --update-env || PORT=3002 pm2 start npm --name xcardgen-frontend -- start
