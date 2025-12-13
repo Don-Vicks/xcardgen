@@ -117,6 +117,10 @@ export class EventsRequest {
     const query = workspaceId ? `?workspaceId=${workspaceId}` : ''
     return api.get<Event>(`/events/${id}${query}`)
   }
+
+  async getPublic(slug: string) {
+    return api.get<Event>(`/events/public/${slug}`)
+  }
   exportPdf(id: string) {
     return api.get(`/events/${id}/export/pdf`, {
       responseType: 'blob',
@@ -159,7 +163,9 @@ export class EventsRequest {
   async uploadAsset(id: string, file: File) {
     const formData = new FormData()
     formData.append('file', file)
-    return api.post<{ url: string }>(`/events/${id}/upload`, formData)
+    return api.post<{ url: string }>(`/events/${id}/upload`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
   }
 }
 

@@ -170,7 +170,7 @@ export default function EventDashboardPage({ params }: { params: Promise<{ slug:
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="registrations">Registrations</TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
+          <TabsTrigger value="settings">Appearance</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">

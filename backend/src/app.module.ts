@@ -11,6 +11,7 @@ import { PrismaService } from './prisma.service';
 import { TemplatesModule } from './templates/templates.module';
 import { UsersModule } from './users/users.module';
 import { WorkspacesModule } from './workspaces/workspaces.module';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { WorkspacesModule } from './workspaces/workspaces.module';
     WorkspacesModule,
     CloudinaryModule,
     EmailModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

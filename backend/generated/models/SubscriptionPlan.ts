@@ -28,10 +28,18 @@ export type AggregateSubscriptionPlan = {
 
 export type SubscriptionPlanAvgAggregateOutputType = {
   amount: runtime.Decimal | null
+  maxWorkspaces: number | null
+  maxGenerations: number | null
+  maxEvents: number | null
+  maxMembers: number | null
 }
 
 export type SubscriptionPlanSumAggregateOutputType = {
   amount: runtime.Decimal | null
+  maxWorkspaces: number | null
+  maxGenerations: number | null
+  maxEvents: number | null
+  maxMembers: number | null
 }
 
 export type SubscriptionPlanMinAggregateOutputType = {
@@ -41,6 +49,10 @@ export type SubscriptionPlanMinAggregateOutputType = {
   amount: runtime.Decimal | null
   interval: $Enums.SubscriptionInterval | null
   currency: string | null
+  maxWorkspaces: number | null
+  maxGenerations: number | null
+  maxEvents: number | null
+  maxMembers: number | null
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -53,6 +65,10 @@ export type SubscriptionPlanMaxAggregateOutputType = {
   amount: runtime.Decimal | null
   interval: $Enums.SubscriptionInterval | null
   currency: string | null
+  maxWorkspaces: number | null
+  maxGenerations: number | null
+  maxEvents: number | null
+  maxMembers: number | null
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -65,6 +81,11 @@ export type SubscriptionPlanCountAggregateOutputType = {
   amount: number
   interval: number
   currency: number
+  maxWorkspaces: number
+  maxGenerations: number
+  maxEvents: number
+  maxMembers: number
+  features: number
   isActive: number
   createdAt: number
   updatedAt: number
@@ -74,10 +95,18 @@ export type SubscriptionPlanCountAggregateOutputType = {
 
 export type SubscriptionPlanAvgAggregateInputType = {
   amount?: true
+  maxWorkspaces?: true
+  maxGenerations?: true
+  maxEvents?: true
+  maxMembers?: true
 }
 
 export type SubscriptionPlanSumAggregateInputType = {
   amount?: true
+  maxWorkspaces?: true
+  maxGenerations?: true
+  maxEvents?: true
+  maxMembers?: true
 }
 
 export type SubscriptionPlanMinAggregateInputType = {
@@ -87,6 +116,10 @@ export type SubscriptionPlanMinAggregateInputType = {
   amount?: true
   interval?: true
   currency?: true
+  maxWorkspaces?: true
+  maxGenerations?: true
+  maxEvents?: true
+  maxMembers?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -99,6 +132,10 @@ export type SubscriptionPlanMaxAggregateInputType = {
   amount?: true
   interval?: true
   currency?: true
+  maxWorkspaces?: true
+  maxGenerations?: true
+  maxEvents?: true
+  maxMembers?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -111,6 +148,11 @@ export type SubscriptionPlanCountAggregateInputType = {
   amount?: true
   interval?: true
   currency?: true
+  maxWorkspaces?: true
+  maxGenerations?: true
+  maxEvents?: true
+  maxMembers?: true
+  features?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -210,6 +252,11 @@ export type SubscriptionPlanGroupByOutputType = {
   amount: runtime.Decimal
   interval: $Enums.SubscriptionInterval
   currency: string
+  maxWorkspaces: number
+  maxGenerations: number
+  maxEvents: number
+  maxMembers: number
+  features: runtime.JsonValue | null
   isActive: boolean
   createdAt: Date
   updatedAt: Date
@@ -245,6 +292,11 @@ export type SubscriptionPlanWhereInput = {
   amount?: Prisma.DecimalFilter<"SubscriptionPlan"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   interval?: Prisma.EnumSubscriptionIntervalFilter<"SubscriptionPlan"> | $Enums.SubscriptionInterval
   currency?: Prisma.StringFilter<"SubscriptionPlan"> | string
+  maxWorkspaces?: Prisma.IntFilter<"SubscriptionPlan"> | number
+  maxGenerations?: Prisma.IntFilter<"SubscriptionPlan"> | number
+  maxEvents?: Prisma.IntFilter<"SubscriptionPlan"> | number
+  maxMembers?: Prisma.IntFilter<"SubscriptionPlan"> | number
+  features?: Prisma.JsonNullableFilter<"SubscriptionPlan">
   isActive?: Prisma.BoolFilter<"SubscriptionPlan"> | boolean
   createdAt?: Prisma.DateTimeFilter<"SubscriptionPlan"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"SubscriptionPlan"> | Date | string
@@ -258,6 +310,11 @@ export type SubscriptionPlanOrderByWithRelationInput = {
   amount?: Prisma.SortOrder
   interval?: Prisma.SortOrder
   currency?: Prisma.SortOrder
+  maxWorkspaces?: Prisma.SortOrder
+  maxGenerations?: Prisma.SortOrder
+  maxEvents?: Prisma.SortOrder
+  maxMembers?: Prisma.SortOrder
+  features?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -274,6 +331,11 @@ export type SubscriptionPlanWhereUniqueInput = Prisma.AtLeast<{
   amount?: Prisma.DecimalFilter<"SubscriptionPlan"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   interval?: Prisma.EnumSubscriptionIntervalFilter<"SubscriptionPlan"> | $Enums.SubscriptionInterval
   currency?: Prisma.StringFilter<"SubscriptionPlan"> | string
+  maxWorkspaces?: Prisma.IntFilter<"SubscriptionPlan"> | number
+  maxGenerations?: Prisma.IntFilter<"SubscriptionPlan"> | number
+  maxEvents?: Prisma.IntFilter<"SubscriptionPlan"> | number
+  maxMembers?: Prisma.IntFilter<"SubscriptionPlan"> | number
+  features?: Prisma.JsonNullableFilter<"SubscriptionPlan">
   isActive?: Prisma.BoolFilter<"SubscriptionPlan"> | boolean
   createdAt?: Prisma.DateTimeFilter<"SubscriptionPlan"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"SubscriptionPlan"> | Date | string
@@ -287,6 +349,11 @@ export type SubscriptionPlanOrderByWithAggregationInput = {
   amount?: Prisma.SortOrder
   interval?: Prisma.SortOrder
   currency?: Prisma.SortOrder
+  maxWorkspaces?: Prisma.SortOrder
+  maxGenerations?: Prisma.SortOrder
+  maxEvents?: Prisma.SortOrder
+  maxMembers?: Prisma.SortOrder
+  features?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -307,6 +374,11 @@ export type SubscriptionPlanScalarWhereWithAggregatesInput = {
   amount?: Prisma.DecimalWithAggregatesFilter<"SubscriptionPlan"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   interval?: Prisma.EnumSubscriptionIntervalWithAggregatesFilter<"SubscriptionPlan"> | $Enums.SubscriptionInterval
   currency?: Prisma.StringWithAggregatesFilter<"SubscriptionPlan"> | string
+  maxWorkspaces?: Prisma.IntWithAggregatesFilter<"SubscriptionPlan"> | number
+  maxGenerations?: Prisma.IntWithAggregatesFilter<"SubscriptionPlan"> | number
+  maxEvents?: Prisma.IntWithAggregatesFilter<"SubscriptionPlan"> | number
+  maxMembers?: Prisma.IntWithAggregatesFilter<"SubscriptionPlan"> | number
+  features?: Prisma.JsonNullableWithAggregatesFilter<"SubscriptionPlan">
   isActive?: Prisma.BoolWithAggregatesFilter<"SubscriptionPlan"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"SubscriptionPlan"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"SubscriptionPlan"> | Date | string
@@ -319,6 +391,11 @@ export type SubscriptionPlanCreateInput = {
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   interval: $Enums.SubscriptionInterval
   currency: string
+  maxWorkspaces?: number
+  maxGenerations?: number
+  maxEvents?: number
+  maxMembers?: number
+  features?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -332,6 +409,11 @@ export type SubscriptionPlanUncheckedCreateInput = {
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   interval: $Enums.SubscriptionInterval
   currency: string
+  maxWorkspaces?: number
+  maxGenerations?: number
+  maxEvents?: number
+  maxMembers?: number
+  features?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -345,6 +427,11 @@ export type SubscriptionPlanUpdateInput = {
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   interval?: Prisma.EnumSubscriptionIntervalFieldUpdateOperationsInput | $Enums.SubscriptionInterval
   currency?: Prisma.StringFieldUpdateOperationsInput | string
+  maxWorkspaces?: Prisma.IntFieldUpdateOperationsInput | number
+  maxGenerations?: Prisma.IntFieldUpdateOperationsInput | number
+  maxEvents?: Prisma.IntFieldUpdateOperationsInput | number
+  maxMembers?: Prisma.IntFieldUpdateOperationsInput | number
+  features?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -358,6 +445,11 @@ export type SubscriptionPlanUncheckedUpdateInput = {
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   interval?: Prisma.EnumSubscriptionIntervalFieldUpdateOperationsInput | $Enums.SubscriptionInterval
   currency?: Prisma.StringFieldUpdateOperationsInput | string
+  maxWorkspaces?: Prisma.IntFieldUpdateOperationsInput | number
+  maxGenerations?: Prisma.IntFieldUpdateOperationsInput | number
+  maxEvents?: Prisma.IntFieldUpdateOperationsInput | number
+  maxMembers?: Prisma.IntFieldUpdateOperationsInput | number
+  features?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -371,6 +463,11 @@ export type SubscriptionPlanCreateManyInput = {
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   interval: $Enums.SubscriptionInterval
   currency: string
+  maxWorkspaces?: number
+  maxGenerations?: number
+  maxEvents?: number
+  maxMembers?: number
+  features?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -383,6 +480,11 @@ export type SubscriptionPlanUpdateManyMutationInput = {
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   interval?: Prisma.EnumSubscriptionIntervalFieldUpdateOperationsInput | $Enums.SubscriptionInterval
   currency?: Prisma.StringFieldUpdateOperationsInput | string
+  maxWorkspaces?: Prisma.IntFieldUpdateOperationsInput | number
+  maxGenerations?: Prisma.IntFieldUpdateOperationsInput | number
+  maxEvents?: Prisma.IntFieldUpdateOperationsInput | number
+  maxMembers?: Prisma.IntFieldUpdateOperationsInput | number
+  features?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -395,6 +497,11 @@ export type SubscriptionPlanUncheckedUpdateManyInput = {
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   interval?: Prisma.EnumSubscriptionIntervalFieldUpdateOperationsInput | $Enums.SubscriptionInterval
   currency?: Prisma.StringFieldUpdateOperationsInput | string
+  maxWorkspaces?: Prisma.IntFieldUpdateOperationsInput | number
+  maxGenerations?: Prisma.IntFieldUpdateOperationsInput | number
+  maxEvents?: Prisma.IntFieldUpdateOperationsInput | number
+  maxMembers?: Prisma.IntFieldUpdateOperationsInput | number
+  features?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -407,6 +514,11 @@ export type SubscriptionPlanCountOrderByAggregateInput = {
   amount?: Prisma.SortOrder
   interval?: Prisma.SortOrder
   currency?: Prisma.SortOrder
+  maxWorkspaces?: Prisma.SortOrder
+  maxGenerations?: Prisma.SortOrder
+  maxEvents?: Prisma.SortOrder
+  maxMembers?: Prisma.SortOrder
+  features?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -414,6 +526,10 @@ export type SubscriptionPlanCountOrderByAggregateInput = {
 
 export type SubscriptionPlanAvgOrderByAggregateInput = {
   amount?: Prisma.SortOrder
+  maxWorkspaces?: Prisma.SortOrder
+  maxGenerations?: Prisma.SortOrder
+  maxEvents?: Prisma.SortOrder
+  maxMembers?: Prisma.SortOrder
 }
 
 export type SubscriptionPlanMaxOrderByAggregateInput = {
@@ -423,6 +539,10 @@ export type SubscriptionPlanMaxOrderByAggregateInput = {
   amount?: Prisma.SortOrder
   interval?: Prisma.SortOrder
   currency?: Prisma.SortOrder
+  maxWorkspaces?: Prisma.SortOrder
+  maxGenerations?: Prisma.SortOrder
+  maxEvents?: Prisma.SortOrder
+  maxMembers?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -435,6 +555,10 @@ export type SubscriptionPlanMinOrderByAggregateInput = {
   amount?: Prisma.SortOrder
   interval?: Prisma.SortOrder
   currency?: Prisma.SortOrder
+  maxWorkspaces?: Prisma.SortOrder
+  maxGenerations?: Prisma.SortOrder
+  maxEvents?: Prisma.SortOrder
+  maxMembers?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -442,19 +566,15 @@ export type SubscriptionPlanMinOrderByAggregateInput = {
 
 export type SubscriptionPlanSumOrderByAggregateInput = {
   amount?: Prisma.SortOrder
+  maxWorkspaces?: Prisma.SortOrder
+  maxGenerations?: Prisma.SortOrder
+  maxEvents?: Prisma.SortOrder
+  maxMembers?: Prisma.SortOrder
 }
 
 export type SubscriptionPlanScalarRelationFilter = {
   is?: Prisma.SubscriptionPlanWhereInput
   isNot?: Prisma.SubscriptionPlanWhereInput
-}
-
-export type DecimalFieldUpdateOperationsInput = {
-  set?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  increment?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type EnumSubscriptionIntervalFieldUpdateOperationsInput = {
@@ -486,6 +606,11 @@ export type SubscriptionPlanCreateWithoutSubscriptionsInput = {
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   interval: $Enums.SubscriptionInterval
   currency: string
+  maxWorkspaces?: number
+  maxGenerations?: number
+  maxEvents?: number
+  maxMembers?: number
+  features?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -498,6 +623,11 @@ export type SubscriptionPlanUncheckedCreateWithoutSubscriptionsInput = {
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   interval: $Enums.SubscriptionInterval
   currency: string
+  maxWorkspaces?: number
+  maxGenerations?: number
+  maxEvents?: number
+  maxMembers?: number
+  features?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -526,6 +656,11 @@ export type SubscriptionPlanUpdateWithoutSubscriptionsInput = {
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   interval?: Prisma.EnumSubscriptionIntervalFieldUpdateOperationsInput | $Enums.SubscriptionInterval
   currency?: Prisma.StringFieldUpdateOperationsInput | string
+  maxWorkspaces?: Prisma.IntFieldUpdateOperationsInput | number
+  maxGenerations?: Prisma.IntFieldUpdateOperationsInput | number
+  maxEvents?: Prisma.IntFieldUpdateOperationsInput | number
+  maxMembers?: Prisma.IntFieldUpdateOperationsInput | number
+  features?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -538,6 +673,11 @@ export type SubscriptionPlanUncheckedUpdateWithoutSubscriptionsInput = {
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   interval?: Prisma.EnumSubscriptionIntervalFieldUpdateOperationsInput | $Enums.SubscriptionInterval
   currency?: Prisma.StringFieldUpdateOperationsInput | string
+  maxWorkspaces?: Prisma.IntFieldUpdateOperationsInput | number
+  maxGenerations?: Prisma.IntFieldUpdateOperationsInput | number
+  maxEvents?: Prisma.IntFieldUpdateOperationsInput | number
+  maxMembers?: Prisma.IntFieldUpdateOperationsInput | number
+  features?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -581,6 +721,11 @@ export type SubscriptionPlanSelect<ExtArgs extends runtime.Types.Extensions.Inte
   amount?: boolean
   interval?: boolean
   currency?: boolean
+  maxWorkspaces?: boolean
+  maxGenerations?: boolean
+  maxEvents?: boolean
+  maxMembers?: boolean
+  features?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -595,6 +740,11 @@ export type SubscriptionPlanSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   amount?: boolean
   interval?: boolean
   currency?: boolean
+  maxWorkspaces?: boolean
+  maxGenerations?: boolean
+  maxEvents?: boolean
+  maxMembers?: boolean
+  features?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -607,6 +757,11 @@ export type SubscriptionPlanSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   amount?: boolean
   interval?: boolean
   currency?: boolean
+  maxWorkspaces?: boolean
+  maxGenerations?: boolean
+  maxEvents?: boolean
+  maxMembers?: boolean
+  features?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -619,12 +774,17 @@ export type SubscriptionPlanSelectScalar = {
   amount?: boolean
   interval?: boolean
   currency?: boolean
+  maxWorkspaces?: boolean
+  maxGenerations?: boolean
+  maxEvents?: boolean
+  maxMembers?: boolean
+  features?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type SubscriptionPlanOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "amount" | "interval" | "currency" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["subscriptionPlan"]>
+export type SubscriptionPlanOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "amount" | "interval" | "currency" | "maxWorkspaces" | "maxGenerations" | "maxEvents" | "maxMembers" | "features" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["subscriptionPlan"]>
 export type SubscriptionPlanInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   subscriptions?: boolean | Prisma.SubscriptionPlan$subscriptionsArgs<ExtArgs>
   _count?: boolean | Prisma.SubscriptionPlanCountOutputTypeDefaultArgs<ExtArgs>
@@ -644,6 +804,11 @@ export type $SubscriptionPlanPayload<ExtArgs extends runtime.Types.Extensions.In
     amount: runtime.Decimal
     interval: $Enums.SubscriptionInterval
     currency: string
+    maxWorkspaces: number
+    maxGenerations: number
+    maxEvents: number
+    maxMembers: number
+    features: runtime.JsonValue | null
     isActive: boolean
     createdAt: Date
     updatedAt: Date
@@ -1077,6 +1242,11 @@ export interface SubscriptionPlanFieldRefs {
   readonly amount: Prisma.FieldRef<"SubscriptionPlan", 'Decimal'>
   readonly interval: Prisma.FieldRef<"SubscriptionPlan", 'SubscriptionInterval'>
   readonly currency: Prisma.FieldRef<"SubscriptionPlan", 'String'>
+  readonly maxWorkspaces: Prisma.FieldRef<"SubscriptionPlan", 'Int'>
+  readonly maxGenerations: Prisma.FieldRef<"SubscriptionPlan", 'Int'>
+  readonly maxEvents: Prisma.FieldRef<"SubscriptionPlan", 'Int'>
+  readonly maxMembers: Prisma.FieldRef<"SubscriptionPlan", 'Int'>
+  readonly features: Prisma.FieldRef<"SubscriptionPlan", 'Json'>
   readonly isActive: Prisma.FieldRef<"SubscriptionPlan", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"SubscriptionPlan", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"SubscriptionPlan", 'DateTime'>

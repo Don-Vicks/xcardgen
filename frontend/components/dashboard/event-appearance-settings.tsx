@@ -91,8 +91,39 @@ interface EventAppearanceSettingsProps {
   onUpdate?: (appearance: any) => void
 }
 
+import { useAuth } from "@/stores/auth-store"
+// ... (imports)
+
+// ...
+
 export function EventAppearanceSettings({ event, onUpdate }: EventAppearanceSettingsProps) {
+  const { user } = useAuth()
+  const planCtx = user?.subscription?.plan
+  const canRemoveBranding = planCtx?.features?.canRemoveBranding || false
+  const canCustomizeTheme = planCtx?.features?.canCustomizeTheme || false
   const [selectedTheme, setSelectedTheme] = useState(event.appearance?.theme || "minimal")
+
+  function PremiumOverlay({ label = "Pro Feature" }: { label?: string }) {
+    return (
+      <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-background/50 backdrop-blur-sm rounded-lg border border-dashed border-primary/20">
+        <div className="flex flex-col items-center gap-2 p-4 text-center">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+            <Palette className="h-5 w-5 text-primary" />
+          </div>
+          <div className="space-y-1">
+            <h4 className="text-sm font-semibold">{label}</h4>
+            <p className="text-xs text-muted-foreground w-[200px]">
+              Unlock custom themes & colors with Pro.
+            </p>
+          </div>
+          <Button size="sm" className="mt-2" asChild>
+            <a href="/dashboard/billing">Upgrade Plan</a>
+          </Button>
+        </div>
+      </div>
+    )
+  }
+  // ...
   const [primaryColor, setPrimaryColor] = useState(event.appearance?.primaryColor || "#000000")
   const [backgroundColor, setBackgroundColor] = useState(event.appearance?.backgroundColor || "")
   const [saving, setSaving] = useState(false)
@@ -136,43 +167,46 @@ export function EventAppearanceSettings({ event, onUpdate }: EventAppearanceSett
             Choose a theme for your public event page
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {THEME_OPTIONS.map((theme) => (
-              <button
-                key={theme.id}
-                onClick={() => setSelectedTheme(theme.id)}
-                className={cn(
-                  "relative rounded-xl p-1 transition-all hover:scale-105 text-left",
-                  selectedTheme === theme.id
-                    ? "ring-2 ring-primary ring-offset-2"
-                    : "ring-1 ring-border hover:ring-primary/50"
-                )}
-              >
-                {/* Theme Preview */}
-                <div
+        <CardContent className="relative">
+          {!canCustomizeTheme && <PremiumOverlay label="Custom Themes Locked" />}
+          <div className={!canCustomizeTheme ? "blur-sm opacity-50 pointer-events-none" : ""}>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              {THEME_OPTIONS.map((theme) => (
+                <button
+                  key={theme.id}
+                  onClick={() => setSelectedTheme(theme.id)}
                   className={cn(
-                    "aspect-[4/3] rounded-lg flex items-center justify-center",
-                    theme.previewClass
+                    "relative rounded-xl p-1 transition-all hover:scale-105 text-left",
+                    selectedTheme === theme.id
+                      ? "ring-2 ring-primary ring-offset-2"
+                      : "ring-1 ring-border hover:ring-primary/50"
                   )}
                 >
-                  <div className="w-8 h-10 rounded bg-current opacity-20" />
-                </div>
-
-                {/* Theme Name */}
-                <div className="p-2 text-center">
-                  <p className="font-medium text-sm">{theme.name}</p>
-                  <p className="text-xs text-muted-foreground">{theme.description}</p>
-                </div>
-
-                {/* Selected Indicator */}
-                {selectedTheme === theme.id && (
-                  <div className="absolute top-2 right-2 h-5 w-5 rounded-full bg-primary flex items-center justify-center">
-                    <Check className="h-3 w-3 text-primary-foreground" />
+                  {/* Theme Preview */}
+                  <div
+                    className={cn(
+                      "aspect-[4/3] rounded-lg flex items-center justify-center",
+                      theme.previewClass
+                    )}
+                  >
+                    <div className="w-8 h-10 rounded bg-current opacity-20" />
                   </div>
-                )}
-              </button>
-            ))}
+
+                  {/* Theme Name */}
+                  <div className="p-2 text-center">
+                    <p className="font-medium text-sm">{theme.name}</p>
+                    <p className="text-xs text-muted-foreground">{theme.description}</p>
+                  </div>
+
+                  {/* Selected Indicator */}
+                  {selectedTheme === theme.id && (
+                    <div className="absolute top-2 right-2 h-5 w-5 rounded-full bg-primary flex items-center justify-center">
+                      <Check className="h-3 w-3 text-primary-foreground" />
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -185,58 +219,105 @@ export function EventAppearanceSettings({ event, onUpdate }: EventAppearanceSett
             Choose a primary color for buttons and highlights
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Preset Colors */}
-          <div className="flex flex-wrap gap-2">
-            {PRESET_COLORS.map((color) => (
-              <button
-                key={color}
-                onClick={() => setPrimaryColor(color)}
-                className={cn(
-                  "h-10 w-10 rounded-full transition-all hover:scale-110",
-                  primaryColor === color
-                    ? "ring-2 ring-offset-2 ring-primary scale-110"
-                    : "ring-1 ring-border"
-                )}
-                style={{ backgroundColor: color }}
-              >
-                {primaryColor === color && (
-                  <Check className={cn(
-                    "h-5 w-5 mx-auto",
-                    ["#000000", "#2563EB", "#7C3AED"].includes(color)
-                      ? "text-white"
-                      : "text-black"
-                  )} />
-                )}
-              </button>
-            ))}
-          </div>
+        <CardContent className="space-y-4 relative">
+          {!canCustomizeTheme && <PremiumOverlay label="Custom Colors Locked" />}
+          <div className={!canCustomizeTheme ? "blur-sm opacity-50 pointer-events-none" : ""}>
+            {/* Preset Colors */}
+            <div className="flex flex-wrap gap-2">
+              {PRESET_COLORS.map((color) => (
+                <button
+                  key={color}
+                  onClick={() => setPrimaryColor(color)}
+                  className={cn(
+                    "h-10 w-10 rounded-full transition-all hover:scale-110",
+                    primaryColor === color
+                      ? "ring-2 ring-offset-2 ring-primary scale-110"
+                      : "ring-1 ring-border"
+                  )}
+                  style={{ backgroundColor: color }}
+                >
+                  {primaryColor === color && (
+                    <Check className={cn(
+                      "h-5 w-5 mx-auto",
+                      ["#000000", "#2563EB", "#7C3AED"].includes(color)
+                        ? "text-white"
+                        : "text-black"
+                    )} />
+                  )}
+                </button>
+              ))}
+            </div>
 
-          {/* Custom Color Input */}
-          <div className="flex items-center gap-4">
-            <Label htmlFor="custom-color" className="text-sm text-muted-foreground">
-              Custom:
-            </Label>
-            <div className="flex items-center gap-2">
-              <input
-                type="color"
-                id="custom-color"
-                value={primaryColor}
-                onChange={(e) => setPrimaryColor(e.target.value)}
-                className="h-10 w-14 rounded cursor-pointer border-0"
-              />
-              <Input
-                value={primaryColor}
-                onChange={(e) => setPrimaryColor(e.target.value)}
-                className="w-28 font-mono text-sm"
-                placeholder="#000000"
-              />
+            {/* Custom Color Input */}
+            <div className="flex items-center gap-4">
+              <Label htmlFor="custom-color" className="text-sm text-muted-foreground">
+                Custom:
+              </Label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="color"
+                  id="custom-color"
+                  value={primaryColor}
+                  onChange={(e) => setPrimaryColor(e.target.value)}
+                  className="h-10 w-14 rounded cursor-pointer border-0"
+                />
+                <Input
+                  value={primaryColor}
+                  onChange={(e) => setPrimaryColor(e.target.value)}
+                  className="w-28 font-mono text-sm"
+                  placeholder="#000000"
+                />
+              </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Background Color Selection */}
+      {/* Branding / Watermark */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Branding</CardTitle>
+          <CardDescription>
+            Manage xCardGen branding on your event page.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between p-4 border rounded-lg bg-muted/40">
+            <div className="space-y-1">
+              <Label className="text-base">xCardGen Watermark</Label>
+              <p className="text-sm text-muted-foreground">
+                {canRemoveBranding
+                  ? "You can disable the 'Powered by xCardGen' badge."
+                  : "Upgrade to remove the 'Powered by xCardGen' badge."}
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              {!canRemoveBranding && <span className="text-xs font-medium text-amber-600 bg-amber-100 px-2 py-1 rounded">Pro Feature</span>}
+              {/* 
+                     Logic: If user can remove branding, they see a toggle.
+                     If they CANNOT, the toggle is forced ON (checked) and disabled.
+                     Wait, usually 'removeBranding' means TRUE to REMOVE.
+                     So if they can't remove, the toggle 'Remove Branding' should be OFF and Disabled.
+                     Or 'Show Branding' should be ON and Disabled.
+                     Let's verify the backend logic: `options?.removeBranding` was passed. 
+                     So the feature is "Remove Branding".
+                 */}
+              {/* Implementing as "Remove Branding" Toggle */}
+              <Button
+                variant={canRemoveBranding ? "outline" : "ghost"}
+                className={!canRemoveBranding ? "opacity-50 cursor-not-allowed" : ""}
+                disabled={true}
+              >
+                {/* Simplified UI: Just a text status if not implemented fully with a real toggle yet. */}
+                {canRemoveBranding ? "Allowed" : "Locked"}
+              </Button>
+              {/* Actually, let's look for a Switch component if available or just use a checkbox */}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Background Color Selection (Existing) */}
       <Card>
         <CardHeader>
           <CardTitle>Background Color</CardTitle>
@@ -244,59 +325,62 @@ export function EventAppearanceSettings({ event, onUpdate }: EventAppearanceSett
             Override the default theme background (Optional)
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => setBackgroundColor("")}
-              className={cn(
-                "h-10 px-3 rounded-lg border text-sm font-medium transition-all hover:bg-accent",
-                !backgroundColor
-                  ? "ring-2 ring-offset-2 ring-primary"
-                  : ""
-              )}
-            >
-              Default
-            </button>
-            {PRESET_BACKGROUNDS.map((color) => (
+        <CardContent className="space-y-4 relative">
+          {!canCustomizeTheme && <PremiumOverlay label="Backgrounds Locked" />}
+          <div className={!canCustomizeTheme ? "blur-sm opacity-50 pointer-events-none" : ""}>
+            <div className="flex flex-wrap gap-2">
               <button
-                key={color}
-                onClick={() => setBackgroundColor(color)}
+                onClick={() => setBackgroundColor("")}
                 className={cn(
-                  "h-10 w-10 rounded-full transition-all hover:scale-110 border",
-                  backgroundColor === color
-                    ? "ring-2 ring-offset-2 ring-primary scale-110"
-                    : "ring-1 ring-border"
+                  "h-10 px-3 rounded-lg border text-sm font-medium transition-all hover:bg-accent",
+                  !backgroundColor
+                    ? "ring-2 ring-offset-2 ring-primary"
+                    : ""
                 )}
-                style={{ backgroundColor: color }}
               >
-                {backgroundColor === color && (
-                  <Check className={cn(
-                    "h-4 w-4 mx-auto",
-                    isLightColor(color) ? "text-black" : "text-white"
-                  )} />
-                )}
+                Default
               </button>
-            ))}
-          </div>
+              {PRESET_BACKGROUNDS.map((color) => (
+                <button
+                  key={color}
+                  onClick={() => setBackgroundColor(color)}
+                  className={cn(
+                    "h-10 w-10 rounded-full transition-all hover:scale-110 border",
+                    backgroundColor === color
+                      ? "ring-2 ring-offset-2 ring-primary scale-110"
+                      : "ring-1 ring-border"
+                  )}
+                  style={{ backgroundColor: color }}
+                >
+                  {backgroundColor === color && (
+                    <Check className={cn(
+                      "h-4 w-4 mx-auto",
+                      isLightColor(color) ? "text-black" : "text-white"
+                    )} />
+                  )}
+                </button>
+              ))}
+            </div>
 
-          <div className="flex items-center gap-4">
-            <Label htmlFor="custom-bg" className="text-sm text-muted-foreground">
-              Custom:
-            </Label>
-            <div className="flex items-center gap-2">
-              <input
-                type="color"
-                id="custom-bg"
-                value={backgroundColor || "#ffffff"}
-                onChange={(e) => setBackgroundColor(e.target.value)}
-                className="h-10 w-14 rounded cursor-pointer border-0"
-              />
-              <Input
-                value={backgroundColor}
-                onChange={(e) => setBackgroundColor(e.target.value)}
-                className="w-28 font-mono text-sm"
-                placeholder="Default"
-              />
+            <div className="flex items-center gap-4">
+              <Label htmlFor="custom-bg" className="text-sm text-muted-foreground">
+                Custom:
+              </Label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="color"
+                  id="custom-bg"
+                  value={backgroundColor || "#ffffff"}
+                  onChange={(e) => setBackgroundColor(e.target.value)}
+                  className="h-10 w-14 rounded cursor-pointer border-0"
+                />
+                <Input
+                  value={backgroundColor}
+                  onChange={(e) => setBackgroundColor(e.target.value)}
+                  className="w-28 font-mono text-sm"
+                  placeholder="Default"
+                />
+              </div>
             </div>
           </div>
         </CardContent>

@@ -110,7 +110,7 @@ export class EventsController {
   }
 
   @Public()
-  @Get(':slug')
+  @Get('public/:slug')
   findOne(@Param('slug') slug: string) {
     return this.eventsService.findPublic(slug);
   }
@@ -206,7 +206,7 @@ export class EventsController {
   @UseInterceptors(FileInterceptor('file'))
   async uploadAsset(@Param('id') id: string, @UploadedFile() file: any) {
     if (!file) throw new BadRequestException('No file uploaded');
-    const res = await this.eventsService.uploadAsset(file);
+    const res = await this.eventsService.uploadAsset(id, file);
     return { url: res.secure_url };
   }
 }

@@ -59,6 +59,7 @@ export type WorkspaceCountAggregateOutputType = {
   slug: number
   type: number
   socialLinks: number
+  appearance: number
   ownerId: number
   createdAt: number
   updatedAt: number
@@ -101,6 +102,7 @@ export type WorkspaceCountAggregateInputType = {
   slug?: true
   type?: true
   socialLinks?: true
+  appearance?: true
   ownerId?: true
   createdAt?: true
   updatedAt?: true
@@ -188,6 +190,7 @@ export type WorkspaceGroupByOutputType = {
   slug: string | null
   type: $Enums.WorkspaceType
   socialLinks: runtime.JsonValue
+  appearance: runtime.JsonValue | null
   ownerId: string
   createdAt: Date
   updatedAt: Date
@@ -223,6 +226,7 @@ export type WorkspaceWhereInput = {
   slug?: Prisma.StringNullableFilter<"Workspace"> | string | null
   type?: Prisma.EnumWorkspaceTypeFilter<"Workspace"> | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonFilter<"Workspace">
+  appearance?: Prisma.JsonNullableFilter<"Workspace">
   ownerId?: Prisma.StringFilter<"Workspace"> | string
   createdAt?: Prisma.DateTimeFilter<"Workspace"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Workspace"> | Date | string
@@ -241,6 +245,7 @@ export type WorkspaceOrderByWithRelationInput = {
   slug?: Prisma.SortOrderInput | Prisma.SortOrder
   type?: Prisma.SortOrder
   socialLinks?: Prisma.SortOrder
+  appearance?: Prisma.SortOrderInput | Prisma.SortOrder
   ownerId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -262,6 +267,7 @@ export type WorkspaceWhereUniqueInput = Prisma.AtLeast<{
   coverImage?: Prisma.StringNullableFilter<"Workspace"> | string | null
   type?: Prisma.EnumWorkspaceTypeFilter<"Workspace"> | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonFilter<"Workspace">
+  appearance?: Prisma.JsonNullableFilter<"Workspace">
   ownerId?: Prisma.StringFilter<"Workspace"> | string
   createdAt?: Prisma.DateTimeFilter<"Workspace"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Workspace"> | Date | string
@@ -280,6 +286,7 @@ export type WorkspaceOrderByWithAggregationInput = {
   slug?: Prisma.SortOrderInput | Prisma.SortOrder
   type?: Prisma.SortOrder
   socialLinks?: Prisma.SortOrder
+  appearance?: Prisma.SortOrderInput | Prisma.SortOrder
   ownerId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -300,6 +307,7 @@ export type WorkspaceScalarWhereWithAggregatesInput = {
   slug?: Prisma.StringNullableWithAggregatesFilter<"Workspace"> | string | null
   type?: Prisma.EnumWorkspaceTypeWithAggregatesFilter<"Workspace"> | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonWithAggregatesFilter<"Workspace">
+  appearance?: Prisma.JsonNullableWithAggregatesFilter<"Workspace">
   ownerId?: Prisma.StringWithAggregatesFilter<"Workspace"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Workspace"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Workspace"> | Date | string
@@ -314,6 +322,7 @@ export type WorkspaceCreateInput = {
   slug?: string | null
   type?: $Enums.WorkspaceType
   socialLinks: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   events?: Prisma.EventCreateNestedManyWithoutWorkspaceInput
@@ -331,6 +340,7 @@ export type WorkspaceUncheckedCreateInput = {
   slug?: string | null
   type?: $Enums.WorkspaceType
   socialLinks: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   ownerId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -348,6 +358,7 @@ export type WorkspaceUpdateInput = {
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkspaceTypeFieldUpdateOperationsInput | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   events?: Prisma.EventUpdateManyWithoutWorkspaceNestedInput
@@ -365,6 +376,7 @@ export type WorkspaceUncheckedUpdateInput = {
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkspaceTypeFieldUpdateOperationsInput | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -382,6 +394,7 @@ export type WorkspaceCreateManyInput = {
   slug?: string | null
   type?: $Enums.WorkspaceType
   socialLinks: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   ownerId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -396,6 +409,7 @@ export type WorkspaceUpdateManyMutationInput = {
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkspaceTypeFieldUpdateOperationsInput | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -409,6 +423,7 @@ export type WorkspaceUncheckedUpdateManyInput = {
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkspaceTypeFieldUpdateOperationsInput | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -423,6 +438,7 @@ export type WorkspaceCountOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   type?: Prisma.SortOrder
   socialLinks?: Prisma.SortOrder
+  appearance?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -587,6 +603,7 @@ export type WorkspaceCreateWithoutMembersInput = {
   slug?: string | null
   type?: $Enums.WorkspaceType
   socialLinks: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   events?: Prisma.EventCreateNestedManyWithoutWorkspaceInput
@@ -603,6 +620,7 @@ export type WorkspaceUncheckedCreateWithoutMembersInput = {
   slug?: string | null
   type?: $Enums.WorkspaceType
   socialLinks: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   ownerId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -635,6 +653,7 @@ export type WorkspaceUpdateWithoutMembersInput = {
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkspaceTypeFieldUpdateOperationsInput | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   events?: Prisma.EventUpdateManyWithoutWorkspaceNestedInput
@@ -651,6 +670,7 @@ export type WorkspaceUncheckedUpdateWithoutMembersInput = {
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkspaceTypeFieldUpdateOperationsInput | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -667,6 +687,7 @@ export type WorkspaceCreateWithoutOwnerInput = {
   slug?: string | null
   type?: $Enums.WorkspaceType
   socialLinks: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   events?: Prisma.EventCreateNestedManyWithoutWorkspaceInput
@@ -683,6 +704,7 @@ export type WorkspaceUncheckedCreateWithoutOwnerInput = {
   slug?: string | null
   type?: $Enums.WorkspaceType
   socialLinks: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   events?: Prisma.EventUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -728,6 +750,7 @@ export type WorkspaceScalarWhereInput = {
   slug?: Prisma.StringNullableFilter<"Workspace"> | string | null
   type?: Prisma.EnumWorkspaceTypeFilter<"Workspace"> | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonFilter<"Workspace">
+  appearance?: Prisma.JsonNullableFilter<"Workspace">
   ownerId?: Prisma.StringFilter<"Workspace"> | string
   createdAt?: Prisma.DateTimeFilter<"Workspace"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Workspace"> | Date | string
@@ -742,6 +765,7 @@ export type WorkspaceCreateWithoutEventsInput = {
   slug?: string | null
   type?: $Enums.WorkspaceType
   socialLinks: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   templates?: Prisma.TemplateCreateNestedManyWithoutWorkspaceInput
@@ -758,6 +782,7 @@ export type WorkspaceUncheckedCreateWithoutEventsInput = {
   slug?: string | null
   type?: $Enums.WorkspaceType
   socialLinks: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   ownerId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -790,6 +815,7 @@ export type WorkspaceUpdateWithoutEventsInput = {
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkspaceTypeFieldUpdateOperationsInput | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   templates?: Prisma.TemplateUpdateManyWithoutWorkspaceNestedInput
@@ -806,6 +832,7 @@ export type WorkspaceUncheckedUpdateWithoutEventsInput = {
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkspaceTypeFieldUpdateOperationsInput | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -822,6 +849,7 @@ export type WorkspaceCreateWithoutTemplatesInput = {
   slug?: string | null
   type?: $Enums.WorkspaceType
   socialLinks: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   events?: Prisma.EventCreateNestedManyWithoutWorkspaceInput
@@ -838,6 +866,7 @@ export type WorkspaceUncheckedCreateWithoutTemplatesInput = {
   slug?: string | null
   type?: $Enums.WorkspaceType
   socialLinks: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   ownerId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -870,6 +899,7 @@ export type WorkspaceUpdateWithoutTemplatesInput = {
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkspaceTypeFieldUpdateOperationsInput | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   events?: Prisma.EventUpdateManyWithoutWorkspaceNestedInput
@@ -886,6 +916,7 @@ export type WorkspaceUncheckedUpdateWithoutTemplatesInput = {
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkspaceTypeFieldUpdateOperationsInput | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -902,6 +933,7 @@ export type WorkspaceCreateManyOwnerInput = {
   slug?: string | null
   type?: $Enums.WorkspaceType
   socialLinks: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -915,6 +947,7 @@ export type WorkspaceUpdateWithoutOwnerInput = {
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkspaceTypeFieldUpdateOperationsInput | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   events?: Prisma.EventUpdateManyWithoutWorkspaceNestedInput
@@ -931,6 +964,7 @@ export type WorkspaceUncheckedUpdateWithoutOwnerInput = {
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkspaceTypeFieldUpdateOperationsInput | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   events?: Prisma.EventUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -947,6 +981,7 @@ export type WorkspaceUncheckedUpdateManyWithoutOwnerInput = {
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkspaceTypeFieldUpdateOperationsInput | $Enums.WorkspaceType
   socialLinks?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  appearance?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1009,6 +1044,7 @@ export type WorkspaceSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   slug?: boolean
   type?: boolean
   socialLinks?: boolean
+  appearance?: boolean
   ownerId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1028,6 +1064,7 @@ export type WorkspaceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   slug?: boolean
   type?: boolean
   socialLinks?: boolean
+  appearance?: boolean
   ownerId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1043,6 +1080,7 @@ export type WorkspaceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   slug?: boolean
   type?: boolean
   socialLinks?: boolean
+  appearance?: boolean
   ownerId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1058,12 +1096,13 @@ export type WorkspaceSelectScalar = {
   slug?: boolean
   type?: boolean
   socialLinks?: boolean
+  appearance?: boolean
   ownerId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type WorkspaceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "logo" | "coverImage" | "slug" | "type" | "socialLinks" | "ownerId" | "createdAt" | "updatedAt", ExtArgs["result"]["workspace"]>
+export type WorkspaceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "logo" | "coverImage" | "slug" | "type" | "socialLinks" | "appearance" | "ownerId" | "createdAt" | "updatedAt", ExtArgs["result"]["workspace"]>
 export type WorkspaceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   events?: boolean | Prisma.Workspace$eventsArgs<ExtArgs>
   templates?: boolean | Prisma.Workspace$templatesArgs<ExtArgs>
@@ -1095,6 +1134,7 @@ export type $WorkspacePayload<ExtArgs extends runtime.Types.Extensions.InternalA
     slug: string | null
     type: $Enums.WorkspaceType
     socialLinks: runtime.JsonValue
+    appearance: runtime.JsonValue | null
     ownerId: string
     createdAt: Date
     updatedAt: Date
@@ -1533,6 +1573,7 @@ export interface WorkspaceFieldRefs {
   readonly slug: Prisma.FieldRef<"Workspace", 'String'>
   readonly type: Prisma.FieldRef<"Workspace", 'WorkspaceType'>
   readonly socialLinks: Prisma.FieldRef<"Workspace", 'Json'>
+  readonly appearance: Prisma.FieldRef<"Workspace", 'Json'>
   readonly ownerId: Prisma.FieldRef<"Workspace", 'String'>
   readonly createdAt: Prisma.FieldRef<"Workspace", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Workspace", 'DateTime'>

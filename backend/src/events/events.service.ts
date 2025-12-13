@@ -14,12 +14,15 @@ import { CreateEventDto } from './dto/create-event.dto';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { generateTicketHtml } from './ticket-generator.util';
 
+import { PaymentsService } from 'src/payments/payments.service';
+
 @Injectable()
 export class EventsService {
   constructor(
     private prisma: PrismaService,
     private cloudinaryService: CloudinaryService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private paymentsService: PaymentsService,
   ) {}
 
   async create(createEventDto: CreateEventDto, userId: string) {
@@ -104,15 +107,17 @@ export class EventsService {
   }
 
   async findPublic(slugOrId: string) {
-    const cacheKey = `public_event_${slugOrId}`;
-    const cached = await this.cacheManager.get(cacheKey);
-    if (cached) {
-      return cached as any;
-    }
+    // Bypass cache for debugging
+    // const cacheKey = `public_event_${slugOrId}`;
+    // const cached = await this.cacheManager.get(cacheKey);
+    // if (cached) {
+    //   return cached as any;
+    // }
 
     const event = await this.prisma.event.findFirst({
       where: {
         OR: [{ slug: slugOrId }, { id: slugOrId }],
+        deletedAt: null, // Explicitly ensure not deleted
       },
       include: {
         stats: true,
@@ -123,11 +128,20 @@ export class EventsService {
         },
       },
     });
-    if (!event) throw new NotFoundException('Event not found');
 
-    // Cache for 1 hour (3600000 ms)
-    await this.cacheManager.set(cacheKey, event, 3600000);
-    return event;
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+
+    // console.log(`[EventsService] Found event: ${event.name} (${event.id})`);
+
+    // Check Branding Feature
+    const canRemoveBranding = await this.paymentsService
+      .hasFeatureAccess(event.userId, 'canRemoveBranding')
+      .catch(() => false);
+
+    // await this.cacheManager.set(cacheKey, event, 3600000);
+    return { ...event, showBranding: !canRemoveBranding };
   }
 
   async findOne(idOrSlug: string, userId: string, workspaceId?: string) {
@@ -150,6 +164,30 @@ export class EventsService {
 
   async update(id: string, userId: string, data: any) {
     // 1. Update
+    // Check Limit if publishing
+    if (data.status === 'PUBLISHED') {
+      const currentPublished = await this.prisma.event.count({
+        where: { userId, status: 'PUBLISHED', deletedAt: null },
+      });
+      // Only check if we are actually changing status to PUBLISHED (optimization: check if it was already published?)
+      // For simplicity, just check limit. Valid even if already published (limit >= current).
+      // But strictly: if current=1, limit=1. I am 1. Updating me shouldn't fail.
+      // So we should exclude THIS event from count, or check if it was ALREADY published.
+
+      const existing = await this.prisma.event.findUnique({
+        where: { id },
+        select: { status: true },
+      });
+      if (existing && existing.status !== 'PUBLISHED') {
+        // We are switching from DRAFT -> PUBLISHED. Check limit.
+        await this.paymentsService.checkUsageLimit(
+          userId,
+          'events',
+          currentPublished,
+        );
+      }
+    }
+
     const updated = await this.prisma.event.update({
       where: { id, userId },
       data,
@@ -254,6 +292,10 @@ export class EventsService {
         stats: true,
       },
     });
+
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
 
     // Determine Date Range
     const end = endDate ? new Date(endDate) : new Date();
@@ -424,6 +466,16 @@ export class EventsService {
       },
     });
 
+    // Verify Plan Features for Gating
+    const hasAdvancedAnalytics = await this.paymentsService.hasFeatureAccess(
+      event.userId,
+      'hasAdvancedAnalytics',
+    );
+    const hasPremiumAnalytics = await this.paymentsService.hasFeatureAccess(
+      event.userId,
+      'hasPremiumAnalytics',
+    );
+
     return {
       event,
       stats: {
@@ -435,16 +487,18 @@ export class EventsService {
           downloads: 0,
           shares: 0,
         }),
-        nftMints, // Add NFT mints to stats object
+        nftMints,
       },
-      visitsOverTime,
-      deviceBreakdown,
-      countryBreakdown,
-      trafficSources,
-      recentActivity,
-      peakActivity,
-      topDomains,
-      trends,
+      visitsOverTime, // Basic
+      // Advanced
+      deviceBreakdown: hasAdvancedAnalytics ? deviceBreakdown : [],
+      countryBreakdown: hasAdvancedAnalytics ? countryBreakdown : [],
+      trafficSources: hasAdvancedAnalytics ? trafficSources : [],
+      // Premium
+      recentActivity: recentActivity, // Allowed? Maybe advanced. Let's keep for now or gate.
+      peakActivity: hasPremiumAnalytics ? peakActivity : [],
+      topDomains: hasPremiumAnalytics ? topDomains : [],
+      trends: hasPremiumAnalytics ? trends : null,
     };
   }
 
@@ -562,6 +616,18 @@ export class EventsService {
    * @returns CSV string
    */
   async exportAttendees(eventId: string) {
+    const event = await this.prisma.event.findUnique({
+      where: { id: eventId },
+      select: { userId: true },
+    });
+    if (!event) throw new NotFoundException('Event not found');
+
+    // Gate Lead Gen Feature (Exporting Data)
+    await this.paymentsService.checkFeatureAccess(
+      event.userId,
+      'canCollectEmails',
+    );
+
     const attendees = await this.prisma.attendee.findMany({
       where: { eventId },
       include: {
@@ -594,12 +660,49 @@ export class EventsService {
       throw new BadRequestException('Event does not have a template');
     }
 
-    // Generate HTML
-    const html = generateTicketHtml(event.template, {
-      ...body.data,
-      name: body.name,
-      email: body.email,
+    // Check & Consume Generation Credit (Logic handles monthly vs extra)
+    // Only consume if we are actually generating a NEW card.
+    // But we don't know if it's new yet until we look up attendee/generation.
+    // However, if we do it late, we might generate the image for nothing.
+    // BETTER: Check balance first (peek). Then consume later?
+    // OR: Just check existing generation first.
+
+    // Check if generation exists for this attendee to prevent duplicates (and free generations)
+    // We need to resolve attendee first.
+    let existingAttendee = await this.prisma.attendee.findUnique({
+      where: { eventId_email: { eventId: event.id, email: body.email } },
     });
+
+    let isNewGeneration = true;
+    if (existingAttendee) {
+      const existingGen = await this.prisma.cardGeneration.findFirst({
+        where: { eventId: event.id, attendeeId: existingAttendee.id },
+      });
+      if (existingGen) isNewGeneration = false;
+    }
+
+    // If new, consume credit
+    if (isNewGeneration) {
+      await this.paymentsService.checkAndConsumeGeneration(event.userId);
+    }
+
+    // Check Feature Access (Remove Branding)
+    // Feature key: 'canRemoveBranding' (as defined in seed/schema plan)
+    const canRemoveBranding = await this.paymentsService.hasFeatureAccess(
+      event.userId,
+      'canRemoveBranding',
+    );
+
+    // Generate HTML
+    const html = generateTicketHtml(
+      event.template,
+      {
+        ...body.data,
+        name: body.name,
+        email: body.email,
+      },
+      { removeBranding: canRemoveBranding },
+    );
 
     // Generate Image via Puppeteer
     const browser = await puppeteer.launch({
@@ -656,8 +759,15 @@ export class EventsService {
     });
 
     let generationId = existingGen?.id;
+    console.log(
+      `[Register] Email: ${body.email}, ExistingGen: ${!!existingGen}`,
+    );
 
     if (!existingGen) {
+      // Consume Generation Credit (Owner pays)
+      console.log(`[Register] New generation. Checking limits...`);
+      await this.paymentsService.checkAndConsumeGeneration(event.userId);
+
       const newGen = await this.prisma.cardGeneration.create({
         data: {
           eventId: event.id,
@@ -763,7 +873,33 @@ export class EventsService {
     }
   }
 
-  async uploadAsset(file: Express.Multer.File) {
+  async uploadAsset(eventId: string, file: Express.Multer.File) {
+    // Check Limits BEFORE uploading to save storage
+    // We need to find the event owner first
+    const event = await this.prisma.event.findUnique({
+      where: { id: eventId },
+      select: { userId: true },
+    });
+
+    if (!event) throw new NotFoundException('Event not found');
+
+    // Check if user has credits (Peeking without consuming)
+    // We reuse checkAndConsumeGeneration but we need a 'peek' method ideally.
+    // Or just check manually here.
+    const { usage } = await this.paymentsService.getCurrentSubscription(
+      event.userId,
+    );
+    const available =
+      usage.generationsLimit === -1 ||
+      usage.generationsUsed < usage.generationsLimit ||
+      usage.extraCredits > 0;
+
+    if (!available) {
+      throw new BadRequestException(
+        'Event organizer has reached their generation limit. Cannot upload assets.',
+      );
+    }
+
     return this.cloudinaryService.uploadImage(
       file.buffer ? file.buffer : file.path,
       'xcardgen_assets',

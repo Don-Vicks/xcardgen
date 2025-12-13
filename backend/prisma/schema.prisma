@@ -16,6 +16,7 @@ model Workspace {
   slug        String?           @unique
   type        WorkspaceType     @default(EVENT_ORGANIZER)
   socialLinks Json
+  appearance  Json?
   ownerId     String
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
@@ -65,8 +66,28 @@ model User {
   templates            Template[]
   workspaceOwnerships  Workspace[]       @relation("WorkspaceOwner")
   workspaceMemberships WorkspaceMember[]
+  payments             Payment[]
+  generationCount      Int               @default(0)
+  extraCredits         Int               @default(0)
+  creditPurchases      CreditPurchase[]
 
   @@index([email])
+}
+
+// ... (existing content) 
+
+model CreditPurchase {
+  id        String        @id @default(uuid())
+  userId    String
+  user      User          @relation(fields: [userId], references: [id])
+  amount    Int // Number of credits
+  price     Decimal       @db.Decimal(10, 2)
+  currency  String
+  status    PaymentStatus @default(PENDING)
+  txHash    String?
+  createdAt DateTime      @default(now())
+
+  @@index([userId])
 }
 
 model Event {
@@ -218,16 +239,21 @@ model NFTMint {
 }
 
 model SubscriptionPlan {
-  id            String               @id @default(uuid())
-  name          String               @unique
-  description   String
-  amount        Decimal
-  interval      SubscriptionInterval
-  currency      String
-  isActive      Boolean              @default(true)
-  createdAt     DateTime             @default(now())
-  updatedAt     DateTime             @updatedAt
-  subscriptions Subscriptions[]
+  id             String               @id @default(uuid())
+  name           String               @unique
+  description    String
+  amount         Decimal
+  interval       SubscriptionInterval
+  currency       String
+  maxWorkspaces  Int                  @default(1)
+  maxGenerations Int                  @default(100)
+  maxEvents      Int                  @default(1)
+  maxMembers     Int                  @default(1)
+  features       Json? // For flexible flags
+  isActive       Boolean              @default(true)
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  subscriptions  Subscriptions[]
 }
 
 model Subscriptions {
@@ -320,4 +346,29 @@ enum MintStatus {
   PENDING
   MINTED
   FAILED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+model Payment {
+  id            String        @id @default(uuid())
+  userId        String
+  user          User          @relation(fields: [userId], references: [id])
+  amount        Decimal       @db.Decimal(10, 2)
+  currency      String // USD, ETH, SOL, USDC
+  provider      String // STRIPE, CRYPTO_ETH, CRYPTO_SOL
+  txHash        String? // For crypto transactions
+  walletAddress String? // Sender wallet
+  status        PaymentStatus @default(PENDING)
+  metadata      Json?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([userId])
+  @@index([txHash])
 }

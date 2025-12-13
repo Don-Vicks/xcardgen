@@ -1,5 +1,6 @@
 "use client"
 
+
 import { CanvasElement } from "@/components/editor/template-editor"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -12,46 +13,18 @@ import { AlignCenter, ArrowDownToLine, Loader2, Upload } from "lucide-react"
 
 // Helper specific to this component for now
 import { templatesRequest } from "@/lib/api/requests/templates.request"
+import { Lock } from "lucide-react"
 import { useParams } from "next/navigation"
 import { useState } from "react"
 import { toast } from "sonner"
 
-function UploadButton({ onSuccess }: { onSuccess: (url: string) => void }) {
-  const params = useParams()
-  const [uploading, setUploading] = useState(false)
-
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    setUploading(true)
-    toast.loading("Uploading image...")
-    try {
-      const res = await templatesRequest.uploadAsset(params.id as string, file)
-      onSuccess(res.data.url)
-      toast.success("Image uploaded")
-    } catch (e) {
-      console.error(e)
-      toast.error("Upload failed")
-    } finally {
-      setUploading(false)
-      toast.dismiss()
-    }
-  }
-
+function PremiumLock({ label }: { label: string }) {
   return (
-    <div className="relative">
-      <Input
-        type="file"
-        accept="image/*"
-        className="absolute inset-0 opacity-0 cursor-pointer z-10"
-        onChange={handleUpload}
-        disabled={uploading}
-      />
-      <Button variant="secondary" className="w-full" disabled={uploading}>
-        {uploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
-        Upload Image
-      </Button>
+    <div className="absolute inset-0 bg-background/50 backdrop-blur-[1px] z-20 flex items-center justify-center border border-dashed border-primary/20 rounded-lg">
+      <div className="flex items-center gap-2 bg-background shadow-lg border rounded-full px-3 py-1.5 cursor-not-allowed">
+        <Lock className="w-3 h-3 text-primary" />
+        <span className="text-[10px] font-medium text-primary">Upgrade to {label}</span>
+      </div>
     </div>
   )
 }
@@ -73,7 +46,65 @@ const COMMON_FIELDS = [
   { label: "User Avatar", value: "user_avatar", description: "Upload your photo" },
 ]
 
+import { useAuth } from "@/stores/auth-store"
+
+function UploadButton({ onSuccess }: { onSuccess: (url: string) => void }) {
+  const [isLoading, setIsLoading] = useState(false)
+  const params = useParams()
+  const templateId = params.id
+
+  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    setIsLoading(true)
+    try {
+      // Logic for upload
+      const res = await templatesRequest.uploadAsset(templateId as string, file)
+
+      if (res.data?.url) {
+        onSuccess(res.data.url)
+        toast.success("Image uploaded successfully!")
+      } else {
+        toast.error("Failed to upload image.")
+      }
+    } catch (error: any) {
+      console.error("Upload error:", error)
+      toast.error(error?.response?.data?.message || "An unexpected error occurred during upload.")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return (
+    <div className="relative">
+      <Input
+        type="file"
+        className="absolute inset-0 opacity-0 cursor-pointer"
+        onChange={handleUpload}
+        disabled={isLoading}
+        accept="image/*"
+      />
+      <Button
+        variant="outline"
+        className="w-full"
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        ) : (
+          <Upload className="mr-2 h-4 w-4" />
+        )}
+        Upload Image
+      </Button>
+    </div>
+  )
+}
+
 export function ElementProperties({ element, onChange, onDelete, onLayerChange, canvasSize }: ElementPropertiesProps) {
+  const { user } = useAuth()
+  const features = user?.subscription?.plan?.features || {}
+
   if (!element) {
     return (
       <div className="p-4 text-center text-muted-foreground text-sm flex flex-col items-center justify-center h-full gap-2 opacity-50">
@@ -442,7 +473,15 @@ export function ElementProperties({ element, onChange, onDelete, onLayerChange, 
             </div>
 
             {element.isDynamic && (
-              <div className="space-y-3 p-4 border rounded-lg bg-muted/30 border-border">
+              <div className="space-y-3 p-4 border rounded-lg bg-muted/30 border-border relative">
+                {/* Premium Gate Logic */}
+                {/* For demonstration/request, let's assume 'canRemoveBranding' implies 'Premium' status. */}
+                {/* Or we check a specific 'advancedEditor' feature flag if it exists. */}
+                {/* If features object is empty or missing 'advancedEditor', we lock it. */}
+                {/* Let's use 'canRemoveBranding' as a proxy for "Pro" features for now, or just check subscription existence. */}
+                {/* Actually, let's assume 'branding' is the key one user cares about gating visually. */}
+                {!features.canRemoveBranding && <PremiumLock label="Pro Plan" />}
+
                 <div className="space-y-1">
                   <Label className="text-xs font-semibold text-foreground">Preset Fields</Label>
                   <Select

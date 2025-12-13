@@ -387,6 +387,7 @@ export const ModelName = {
   Workspace: 'Workspace',
   WorkspaceMember: 'WorkspaceMember',
   User: 'User',
+  CreditPurchase: 'CreditPurchase',
   Event: 'Event',
   Template: 'Template',
   Attendee: 'Attendee',
@@ -399,7 +400,8 @@ export const ModelName = {
   SubscriptionPlan: 'SubscriptionPlan',
   Subscriptions: 'Subscriptions',
   LoginLog: 'LoginLog',
-  Session: 'Session'
+  Session: 'Session',
+  Payment: 'Payment'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -415,7 +417,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "workspace" | "workspaceMember" | "user" | "event" | "template" | "attendee" | "eventStats" | "eventVisit" | "cardGeneration" | "socialShare" | "download" | "nFTMint" | "subscriptionPlan" | "subscriptions" | "loginLog" | "session"
+    modelProps: "workspace" | "workspaceMember" | "user" | "creditPurchase" | "event" | "template" | "attendee" | "eventStats" | "eventVisit" | "cardGeneration" | "socialShare" | "download" | "nFTMint" | "subscriptionPlan" | "subscriptions" | "loginLog" | "session" | "payment"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -638,6 +640,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number
+        }
+      }
+    }
+    CreditPurchase: {
+      payload: Prisma.$CreditPurchasePayload<ExtArgs>
+      fields: Prisma.CreditPurchaseFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CreditPurchaseFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditPurchasePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CreditPurchaseFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditPurchasePayload>
+        }
+        findFirst: {
+          args: Prisma.CreditPurchaseFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditPurchasePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CreditPurchaseFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditPurchasePayload>
+        }
+        findMany: {
+          args: Prisma.CreditPurchaseFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditPurchasePayload>[]
+        }
+        create: {
+          args: Prisma.CreditPurchaseCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditPurchasePayload>
+        }
+        createMany: {
+          args: Prisma.CreditPurchaseCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CreditPurchaseCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditPurchasePayload>[]
+        }
+        delete: {
+          args: Prisma.CreditPurchaseDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditPurchasePayload>
+        }
+        update: {
+          args: Prisma.CreditPurchaseUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditPurchasePayload>
+        }
+        deleteMany: {
+          args: Prisma.CreditPurchaseDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CreditPurchaseUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CreditPurchaseUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditPurchasePayload>[]
+        }
+        upsert: {
+          args: Prisma.CreditPurchaseUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditPurchasePayload>
+        }
+        aggregate: {
+          args: Prisma.CreditPurchaseAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCreditPurchase>
+        }
+        groupBy: {
+          args: Prisma.CreditPurchaseGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CreditPurchaseGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CreditPurchaseCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CreditPurchaseCountAggregateOutputType> | number
         }
       }
     }
@@ -1603,6 +1679,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Payment: {
+      payload: Prisma.$PaymentPayload<ExtArgs>
+      fields: Prisma.PaymentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PaymentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PaymentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>
+        }
+        findFirst: {
+          args: Prisma.PaymentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PaymentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>
+        }
+        findMany: {
+          args: Prisma.PaymentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>[]
+        }
+        create: {
+          args: Prisma.PaymentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>
+        }
+        createMany: {
+          args: Prisma.PaymentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PaymentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>[]
+        }
+        delete: {
+          args: Prisma.PaymentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>
+        }
+        update: {
+          args: Prisma.PaymentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>
+        }
+        deleteMany: {
+          args: Prisma.PaymentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PaymentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PaymentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>[]
+        }
+        upsert: {
+          args: Prisma.PaymentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>
+        }
+        aggregate: {
+          args: Prisma.PaymentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePayment>
+        }
+        groupBy: {
+          args: Prisma.PaymentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PaymentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PaymentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PaymentCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1651,6 +1801,7 @@ export const WorkspaceScalarFieldEnum = {
   slug: 'slug',
   type: 'type',
   socialLinks: 'socialLinks',
+  appearance: 'appearance',
   ownerId: 'ownerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1683,10 +1834,26 @@ export const UserScalarFieldEnum = {
   password: 'password',
   googleId: 'googleId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  generationCount: 'generationCount',
+  extraCredits: 'extraCredits'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const CreditPurchaseScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  amount: 'amount',
+  price: 'price',
+  currency: 'currency',
+  status: 'status',
+  txHash: 'txHash',
+  createdAt: 'createdAt'
+} as const
+
+export type CreditPurchaseScalarFieldEnum = (typeof CreditPurchaseScalarFieldEnum)[keyof typeof CreditPurchaseScalarFieldEnum]
 
 
 export const EventScalarFieldEnum = {
@@ -1825,6 +1992,11 @@ export const SubscriptionPlanScalarFieldEnum = {
   amount: 'amount',
   interval: 'interval',
   currency: 'currency',
+  maxWorkspaces: 'maxWorkspaces',
+  maxGenerations: 'maxGenerations',
+  maxEvents: 'maxEvents',
+  maxMembers: 'maxMembers',
+  features: 'features',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1876,6 +2048,23 @@ export const SessionScalarFieldEnum = {
 } as const
 
 export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
+
+
+export const PaymentScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  amount: 'amount',
+  currency: 'currency',
+  provider: 'provider',
+  txHash: 'txHash',
+  walletAddress: 'walletAddress',
+  status: 'status',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -2003,6 +2192,48 @@ export type ListEnumWorkspaceRoleFieldRefInput<$PrismaModel> = FieldRefInputType
 
 
 /**
+ * Reference to a field of type 'Int'
+ */
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+/**
+ * Reference to a field of type 'Int[]'
+ */
+export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Decimal'
+ */
+export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
+    
+
+
+/**
+ * Reference to a field of type 'Decimal[]'
+ */
+export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
+    
+
+
+/**
+ * Reference to a field of type 'PaymentStatus'
+ */
+export type EnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'PaymentStatus[]'
+ */
+export type ListEnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'EventStatus'
  */
 export type EnumEventStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EventStatus'>
@@ -2031,20 +2262,6 @@ export type ListEnumTemplateStatusFieldRefInput<$PrismaModel> = FieldRefInputTyp
 
 
 /**
- * Reference to a field of type 'Int'
- */
-export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-/**
- * Reference to a field of type 'Int[]'
- */
-export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-    
-
-
-/**
  * Reference to a field of type 'MintStatus'
  */
 export type EnumMintStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MintStatus'>
@@ -2055,20 +2272,6 @@ export type EnumMintStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Prism
  * Reference to a field of type 'MintStatus[]'
  */
 export type ListEnumMintStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MintStatus[]'>
-    
-
-
-/**
- * Reference to a field of type 'Decimal'
- */
-export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
-    
-
-
-/**
- * Reference to a field of type 'Decimal[]'
- */
-export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
     
 
 
@@ -2218,6 +2421,7 @@ export type GlobalOmitConfig = {
   workspace?: Prisma.WorkspaceOmit
   workspaceMember?: Prisma.WorkspaceMemberOmit
   user?: Prisma.UserOmit
+  creditPurchase?: Prisma.CreditPurchaseOmit
   event?: Prisma.EventOmit
   template?: Prisma.TemplateOmit
   attendee?: Prisma.AttendeeOmit
@@ -2231,6 +2435,7 @@ export type GlobalOmitConfig = {
   subscriptions?: Prisma.SubscriptionsOmit
   loginLog?: Prisma.LoginLogOmit
   session?: Prisma.SessionOmit
+  payment?: Prisma.PaymentOmit
 }
 
 /* Types for Logging */

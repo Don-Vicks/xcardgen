@@ -46,8 +46,13 @@ const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?:
   return null
 }
 
+import { useAuth } from "@/stores/auth-store"
+
 export default function AnalyticsPage() {
   const { currentWorkspace } = useWorkspace()
+  const { user } = useAuth()
+  const hasAdvancedStats = user?.subscription?.plan?.features?.hasAdvancedAnalytics || false
+
   const [loading, setLoading] = useState(true)
   const [events, setEvents] = useState<any[]>([])
   const [period, setPeriod] = useState("30")
@@ -199,7 +204,24 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Charts Row */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 relative">
+        {!hasAdvancedStats && (
+          <div className="absolute inset-0 z-20 bg-background/60 backdrop-blur-sm flex items-center justify-center border rounded-lg border-dashed">
+            <div className="text-center p-6 bg-background/95 shadow-lg rounded-xl border max-w-sm mx-auto">
+              <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <BarChart3 className="h-5 w-5 text-primary" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Unlock Advanced Analytics</h3>
+              <p className="text-muted-foreground text-sm mb-4">
+                Upgrade to the Pro plan to see detailed activity trends, device breakdowns, and deeper insights into your audience.
+              </p>
+              <Link href="/dashboard/billing">
+                <Button>Upgrade to Pro</Button>
+              </Link>
+            </div>
+          </div>
+        )}
+
         {/* Activity Trend */}
         <Card className="col-span-4">
           <CardHeader>
@@ -278,9 +300,17 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Countries & xCards Table */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 relative">
         {/* Top Countries */}
-        <Card className="col-span-2">
+        <Card className="col-span-2 relative overflow-hidden">
+          {!hasAdvancedStats && (
+            <div className="absolute inset-0 z-10 bg-background/60 backdrop-blur-[2px] flex items-center justify-center">
+              <div className="flex items-center gap-2 bg-background/90 px-3 py-1.5 rounded-full border shadow-sm">
+                <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                <span className="text-xs font-semibold">Pro Feature</span>
+              </div>
+            </div>
+          )}
           <CardHeader>
             <CardTitle>Top Countries</CardTitle>
             <CardDescription>Where your audience is from</CardDescription>

@@ -104,7 +104,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   async getProfile(@CurrentUser() user: any) {
-    console.log('Backend: getProfile hit', user);
     return user;
   }
 

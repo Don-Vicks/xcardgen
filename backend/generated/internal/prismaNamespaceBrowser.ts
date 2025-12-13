@@ -54,6 +54,7 @@ export const ModelName = {
   Workspace: 'Workspace',
   WorkspaceMember: 'WorkspaceMember',
   User: 'User',
+  CreditPurchase: 'CreditPurchase',
   Event: 'Event',
   Template: 'Template',
   Attendee: 'Attendee',
@@ -66,7 +67,8 @@ export const ModelName = {
   SubscriptionPlan: 'SubscriptionPlan',
   Subscriptions: 'Subscriptions',
   LoginLog: 'LoginLog',
-  Session: 'Session'
+  Session: 'Session',
+  Payment: 'Payment'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -94,6 +96,7 @@ export const WorkspaceScalarFieldEnum = {
   slug: 'slug',
   type: 'type',
   socialLinks: 'socialLinks',
+  appearance: 'appearance',
   ownerId: 'ownerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -126,10 +129,26 @@ export const UserScalarFieldEnum = {
   password: 'password',
   googleId: 'googleId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  generationCount: 'generationCount',
+  extraCredits: 'extraCredits'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const CreditPurchaseScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  amount: 'amount',
+  price: 'price',
+  currency: 'currency',
+  status: 'status',
+  txHash: 'txHash',
+  createdAt: 'createdAt'
+} as const
+
+export type CreditPurchaseScalarFieldEnum = (typeof CreditPurchaseScalarFieldEnum)[keyof typeof CreditPurchaseScalarFieldEnum]
 
 
 export const EventScalarFieldEnum = {
@@ -268,6 +287,11 @@ export const SubscriptionPlanScalarFieldEnum = {
   amount: 'amount',
   interval: 'interval',
   currency: 'currency',
+  maxWorkspaces: 'maxWorkspaces',
+  maxGenerations: 'maxGenerations',
+  maxEvents: 'maxEvents',
+  maxMembers: 'maxMembers',
+  features: 'features',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -319,6 +343,23 @@ export const SessionScalarFieldEnum = {
 } as const
 
 export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
+
+
+export const PaymentScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  amount: 'amount',
+  currency: 'currency',
+  provider: 'provider',
+  txHash: 'txHash',
+  walletAddress: 'walletAddress',
+  status: 'status',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
 
 
 export const SortOrder = {

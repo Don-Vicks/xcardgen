@@ -25,6 +25,16 @@ interface User {
     slug?: string
     logo?: string
   }>
+  subscription?: {
+    plan: {
+      id: string
+      name: string
+      features: Record<string, any>
+      maxWorkspaces: number
+      maxMembers: number
+      maxEvents: number
+    }
+  }
 }
 
 interface AuthState {
@@ -54,7 +64,29 @@ export const useAuth = create<AuthState>((set, get) => ({
       console.log('Store: checkAuth starting...')
       const response = await authRequestInstance.getProfile()
       console.log('Store: checkAuth response', response)
-      set({ user: response.data, loading: false })
+
+      // Fetch subscription details separately and merge
+      // Ideally backend returns this in profile, but if not we can fetch it.
+      // Or just assume backend profile now includes it (if we updated backend).
+      // Let's rely on backend 'getProfile' endpoint updates or fetch separately.
+      // For now, let's fetch it if needed.
+      // But wait, the backend User model has relations.
+      // Let's modify 'checkAuth' to also fetch '/payments/subscription' or just assume getProfile includes it if mapped.
+      // Let's try fetching it here to be safe and reactive.
+
+      let subscriptionData = undefined
+      try {
+        const { api } = await import('@/lib/api/api')
+        const subRes = await api.get('/payments/subscription')
+        subscriptionData = { plan: subRes.data.subscription?.subscriptionPlan }
+      } catch (e) {
+        console.warn('Failed to fetch subscription', e)
+      }
+
+      set({
+        user: { ...response.data, subscription: subscriptionData },
+        loading: false,
+      })
     } catch (error) {
       console.error('Store: checkAuth Failed:', error)
       set({ user: null, loading: false })

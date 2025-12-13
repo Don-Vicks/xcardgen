@@ -506,14 +506,6 @@ export type EventStatsUncheckedUpdateOneWithoutEventNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.EventStatsUpdateToOneWithWhereWithoutEventInput, Prisma.EventStatsUpdateWithoutEventInput>, Prisma.EventStatsUncheckedUpdateWithoutEventInput>
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type EventStatsCreateWithoutEventInput = {
   id?: string
   views?: number

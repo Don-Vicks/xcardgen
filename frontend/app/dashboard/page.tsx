@@ -6,12 +6,16 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { LoadingScreen } from "@/components/ui/loading-screen"
 import { eventsRequest } from "@/lib/api/requests/events.request"
+import { useAuth } from "@/stores/auth-store"
 import { useWorkspace } from "@/stores/workspace-store"
 import { BarChart3, Calendar, CreditCard, Layout, Plus, Users } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 
 export default function DashboardPage() {
+  const { user } = useAuth()
+  const hasAdvancedStats = user?.subscription?.plan?.features?.hasAdvancedAnalytics || false
+
   const [data, setData] = useState<{
     stats: { views: number; generations: number; attendees: number; activeEvents: number }
     activityTrend: any[]
@@ -130,12 +134,40 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <DashboardCharts data={data.activityTrend} />
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 relative">
+        <div className={`col-span-4 ${!hasAdvancedStats ? "blur-2xl opacity-25 pointer-events-none" : ""}`}>
+          <DashboardCharts data={data.activityTrend} />
+        </div>
+        {!hasAdvancedStats && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center">
+            <div className="flex flex-col items-center gap-2 bg-background/95 px-6 py-4 rounded-xl shadow-lg border">
+              <BarChart3 className="h-8 w-8 text-primary" />
+              <div className="text-center">
+                <h3 className="font-semibold">Unlock Advanced Analytics</h3>
+                <p className="text-xs text-muted-foreground mb-2">See detailed activity trends and audience breakdown</p>
+                <Link href="/dashboard/billing">
+                  <Button size="sm">Upgrade to Pro</Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
         <ActivityFeed items={data.feed} />
       </div>
 
-      <AudienceOverview audience={data.audience} />
+      <div className="relative">
+        <div className={!hasAdvancedStats ? "blur-2xl opacity-25 pointer-events-none" : ""}>
+          <AudienceOverview audience={data.audience} />
+        </div>
+        {!hasAdvancedStats && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center">
+            <div className="flex items-center gap-2 bg-background/95 px-4 py-2 rounded-full border shadow-sm">
+              <BarChart3 className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm font-semibold">Audience data is locked for Pro plans</span>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Quick Links Footer */}
       <div className="flex items-center justify-center pt-8 border-t">

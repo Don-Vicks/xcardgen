@@ -1,4 +1,11 @@
-import { BarChart3, Home, Layers, LayoutTemplate, Settings } from 'lucide-react'
+import {
+  BarChart3,
+  Home,
+  Layers,
+  LayoutTemplate,
+  CreditCard,
+  Settings,
+} from 'lucide-react'
 
 export const routes = [
   {
@@ -20,6 +27,11 @@ export const routes = [
     href: '/dashboard/analytics',
     label: 'Analytics',
     icon: BarChart3,
+  },
+  {
+    href: '/dashboard/billing',
+    label: 'Billing',
+    icon: CreditCard,
   },
   {
     href: '/dashboard/settings',

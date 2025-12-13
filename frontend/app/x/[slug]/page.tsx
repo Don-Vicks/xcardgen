@@ -9,7 +9,7 @@ interface PageProps {
 
 async function getEvent(slug: string) {
   try {
-    const res = await eventsRequest.getById(slug)
+    const res = await eventsRequest.getPublic(slug)
     return res.data
   } catch (error) {
     return null

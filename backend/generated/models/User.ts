@@ -20,8 +20,20 @@ export type UserModel = runtime.Types.Result.DefaultSelection<Prisma.$UserPayloa
 
 export type AggregateUser = {
   _count: UserCountAggregateOutputType | null
+  _avg: UserAvgAggregateOutputType | null
+  _sum: UserSumAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
+}
+
+export type UserAvgAggregateOutputType = {
+  generationCount: number | null
+  extraCredits: number | null
+}
+
+export type UserSumAggregateOutputType = {
+  generationCount: number | null
+  extraCredits: number | null
 }
 
 export type UserMinAggregateOutputType = {
@@ -32,6 +44,8 @@ export type UserMinAggregateOutputType = {
   googleId: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  generationCount: number | null
+  extraCredits: number | null
 }
 
 export type UserMaxAggregateOutputType = {
@@ -42,6 +56,8 @@ export type UserMaxAggregateOutputType = {
   googleId: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  generationCount: number | null
+  extraCredits: number | null
 }
 
 export type UserCountAggregateOutputType = {
@@ -52,9 +68,21 @@ export type UserCountAggregateOutputType = {
   googleId: number
   createdAt: number
   updatedAt: number
+  generationCount: number
+  extraCredits: number
   _all: number
 }
 
+
+export type UserAvgAggregateInputType = {
+  generationCount?: true
+  extraCredits?: true
+}
+
+export type UserSumAggregateInputType = {
+  generationCount?: true
+  extraCredits?: true
+}
 
 export type UserMinAggregateInputType = {
   id?: true
@@ -64,6 +92,8 @@ export type UserMinAggregateInputType = {
   googleId?: true
   createdAt?: true
   updatedAt?: true
+  generationCount?: true
+  extraCredits?: true
 }
 
 export type UserMaxAggregateInputType = {
@@ -74,6 +104,8 @@ export type UserMaxAggregateInputType = {
   googleId?: true
   createdAt?: true
   updatedAt?: true
+  generationCount?: true
+  extraCredits?: true
 }
 
 export type UserCountAggregateInputType = {
@@ -84,6 +116,8 @@ export type UserCountAggregateInputType = {
   googleId?: true
   createdAt?: true
   updatedAt?: true
+  generationCount?: true
+  extraCredits?: true
   _all?: true
 }
 
@@ -125,6 +159,18 @@ export type UserAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: UserAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: UserSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: UserMinAggregateInputType
@@ -155,6 +201,8 @@ export type UserGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
   take?: number
   skip?: number
   _count?: UserCountAggregateInputType | true
+  _avg?: UserAvgAggregateInputType
+  _sum?: UserSumAggregateInputType
   _min?: UserMinAggregateInputType
   _max?: UserMaxAggregateInputType
 }
@@ -167,7 +215,11 @@ export type UserGroupByOutputType = {
   googleId: string | null
   createdAt: Date
   updatedAt: Date
+  generationCount: number
+  extraCredits: number
   _count: UserCountAggregateOutputType | null
+  _avg: UserAvgAggregateOutputType | null
+  _sum: UserSumAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
 }
@@ -198,6 +250,8 @@ export type UserWhereInput = {
   googleId?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  generationCount?: Prisma.IntFilter<"User"> | number
+  extraCredits?: Prisma.IntFilter<"User"> | number
   events?: Prisma.EventListRelationFilter
   loginLogs?: Prisma.LoginLogListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
@@ -205,6 +259,8 @@ export type UserWhereInput = {
   templates?: Prisma.TemplateListRelationFilter
   workspaceOwnerships?: Prisma.WorkspaceListRelationFilter
   workspaceMemberships?: Prisma.WorkspaceMemberListRelationFilter
+  payments?: Prisma.PaymentListRelationFilter
+  creditPurchases?: Prisma.CreditPurchaseListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -215,6 +271,8 @@ export type UserOrderByWithRelationInput = {
   googleId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  generationCount?: Prisma.SortOrder
+  extraCredits?: Prisma.SortOrder
   events?: Prisma.EventOrderByRelationAggregateInput
   loginLogs?: Prisma.LoginLogOrderByRelationAggregateInput
   sessions?: Prisma.SessionOrderByRelationAggregateInput
@@ -222,6 +280,8 @@ export type UserOrderByWithRelationInput = {
   templates?: Prisma.TemplateOrderByRelationAggregateInput
   workspaceOwnerships?: Prisma.WorkspaceOrderByRelationAggregateInput
   workspaceMemberships?: Prisma.WorkspaceMemberOrderByRelationAggregateInput
+  payments?: Prisma.PaymentOrderByRelationAggregateInput
+  creditPurchases?: Prisma.CreditPurchaseOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -235,6 +295,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   password?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  generationCount?: Prisma.IntFilter<"User"> | number
+  extraCredits?: Prisma.IntFilter<"User"> | number
   events?: Prisma.EventListRelationFilter
   loginLogs?: Prisma.LoginLogListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
@@ -242,6 +304,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   templates?: Prisma.TemplateListRelationFilter
   workspaceOwnerships?: Prisma.WorkspaceListRelationFilter
   workspaceMemberships?: Prisma.WorkspaceMemberListRelationFilter
+  payments?: Prisma.PaymentListRelationFilter
+  creditPurchases?: Prisma.CreditPurchaseListRelationFilter
 }, "id" | "email" | "googleId">
 
 export type UserOrderByWithAggregationInput = {
@@ -252,9 +316,13 @@ export type UserOrderByWithAggregationInput = {
   googleId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  generationCount?: Prisma.SortOrder
+  extraCredits?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
+  _avg?: Prisma.UserAvgOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
+  _sum?: Prisma.UserSumOrderByAggregateInput
 }
 
 export type UserScalarWhereWithAggregatesInput = {
@@ -268,6 +336,8 @@ export type UserScalarWhereWithAggregatesInput = {
   googleId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
+  generationCount?: Prisma.IntWithAggregatesFilter<"User"> | number
+  extraCredits?: Prisma.IntWithAggregatesFilter<"User"> | number
 }
 
 export type UserCreateInput = {
@@ -278,6 +348,8 @@ export type UserCreateInput = {
   googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  generationCount?: number
+  extraCredits?: number
   events?: Prisma.EventCreateNestedManyWithoutUserInput
   loginLogs?: Prisma.LoginLogCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -285,6 +357,8 @@ export type UserCreateInput = {
   templates?: Prisma.TemplateCreateNestedManyWithoutUserInput
   workspaceOwnerships?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
   workspaceMemberships?: Prisma.WorkspaceMemberCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  creditPurchases?: Prisma.CreditPurchaseCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -295,6 +369,8 @@ export type UserUncheckedCreateInput = {
   googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  generationCount?: number
+  extraCredits?: number
   events?: Prisma.EventUncheckedCreateNestedManyWithoutUserInput
   loginLogs?: Prisma.LoginLogUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -302,6 +378,8 @@ export type UserUncheckedCreateInput = {
   templates?: Prisma.TemplateUncheckedCreateNestedManyWithoutUserInput
   workspaceOwnerships?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
   workspaceMemberships?: Prisma.WorkspaceMemberUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  creditPurchases?: Prisma.CreditPurchaseUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -312,6 +390,8 @@ export type UserUpdateInput = {
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  generationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  extraCredits?: Prisma.IntFieldUpdateOperationsInput | number
   events?: Prisma.EventUpdateManyWithoutUserNestedInput
   loginLogs?: Prisma.LoginLogUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -319,6 +399,8 @@ export type UserUpdateInput = {
   templates?: Prisma.TemplateUpdateManyWithoutUserNestedInput
   workspaceOwnerships?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
   workspaceMemberships?: Prisma.WorkspaceMemberUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  creditPurchases?: Prisma.CreditPurchaseUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -329,6 +411,8 @@ export type UserUncheckedUpdateInput = {
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  generationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  extraCredits?: Prisma.IntFieldUpdateOperationsInput | number
   events?: Prisma.EventUncheckedUpdateManyWithoutUserNestedInput
   loginLogs?: Prisma.LoginLogUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -336,6 +420,8 @@ export type UserUncheckedUpdateInput = {
   templates?: Prisma.TemplateUncheckedUpdateManyWithoutUserNestedInput
   workspaceOwnerships?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
   workspaceMemberships?: Prisma.WorkspaceMemberUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  creditPurchases?: Prisma.CreditPurchaseUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -346,6 +432,8 @@ export type UserCreateManyInput = {
   googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  generationCount?: number
+  extraCredits?: number
 }
 
 export type UserUpdateManyMutationInput = {
@@ -356,6 +444,8 @@ export type UserUpdateManyMutationInput = {
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  generationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  extraCredits?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type UserUncheckedUpdateManyInput = {
@@ -366,6 +456,8 @@ export type UserUncheckedUpdateManyInput = {
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  generationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  extraCredits?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type UserScalarRelationFilter = {
@@ -386,6 +478,13 @@ export type UserCountOrderByAggregateInput = {
   googleId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  generationCount?: Prisma.SortOrder
+  extraCredits?: Prisma.SortOrder
+}
+
+export type UserAvgOrderByAggregateInput = {
+  generationCount?: Prisma.SortOrder
+  extraCredits?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -396,6 +495,8 @@ export type UserMaxOrderByAggregateInput = {
   googleId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  generationCount?: Prisma.SortOrder
+  extraCredits?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
@@ -406,6 +507,13 @@ export type UserMinOrderByAggregateInput = {
   googleId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  generationCount?: Prisma.SortOrder
+  extraCredits?: Prisma.SortOrder
+}
+
+export type UserSumOrderByAggregateInput = {
+  generationCount?: Prisma.SortOrder
+  extraCredits?: Prisma.SortOrder
 }
 
 export type UserCreateNestedOneWithoutWorkspaceOwnershipsInput = {
@@ -436,6 +544,28 @@ export type UserUpdateOneWithoutWorkspaceMembershipsNestedInput = {
   delete?: Prisma.UserWhereInput | boolean
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutWorkspaceMembershipsInput, Prisma.UserUpdateWithoutWorkspaceMembershipsInput>, Prisma.UserUncheckedUpdateWithoutWorkspaceMembershipsInput>
+}
+
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
+export type UserCreateNestedOneWithoutCreditPurchasesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreditPurchasesInput, Prisma.UserUncheckedCreateWithoutCreditPurchasesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreditPurchasesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCreditPurchasesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreditPurchasesInput, Prisma.UserUncheckedCreateWithoutCreditPurchasesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreditPurchasesInput
+  upsert?: Prisma.UserUpsertWithoutCreditPurchasesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCreditPurchasesInput, Prisma.UserUpdateWithoutCreditPurchasesInput>, Prisma.UserUncheckedUpdateWithoutCreditPurchasesInput>
 }
 
 export type UserCreateNestedOneWithoutEventsInput = {
@@ -508,6 +638,20 @@ export type UserUpdateOneRequiredWithoutSessionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSessionsInput, Prisma.UserUpdateWithoutSessionsInput>, Prisma.UserUncheckedUpdateWithoutSessionsInput>
 }
 
+export type UserCreateNestedOneWithoutPaymentsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPaymentsInput, Prisma.UserUncheckedCreateWithoutPaymentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPaymentsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutPaymentsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPaymentsInput, Prisma.UserUncheckedCreateWithoutPaymentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPaymentsInput
+  upsert?: Prisma.UserUpsertWithoutPaymentsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPaymentsInput, Prisma.UserUpdateWithoutPaymentsInput>, Prisma.UserUncheckedUpdateWithoutPaymentsInput>
+}
+
 export type UserCreateWithoutWorkspaceOwnershipsInput = {
   id?: string
   name: string
@@ -516,12 +660,16 @@ export type UserCreateWithoutWorkspaceOwnershipsInput = {
   googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  generationCount?: number
+  extraCredits?: number
   events?: Prisma.EventCreateNestedManyWithoutUserInput
   loginLogs?: Prisma.LoginLogCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   Subscriptions?: Prisma.SubscriptionsCreateNestedManyWithoutUserInput
   templates?: Prisma.TemplateCreateNestedManyWithoutUserInput
   workspaceMemberships?: Prisma.WorkspaceMemberCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  creditPurchases?: Prisma.CreditPurchaseCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutWorkspaceOwnershipsInput = {
@@ -532,12 +680,16 @@ export type UserUncheckedCreateWithoutWorkspaceOwnershipsInput = {
   googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  generationCount?: number
+  extraCredits?: number
   events?: Prisma.EventUncheckedCreateNestedManyWithoutUserInput
   loginLogs?: Prisma.LoginLogUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   Subscriptions?: Prisma.SubscriptionsUncheckedCreateNestedManyWithoutUserInput
   templates?: Prisma.TemplateUncheckedCreateNestedManyWithoutUserInput
   workspaceMemberships?: Prisma.WorkspaceMemberUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  creditPurchases?: Prisma.CreditPurchaseUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutWorkspaceOwnershipsInput = {
@@ -564,12 +716,16 @@ export type UserUpdateWithoutWorkspaceOwnershipsInput = {
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  generationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  extraCredits?: Prisma.IntFieldUpdateOperationsInput | number
   events?: Prisma.EventUpdateManyWithoutUserNestedInput
   loginLogs?: Prisma.LoginLogUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   Subscriptions?: Prisma.SubscriptionsUpdateManyWithoutUserNestedInput
   templates?: Prisma.TemplateUpdateManyWithoutUserNestedInput
   workspaceMemberships?: Prisma.WorkspaceMemberUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  creditPurchases?: Prisma.CreditPurchaseUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWorkspaceOwnershipsInput = {
@@ -580,12 +736,16 @@ export type UserUncheckedUpdateWithoutWorkspaceOwnershipsInput = {
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  generationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  extraCredits?: Prisma.IntFieldUpdateOperationsInput | number
   events?: Prisma.EventUncheckedUpdateManyWithoutUserNestedInput
   loginLogs?: Prisma.LoginLogUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   Subscriptions?: Prisma.SubscriptionsUncheckedUpdateManyWithoutUserNestedInput
   templates?: Prisma.TemplateUncheckedUpdateManyWithoutUserNestedInput
   workspaceMemberships?: Prisma.WorkspaceMemberUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  creditPurchases?: Prisma.CreditPurchaseUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutWorkspaceMembershipsInput = {
@@ -596,12 +756,16 @@ export type UserCreateWithoutWorkspaceMembershipsInput = {
   googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  generationCount?: number
+  extraCredits?: number
   events?: Prisma.EventCreateNestedManyWithoutUserInput
   loginLogs?: Prisma.LoginLogCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   Subscriptions?: Prisma.SubscriptionsCreateNestedManyWithoutUserInput
   templates?: Prisma.TemplateCreateNestedManyWithoutUserInput
   workspaceOwnerships?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  creditPurchases?: Prisma.CreditPurchaseCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutWorkspaceMembershipsInput = {
@@ -612,12 +776,16 @@ export type UserUncheckedCreateWithoutWorkspaceMembershipsInput = {
   googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  generationCount?: number
+  extraCredits?: number
   events?: Prisma.EventUncheckedCreateNestedManyWithoutUserInput
   loginLogs?: Prisma.LoginLogUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   Subscriptions?: Prisma.SubscriptionsUncheckedCreateNestedManyWithoutUserInput
   templates?: Prisma.TemplateUncheckedCreateNestedManyWithoutUserInput
   workspaceOwnerships?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  creditPurchases?: Prisma.CreditPurchaseUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutWorkspaceMembershipsInput = {
@@ -644,12 +812,16 @@ export type UserUpdateWithoutWorkspaceMembershipsInput = {
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  generationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  extraCredits?: Prisma.IntFieldUpdateOperationsInput | number
   events?: Prisma.EventUpdateManyWithoutUserNestedInput
   loginLogs?: Prisma.LoginLogUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   Subscriptions?: Prisma.SubscriptionsUpdateManyWithoutUserNestedInput
   templates?: Prisma.TemplateUpdateManyWithoutUserNestedInput
   workspaceOwnerships?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  creditPurchases?: Prisma.CreditPurchaseUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWorkspaceMembershipsInput = {
@@ -660,12 +832,112 @@ export type UserUncheckedUpdateWithoutWorkspaceMembershipsInput = {
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  generationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  extraCredits?: Prisma.IntFieldUpdateOperationsInput | number
   events?: Prisma.EventUncheckedUpdateManyWithoutUserNestedInput
   loginLogs?: Prisma.LoginLogUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   Subscriptions?: Prisma.SubscriptionsUncheckedUpdateManyWithoutUserNestedInput
   templates?: Prisma.TemplateUncheckedUpdateManyWithoutUserNestedInput
   workspaceOwnerships?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  creditPurchases?: Prisma.CreditPurchaseUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutCreditPurchasesInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  googleId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  generationCount?: number
+  extraCredits?: number
+  events?: Prisma.EventCreateNestedManyWithoutUserInput
+  loginLogs?: Prisma.LoginLogCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  Subscriptions?: Prisma.SubscriptionsCreateNestedManyWithoutUserInput
+  templates?: Prisma.TemplateCreateNestedManyWithoutUserInput
+  workspaceOwnerships?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
+  workspaceMemberships?: Prisma.WorkspaceMemberCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCreditPurchasesInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  googleId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  generationCount?: number
+  extraCredits?: number
+  events?: Prisma.EventUncheckedCreateNestedManyWithoutUserInput
+  loginLogs?: Prisma.LoginLogUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  Subscriptions?: Prisma.SubscriptionsUncheckedCreateNestedManyWithoutUserInput
+  templates?: Prisma.TemplateUncheckedCreateNestedManyWithoutUserInput
+  workspaceOwnerships?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
+  workspaceMemberships?: Prisma.WorkspaceMemberUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCreditPurchasesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreditPurchasesInput, Prisma.UserUncheckedCreateWithoutCreditPurchasesInput>
+}
+
+export type UserUpsertWithoutCreditPurchasesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCreditPurchasesInput, Prisma.UserUncheckedUpdateWithoutCreditPurchasesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreditPurchasesInput, Prisma.UserUncheckedCreateWithoutCreditPurchasesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCreditPurchasesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCreditPurchasesInput, Prisma.UserUncheckedUpdateWithoutCreditPurchasesInput>
+}
+
+export type UserUpdateWithoutCreditPurchasesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  generationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  extraCredits?: Prisma.IntFieldUpdateOperationsInput | number
+  events?: Prisma.EventUpdateManyWithoutUserNestedInput
+  loginLogs?: Prisma.LoginLogUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  Subscriptions?: Prisma.SubscriptionsUpdateManyWithoutUserNestedInput
+  templates?: Prisma.TemplateUpdateManyWithoutUserNestedInput
+  workspaceOwnerships?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
+  workspaceMemberships?: Prisma.WorkspaceMemberUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCreditPurchasesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  generationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  extraCredits?: Prisma.IntFieldUpdateOperationsInput | number
+  events?: Prisma.EventUncheckedUpdateManyWithoutUserNestedInput
+  loginLogs?: Prisma.LoginLogUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  Subscriptions?: Prisma.SubscriptionsUncheckedUpdateManyWithoutUserNestedInput
+  templates?: Prisma.TemplateUncheckedUpdateManyWithoutUserNestedInput
+  workspaceOwnerships?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
+  workspaceMemberships?: Prisma.WorkspaceMemberUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutEventsInput = {
@@ -676,12 +948,16 @@ export type UserCreateWithoutEventsInput = {
   googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  generationCount?: number
+  extraCredits?: number
   loginLogs?: Prisma.LoginLogCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   Subscriptions?: Prisma.SubscriptionsCreateNestedManyWithoutUserInput
   templates?: Prisma.TemplateCreateNestedManyWithoutUserInput
   workspaceOwnerships?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
   workspaceMemberships?: Prisma.WorkspaceMemberCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  creditPurchases?: Prisma.CreditPurchaseCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutEventsInput = {
@@ -692,12 +968,16 @@ export type UserUncheckedCreateWithoutEventsInput = {
   googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  generationCount?: number
+  extraCredits?: number
   loginLogs?: Prisma.LoginLogUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   Subscriptions?: Prisma.SubscriptionsUncheckedCreateNestedManyWithoutUserInput
   templates?: Prisma.TemplateUncheckedCreateNestedManyWithoutUserInput
   workspaceOwnerships?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
   workspaceMemberships?: Prisma.WorkspaceMemberUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  creditPurchases?: Prisma.CreditPurchaseUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutEventsInput = {
@@ -724,12 +1004,16 @@ export type UserUpdateWithoutEventsInput = {
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  generationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  extraCredits?: Prisma.IntFieldUpdateOperationsInput | number
   loginLogs?: Prisma.LoginLogUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   Subscriptions?: Prisma.SubscriptionsUpdateManyWithoutUserNestedInput
   templates?: Prisma.TemplateUpdateManyWithoutUserNestedInput
   workspaceOwnerships?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
   workspaceMemberships?: Prisma.WorkspaceMemberUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  creditPurchases?: Prisma.CreditPurchaseUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutEventsInput = {
@@ -740,12 +1024,16 @@ export type UserUncheckedUpdateWithoutEventsInput = {
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  generationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  extraCredits?: Prisma.IntFieldUpdateOperationsInput | number
   loginLogs?: Prisma.LoginLogUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   Subscriptions?: Prisma.SubscriptionsUncheckedUpdateManyWithoutUserNestedInput
   templates?: Prisma.TemplateUncheckedUpdateManyWithoutUserNestedInput
   workspaceOwnerships?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
   workspaceMemberships?: Prisma.WorkspaceMemberUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  creditPurchases?: Prisma.CreditPurchaseUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutTemplatesInput = {
@@ -756,12 +1044,16 @@ export type UserCreateWithoutTemplatesInput = {
   googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  generationCount?: number
+  extraCredits?: number
   events?: Prisma.EventCreateNestedManyWithoutUserInput
   loginLogs?: Prisma.LoginLogCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   Subscriptions?: Prisma.SubscriptionsCreateNestedManyWithoutUserInput
   workspaceOwnerships?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
   workspaceMemberships?: Prisma.WorkspaceMemberCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  creditPurchases?: Prisma.CreditPurchaseCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutTemplatesInput = {
@@ -772,12 +1064,16 @@ export type UserUncheckedCreateWithoutTemplatesInput = {
   googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  generationCount?: number
+  extraCredits?: number
   events?: Prisma.EventUncheckedCreateNestedManyWithoutUserInput
   loginLogs?: Prisma.LoginLogUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   Subscriptions?: Prisma.SubscriptionsUncheckedCreateNestedManyWithoutUserInput
   workspaceOwnerships?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
   workspaceMemberships?: Prisma.WorkspaceMemberUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  creditPurchases?: Prisma.CreditPurchaseUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutTemplatesInput = {
@@ -804,12 +1100,16 @@ export type UserUpdateWithoutTemplatesInput = {
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  generationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  extraCredits?: Prisma.IntFieldUpdateOperationsInput | number
   events?: Prisma.EventUpdateManyWithoutUserNestedInput
   loginLogs?: Prisma.LoginLogUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   Subscriptions?: Prisma.SubscriptionsUpdateManyWithoutUserNestedInput
   workspaceOwnerships?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
   workspaceMemberships?: Prisma.WorkspaceMemberUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  creditPurchases?: Prisma.CreditPurchaseUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTemplatesInput = {
@@ -820,12 +1120,16 @@ export type UserUncheckedUpdateWithoutTemplatesInput = {
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  generationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  extraCredits?: Prisma.IntFieldUpdateOperationsInput | number
   events?: Prisma.EventUncheckedUpdateManyWithoutUserNestedInput
   loginLogs?: Prisma.LoginLogUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   Subscriptions?: Prisma.SubscriptionsUncheckedUpdateManyWithoutUserNestedInput
   workspaceOwnerships?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
   workspaceMemberships?: Prisma.WorkspaceMemberUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  creditPurchases?: Prisma.CreditPurchaseUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSubscriptionsInput = {
@@ -836,12 +1140,16 @@ export type UserCreateWithoutSubscriptionsInput = {
   googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  generationCount?: number
+  extraCredits?: number
   events?: Prisma.EventCreateNestedManyWithoutUserInput
   loginLogs?: Prisma.LoginLogCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   templates?: Prisma.TemplateCreateNestedManyWithoutUserInput
   workspaceOwnerships?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
   workspaceMemberships?: Prisma.WorkspaceMemberCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  creditPurchases?: Prisma.CreditPurchaseCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSubscriptionsInput = {
@@ -852,12 +1160,16 @@ export type UserUncheckedCreateWithoutSubscriptionsInput = {
   googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  generationCount?: number
+  extraCredits?: number
   events?: Prisma.EventUncheckedCreateNestedManyWithoutUserInput
   loginLogs?: Prisma.LoginLogUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   templates?: Prisma.TemplateUncheckedCreateNestedManyWithoutUserInput
   workspaceOwnerships?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
   workspaceMemberships?: Prisma.WorkspaceMemberUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  creditPurchases?: Prisma.CreditPurchaseUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSubscriptionsInput = {
@@ -884,12 +1196,16 @@ export type UserUpdateWithoutSubscriptionsInput = {
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  generationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  extraCredits?: Prisma.IntFieldUpdateOperationsInput | number
   events?: Prisma.EventUpdateManyWithoutUserNestedInput
   loginLogs?: Prisma.LoginLogUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   templates?: Prisma.TemplateUpdateManyWithoutUserNestedInput
   workspaceOwnerships?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
   workspaceMemberships?: Prisma.WorkspaceMemberUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  creditPurchases?: Prisma.CreditPurchaseUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSubscriptionsInput = {
@@ -900,12 +1216,16 @@ export type UserUncheckedUpdateWithoutSubscriptionsInput = {
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  generationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  extraCredits?: Prisma.IntFieldUpdateOperationsInput | number
   events?: Prisma.EventUncheckedUpdateManyWithoutUserNestedInput
   loginLogs?: Prisma.LoginLogUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   templates?: Prisma.TemplateUncheckedUpdateManyWithoutUserNestedInput
   workspaceOwnerships?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
   workspaceMemberships?: Prisma.WorkspaceMemberUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  creditPurchases?: Prisma.CreditPurchaseUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutLoginLogsInput = {
@@ -916,12 +1236,16 @@ export type UserCreateWithoutLoginLogsInput = {
   googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  generationCount?: number
+  extraCredits?: number
   events?: Prisma.EventCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   Subscriptions?: Prisma.SubscriptionsCreateNestedManyWithoutUserInput
   templates?: Prisma.TemplateCreateNestedManyWithoutUserInput
   workspaceOwnerships?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
   workspaceMemberships?: Prisma.WorkspaceMemberCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  creditPurchases?: Prisma.CreditPurchaseCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutLoginLogsInput = {
@@ -932,12 +1256,16 @@ export type UserUncheckedCreateWithoutLoginLogsInput = {
   googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  generationCount?: number
+  extraCredits?: number
   events?: Prisma.EventUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   Subscriptions?: Prisma.SubscriptionsUncheckedCreateNestedManyWithoutUserInput
   templates?: Prisma.TemplateUncheckedCreateNestedManyWithoutUserInput
   workspaceOwnerships?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
   workspaceMemberships?: Prisma.WorkspaceMemberUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  creditPurchases?: Prisma.CreditPurchaseUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutLoginLogsInput = {
@@ -964,12 +1292,16 @@ export type UserUpdateWithoutLoginLogsInput = {
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  generationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  extraCredits?: Prisma.IntFieldUpdateOperationsInput | number
   events?: Prisma.EventUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   Subscriptions?: Prisma.SubscriptionsUpdateManyWithoutUserNestedInput
   templates?: Prisma.TemplateUpdateManyWithoutUserNestedInput
   workspaceOwnerships?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
   workspaceMemberships?: Prisma.WorkspaceMemberUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  creditPurchases?: Prisma.CreditPurchaseUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLoginLogsInput = {
@@ -980,12 +1312,16 @@ export type UserUncheckedUpdateWithoutLoginLogsInput = {
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  generationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  extraCredits?: Prisma.IntFieldUpdateOperationsInput | number
   events?: Prisma.EventUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   Subscriptions?: Prisma.SubscriptionsUncheckedUpdateManyWithoutUserNestedInput
   templates?: Prisma.TemplateUncheckedUpdateManyWithoutUserNestedInput
   workspaceOwnerships?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
   workspaceMemberships?: Prisma.WorkspaceMemberUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  creditPurchases?: Prisma.CreditPurchaseUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -996,12 +1332,16 @@ export type UserCreateWithoutSessionsInput = {
   googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  generationCount?: number
+  extraCredits?: number
   events?: Prisma.EventCreateNestedManyWithoutUserInput
   loginLogs?: Prisma.LoginLogCreateNestedManyWithoutUserInput
   Subscriptions?: Prisma.SubscriptionsCreateNestedManyWithoutUserInput
   templates?: Prisma.TemplateCreateNestedManyWithoutUserInput
   workspaceOwnerships?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
   workspaceMemberships?: Prisma.WorkspaceMemberCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  creditPurchases?: Prisma.CreditPurchaseCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -1012,12 +1352,16 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  generationCount?: number
+  extraCredits?: number
   events?: Prisma.EventUncheckedCreateNestedManyWithoutUserInput
   loginLogs?: Prisma.LoginLogUncheckedCreateNestedManyWithoutUserInput
   Subscriptions?: Prisma.SubscriptionsUncheckedCreateNestedManyWithoutUserInput
   templates?: Prisma.TemplateUncheckedCreateNestedManyWithoutUserInput
   workspaceOwnerships?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
   workspaceMemberships?: Prisma.WorkspaceMemberUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  creditPurchases?: Prisma.CreditPurchaseUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -1044,12 +1388,16 @@ export type UserUpdateWithoutSessionsInput = {
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  generationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  extraCredits?: Prisma.IntFieldUpdateOperationsInput | number
   events?: Prisma.EventUpdateManyWithoutUserNestedInput
   loginLogs?: Prisma.LoginLogUpdateManyWithoutUserNestedInput
   Subscriptions?: Prisma.SubscriptionsUpdateManyWithoutUserNestedInput
   templates?: Prisma.TemplateUpdateManyWithoutUserNestedInput
   workspaceOwnerships?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
   workspaceMemberships?: Prisma.WorkspaceMemberUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  creditPurchases?: Prisma.CreditPurchaseUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -1060,12 +1408,112 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  generationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  extraCredits?: Prisma.IntFieldUpdateOperationsInput | number
   events?: Prisma.EventUncheckedUpdateManyWithoutUserNestedInput
   loginLogs?: Prisma.LoginLogUncheckedUpdateManyWithoutUserNestedInput
   Subscriptions?: Prisma.SubscriptionsUncheckedUpdateManyWithoutUserNestedInput
   templates?: Prisma.TemplateUncheckedUpdateManyWithoutUserNestedInput
   workspaceOwnerships?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
   workspaceMemberships?: Prisma.WorkspaceMemberUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  creditPurchases?: Prisma.CreditPurchaseUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutPaymentsInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  googleId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  generationCount?: number
+  extraCredits?: number
+  events?: Prisma.EventCreateNestedManyWithoutUserInput
+  loginLogs?: Prisma.LoginLogCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  Subscriptions?: Prisma.SubscriptionsCreateNestedManyWithoutUserInput
+  templates?: Prisma.TemplateCreateNestedManyWithoutUserInput
+  workspaceOwnerships?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
+  workspaceMemberships?: Prisma.WorkspaceMemberCreateNestedManyWithoutUserInput
+  creditPurchases?: Prisma.CreditPurchaseCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutPaymentsInput = {
+  id?: string
+  name: string
+  email: string
+  password?: string | null
+  googleId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  generationCount?: number
+  extraCredits?: number
+  events?: Prisma.EventUncheckedCreateNestedManyWithoutUserInput
+  loginLogs?: Prisma.LoginLogUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  Subscriptions?: Prisma.SubscriptionsUncheckedCreateNestedManyWithoutUserInput
+  templates?: Prisma.TemplateUncheckedCreateNestedManyWithoutUserInput
+  workspaceOwnerships?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
+  workspaceMemberships?: Prisma.WorkspaceMemberUncheckedCreateNestedManyWithoutUserInput
+  creditPurchases?: Prisma.CreditPurchaseUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutPaymentsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPaymentsInput, Prisma.UserUncheckedCreateWithoutPaymentsInput>
+}
+
+export type UserUpsertWithoutPaymentsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPaymentsInput, Prisma.UserUncheckedUpdateWithoutPaymentsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPaymentsInput, Prisma.UserUncheckedCreateWithoutPaymentsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPaymentsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPaymentsInput, Prisma.UserUncheckedUpdateWithoutPaymentsInput>
+}
+
+export type UserUpdateWithoutPaymentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  generationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  extraCredits?: Prisma.IntFieldUpdateOperationsInput | number
+  events?: Prisma.EventUpdateManyWithoutUserNestedInput
+  loginLogs?: Prisma.LoginLogUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  Subscriptions?: Prisma.SubscriptionsUpdateManyWithoutUserNestedInput
+  templates?: Prisma.TemplateUpdateManyWithoutUserNestedInput
+  workspaceOwnerships?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
+  workspaceMemberships?: Prisma.WorkspaceMemberUpdateManyWithoutUserNestedInput
+  creditPurchases?: Prisma.CreditPurchaseUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPaymentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  generationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  extraCredits?: Prisma.IntFieldUpdateOperationsInput | number
+  events?: Prisma.EventUncheckedUpdateManyWithoutUserNestedInput
+  loginLogs?: Prisma.LoginLogUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  Subscriptions?: Prisma.SubscriptionsUncheckedUpdateManyWithoutUserNestedInput
+  templates?: Prisma.TemplateUncheckedUpdateManyWithoutUserNestedInput
+  workspaceOwnerships?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
+  workspaceMemberships?: Prisma.WorkspaceMemberUncheckedUpdateManyWithoutUserNestedInput
+  creditPurchases?: Prisma.CreditPurchaseUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -1081,6 +1529,8 @@ export type UserCountOutputType = {
   templates: number
   workspaceOwnerships: number
   workspaceMemberships: number
+  payments: number
+  creditPurchases: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1091,6 +1541,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   templates?: boolean | UserCountOutputTypeCountTemplatesArgs
   workspaceOwnerships?: boolean | UserCountOutputTypeCountWorkspaceOwnershipsArgs
   workspaceMemberships?: boolean | UserCountOutputTypeCountWorkspaceMembershipsArgs
+  payments?: boolean | UserCountOutputTypeCountPaymentsArgs
+  creditPurchases?: boolean | UserCountOutputTypeCountCreditPurchasesArgs
 }
 
 /**
@@ -1152,6 +1604,20 @@ export type UserCountOutputTypeCountWorkspaceMembershipsArgs<ExtArgs extends run
   where?: Prisma.WorkspaceMemberWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountPaymentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PaymentWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCreditPurchasesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CreditPurchaseWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1161,6 +1627,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   googleId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  generationCount?: boolean
+  extraCredits?: boolean
   events?: boolean | Prisma.User$eventsArgs<ExtArgs>
   loginLogs?: boolean | Prisma.User$loginLogsArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
@@ -1168,6 +1636,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   templates?: boolean | Prisma.User$templatesArgs<ExtArgs>
   workspaceOwnerships?: boolean | Prisma.User$workspaceOwnershipsArgs<ExtArgs>
   workspaceMemberships?: boolean | Prisma.User$workspaceMembershipsArgs<ExtArgs>
+  payments?: boolean | Prisma.User$paymentsArgs<ExtArgs>
+  creditPurchases?: boolean | Prisma.User$creditPurchasesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1179,6 +1649,8 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   googleId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  generationCount?: boolean
+  extraCredits?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1189,6 +1661,8 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   googleId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  generationCount?: boolean
+  extraCredits?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -1199,9 +1673,11 @@ export type UserSelectScalar = {
   googleId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  generationCount?: boolean
+  extraCredits?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "googleId" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "googleId" | "createdAt" | "updatedAt" | "generationCount" | "extraCredits", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   events?: boolean | Prisma.User$eventsArgs<ExtArgs>
   loginLogs?: boolean | Prisma.User$loginLogsArgs<ExtArgs>
@@ -1210,6 +1686,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   templates?: boolean | Prisma.User$templatesArgs<ExtArgs>
   workspaceOwnerships?: boolean | Prisma.User$workspaceOwnershipsArgs<ExtArgs>
   workspaceMemberships?: boolean | Prisma.User$workspaceMembershipsArgs<ExtArgs>
+  payments?: boolean | Prisma.User$paymentsArgs<ExtArgs>
+  creditPurchases?: boolean | Prisma.User$creditPurchasesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1225,6 +1703,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     templates: Prisma.$TemplatePayload<ExtArgs>[]
     workspaceOwnerships: Prisma.$WorkspacePayload<ExtArgs>[]
     workspaceMemberships: Prisma.$WorkspaceMemberPayload<ExtArgs>[]
+    payments: Prisma.$PaymentPayload<ExtArgs>[]
+    creditPurchases: Prisma.$CreditPurchasePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1234,6 +1714,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     googleId: string | null
     createdAt: Date
     updatedAt: Date
+    generationCount: number
+    extraCredits: number
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -1635,6 +2117,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   templates<T extends Prisma.User$templatesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$templatesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   workspaceOwnerships<T extends Prisma.User$workspaceOwnershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$workspaceOwnershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   workspaceMemberships<T extends Prisma.User$workspaceMembershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$workspaceMembershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkspaceMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  payments<T extends Prisma.User$paymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  creditPurchases<T extends Prisma.User$creditPurchasesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$creditPurchasesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CreditPurchasePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1671,6 +2155,8 @@ export interface UserFieldRefs {
   readonly googleId: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly generationCount: Prisma.FieldRef<"User", 'Int'>
+  readonly extraCredits: Prisma.FieldRef<"User", 'Int'>
 }
     
 
@@ -2224,6 +2710,54 @@ export type User$workspaceMembershipsArgs<ExtArgs extends runtime.Types.Extensio
   take?: number
   skip?: number
   distinct?: Prisma.WorkspaceMemberScalarFieldEnum | Prisma.WorkspaceMemberScalarFieldEnum[]
+}
+
+/**
+ * User.payments
+ */
+export type User$paymentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Payment
+   */
+  select?: Prisma.PaymentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Payment
+   */
+  omit?: Prisma.PaymentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PaymentInclude<ExtArgs> | null
+  where?: Prisma.PaymentWhereInput
+  orderBy?: Prisma.PaymentOrderByWithRelationInput | Prisma.PaymentOrderByWithRelationInput[]
+  cursor?: Prisma.PaymentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PaymentScalarFieldEnum | Prisma.PaymentScalarFieldEnum[]
+}
+
+/**
+ * User.creditPurchases
+ */
+export type User$creditPurchasesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CreditPurchase
+   */
+  select?: Prisma.CreditPurchaseSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CreditPurchase
+   */
+  omit?: Prisma.CreditPurchaseOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CreditPurchaseInclude<ExtArgs> | null
+  where?: Prisma.CreditPurchaseWhereInput
+  orderBy?: Prisma.CreditPurchaseOrderByWithRelationInput | Prisma.CreditPurchaseOrderByWithRelationInput[]
+  cursor?: Prisma.CreditPurchaseWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CreditPurchaseScalarFieldEnum | Prisma.CreditPurchaseScalarFieldEnum[]
 }
 
 /**

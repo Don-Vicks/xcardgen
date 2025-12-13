@@ -48,13 +48,17 @@ export class WorkspacesRequest {
   async uploadLogo(file: File) {
     const formData = new FormData()
     formData.append('file', file)
-    return api.post<{ url: string }>('/workspaces/upload-logo', formData)
+    return api.post<{ url: string }>('/workspaces/upload-logo', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
   }
 
   async uploadCover(file: File) {
     const formData = new FormData()
     formData.append('file', file)
-    return api.post<{ url: string }>('/workspaces/upload-cover', formData)
+    return api.post<{ url: string }>('/workspaces/upload-cover', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
   }
 
   // ===== MEMBER MANAGEMENT =====

@@ -20,7 +20,7 @@ import {
 import { eventsRequest } from "@/lib/api/requests/events.request"
 import { cn } from "@/lib/utils"
 import { addDays, format, formatDistanceToNow } from "date-fns"
-import { Calendar as CalendarIcon, CreditCard, Download, Eye, FileDown, Gem, Globe, Users } from "lucide-react"
+import { Calendar as CalendarIcon, CreditCard, Download, Eye, FileDown, Gem, Globe, LockIcon, Users } from "lucide-react"
 import Image from "next/image"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
@@ -53,10 +53,39 @@ const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?:
   return null
 }
 
+function PremiumOverlay({ label = "Upgrade to Pro" }: { label?: string }) {
+  return (
+    <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-background/50 backdrop-blur-sm rounded-lg border border-dashed border-primary/20">
+      <div className="flex flex-col items-center gap-2 p-4 text-center">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+          <Gem className="h-5 w-5 text-primary" />
+        </div>
+        <div className="space-y-1">
+          <h4 className="text-sm font-semibold">{label}</h4>
+          <p className="text-xs text-muted-foreground w-[200px]">
+            Unlock advanced insights with our Pro plan.
+          </p>
+        </div>
+        <Button size="sm" className="mt-2" asChild>
+          <a href="/dashboard/billing">Upgrade Plan</a>
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+
+import { useAuth } from "@/stores/auth-store"
+import { useWorkspace } from "@/stores/workspace-store"
+
 export default function AnalyticsPage() {
   const params = useParams()
   const router = useRouter()
   const analyticsRef = useRef<HTMLDivElement>(null)
+  const { currentWorkspace } = useWorkspace()
+  const { user } = useAuth()
+  const hasAdvancedStats = user?.subscription?.plan?.features?.hasAdvancedAnalytics
+  const canExportAttendees = user?.subscription?.plan?.features?.canCollectEmails
 
   // Removed reportRef
 
@@ -82,14 +111,16 @@ export default function AnalyticsPage() {
   useEffect(() => {
     const fetchStats = async () => {
       if (!params.slug) return
-      try {
-        // setLoading(true) // Optional: might cause flickering if we want smooth updates. 
-        // But for clarity, let's keep it simple or just rely on new data replacing old.
+      // Wait for workspace to be loaded if possible, or just proceed. 
+      // If currentWorkspace is undefined initially, it might fail if strict mode relies on it.
+      // But usually store initializes fast or is persisted.
 
-        const eventRes = await eventsRequest.getAll()
-        // Handle both legacy array and new { data: [] } structure
-        const eventsList = Array.isArray(eventRes.data) ? eventRes.data : (eventRes.data as any).data || []
-        const event = eventsList.find((e: any) => e.slug === params.slug || e.id === params.slug)
+      try {
+        const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug
+
+        // Fetch specific event by slug, providing workspace context
+        const eventRes = await eventsRequest.getById(slug, currentWorkspace?.id)
+        const event = eventRes.data
 
         if (event) {
           const res = await eventsRequest.getAnalytics(
@@ -97,16 +128,18 @@ export default function AnalyticsPage() {
             date?.from,
             date?.to
           )
-          setData(res.data)
+          // Merge event info into data for the UI
+          setData({ ...res.data, event })
         }
       } catch (error) {
+        console.error("Failed to load analytics", error)
         toast.error("Failed to load analytics")
       } finally {
         setLoading(false)
       }
     }
     fetchStats()
-  }, [params.slug, date])
+  }, [params.slug, date, currentWorkspace?.id])
 
   const downloadCsv = (blob: any, filename: string) => {
     const url = window.URL.createObjectURL(new Blob([blob]));
@@ -272,9 +305,24 @@ export default function AnalyticsPage() {
               <DropdownMenuItem onClick={handleExportAnalytics}>
                 Export Analytics (CSV)
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleExportAttendees}>
-                Export Attendees (CSV)
+
+              <DropdownMenuItem
+                onClick={canExportAttendees ? handleExportAttendees : (e) => {
+                  e.preventDefault()
+                  router.push('/dashboard/billing')
+                }}
+                className={cn(!canExportAttendees && "opacity-75 cursor-default")}
+              >
+                <div className="flex items-center justify-between w-full">
+                  <span>Export Attendees (CSV)</span>
+                  {!canExportAttendees && <LockIcon className="h-3 w-3 text-muted-foreground ml-2" />}
+                </div>
               </DropdownMenuItem>
+              {!canExportAttendees && (
+                <DropdownMenuItem className="text-xs text-primary focus:text-primary justify-center cursor-pointer bg-primary/5" onClick={() => router.push('/dashboard/billing')}>
+                  Upgrade to Export Data
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -391,13 +439,14 @@ export default function AnalyticsPage() {
 
         {/* Premium: Activity & Audience */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-          <Card className="col-span-4">
+          <Card className="col-span-4 relative group">
+            {!hasAdvancedStats && <PremiumOverlay label="Peak Activity Locked" />}
             <CardHeader>
               <CardTitle>Peak Activity (UTC)</CardTitle>
               <CardDescription>Busiest hours.</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-[250px] w-full">
+              <div className={cn("h-[250px] w-full", !hasAdvancedStats && "blur-2xl opacity-25")}>
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={peakActivity}>
                     <XAxis dataKey="hour" fontSize={12} tickLine={false} axisLine={false} />
@@ -409,13 +458,14 @@ export default function AnalyticsPage() {
             </CardContent>
           </Card>
 
-          <Card className="col-span-3">
+          <Card className="col-span-3 relative">
+            {!hasAdvancedStats && <PremiumOverlay label="Audience Quality Locked" />}
             <CardHeader>
               <CardTitle>Participating Organizations</CardTitle>
               <CardDescription>Based on corporate email domains.</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className={cn("space-y-4", !hasAdvancedStats && "blur-md opacity-50")}>
                 {topDomains.map((d: any, i: number) => (
                   <div key={i} className="flex items-center justify-between border-b pb-2 last:border-0">
                     <span className="font-medium text-sm">{d.name}</span>
@@ -431,13 +481,14 @@ export default function AnalyticsPage() {
         {/* Detailed Stats Row */}
         <div className="grid gap-4 md:grid-cols-3">
           {/* Traffic Sources */}
-          <Card className="col-span-1">
+          <Card className="col-span-1 relative">
+            {!hasAdvancedStats && <PremiumOverlay label="Traffic Sources Locked" />}
             <CardHeader>
               <CardTitle>Traffic Sources</CardTitle>
               <CardDescription>Top referrers.</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className={cn("space-y-4", !hasAdvancedStats && "blur-md opacity-50")}>
                 {trafficSources.length === 0 ? (
                   <p className="text-sm text-muted-foreground text-center py-8">No referrer data yet.</p>
                 ) : (
@@ -456,13 +507,14 @@ export default function AnalyticsPage() {
           </Card>
 
           {/* Demographics */}
-          <Card className="col-span-1">
+          <Card className="col-span-1 relative">
+            {!hasAdvancedStats && <PremiumOverlay label="Demographics Locked" />}
             <CardHeader>
               <CardTitle>Demographics</CardTitle>
               <CardDescription>Top countries.</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-[200px] w-full">
+              <div className={cn("h-[200px] w-full", !hasAdvancedStats && "blur-md opacity-50")}>
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={countryBreakdown} layout="vertical" margin={{ left: 20 }}>
                     <XAxis type="number" hide />

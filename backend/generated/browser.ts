@@ -33,6 +33,11 @@ export type WorkspaceMember = Prisma.WorkspaceMemberModel
  */
 export type User = Prisma.UserModel
 /**
+ * Model CreditPurchase
+ * 
+ */
+export type CreditPurchase = Prisma.CreditPurchaseModel
+/**
  * Model Event
  * 
  */
@@ -97,3 +102,8 @@ export type LoginLog = Prisma.LoginLogModel
  * 
  */
 export type Session = Prisma.SessionModel
+/**
+ * Model Payment
+ * 
+ */
+export type Payment = Prisma.PaymentModel

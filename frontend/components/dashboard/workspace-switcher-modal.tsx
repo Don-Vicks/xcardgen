@@ -160,14 +160,33 @@ export function WorkspaceSwitcherModal({ open, onOpenChange }: WorkspaceSwitcher
 
         {/* Footer */}
         <div className="border-t p-3">
-          <Button
-            variant="outline"
-            className="w-full gap-2"
-            onClick={handleCreateNew}
-          >
-            <Plus className="h-4 w-4" />
-            Create New Workspace
-          </Button>
+          <div className="flex flex-col gap-2">
+            {/* Limit Check */}
+            {(() => {
+              const plan = user?.subscription?.plan;
+              const maxWorkspaces = plan?.maxWorkspaces || 1;
+              const currentCount = user?.workspaceOwnerships?.length || 0;
+              const isLimitReached = maxWorkspaces !== -1 && currentCount >= maxWorkspaces;
+
+              return (
+                <Button
+                  variant="outline"
+                  className="w-full gap-2"
+                  onClick={handleCreateNew}
+                  disabled={isLimitReached}
+                  title={isLimitReached ? `Limit of ${maxWorkspaces} workspaces reached. Upgrade plan.` : "Create new workspace"}
+                >
+                  <Plus className="h-4 w-4" />
+                  Create New Workspace
+                  {isLimitReached && (
+                    <span className="ml-auto text-[10px] bg-muted-foreground/20 px-1.5 py-0.5 rounded text-muted-foreground uppercase">
+                      Limit Reached
+                    </span>
+                  )}
+                </Button>
+              )
+            })()}
+          </div>
         </div>
 
         {/* Keyboard Hint */}

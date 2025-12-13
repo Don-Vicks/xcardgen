@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { eventsRequest } from "@/lib/api/requests/events.request"
 import { Template } from "@/lib/api/requests/templates.request"
 import { getButtonStyle, getCardStyle, getThemeStyles } from "@/lib/theme-utils"
-import { useGeneratedCardStore } from "@/store/generated-card.store"
+import { useGeneratedCardStore } from "@/stores/generated-card.store"
 import confetti from "canvas-confetti"
 import { format } from "date-fns"
 import { CalendarIcon, Download, Facebook, Image as ImageIcon, Linkedin, Loader2, Mail, MessageCircle, Share2, Sparkles, Twitter, Upload, User } from "lucide-react"
@@ -732,9 +732,11 @@ export function EventRegistrationView({ event, template, isEmbed = false }: Even
                 </CardContent>
               </Card>
             </div>
-            <div className="mt-12 text-center text-xs" style={{ color: themeStyles.mutedColor }}>
-              Powered by <span className="font-semibold" style={{ color: themeStyles.textColor }}>xCardGen</span>
-            </div>
+            {event.showBranding !== false && (
+              <div className="mt-12 text-center text-xs" style={{ color: themeStyles.mutedColor }}>
+                Powered by <a href="https://xcardgen.com" target="_blank" className="font-semibold hover:underline" style={{ color: themeStyles.textColor }}>xCardGen</a>
+              </div>
+            )}
           </div>
           {/* Scroll Hint Overlay (Desktop) */}
           <div className="hidden lg:flex absolute bottom-0 left-0 right-0 h-24 pointer-events-none items-end justify-center pb-6">

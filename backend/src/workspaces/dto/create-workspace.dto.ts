@@ -33,4 +33,7 @@ export class CreateWorkspaceDto {
 
   @IsOptional()
   socialLinks?: any;
+
+  @IsOptional()
+  appearance?: any;
 }

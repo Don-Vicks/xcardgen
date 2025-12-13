@@ -20,6 +20,7 @@ export interface ThemeStyle {
   fontBody?: string
   accentStyle: string
   animation?: string
+  isDark: boolean
 }
 
 // Luma-inspired heavy design themes
@@ -36,6 +37,7 @@ export const THEME_STYLES: Record<ThemeId, ThemeStyle> = {
     shadow: '0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03)',
     radius: '8px',
     accentStyle: 'subtle',
+    isDark: false,
   },
   futuristic: {
     // Deep dark, neon glows, grid patterns
@@ -51,6 +53,7 @@ export const THEME_STYLES: Record<ThemeId, ThemeStyle> = {
     shadow: '0 0 40px -10px rgba(124, 58, 237, 0.15)',
     radius: '2px',
     accentStyle: 'neon',
+    isDark: true,
   },
   elegant: {
     // Rich, warm, expensive feel, heavy blurs
@@ -65,6 +68,7 @@ export const THEME_STYLES: Record<ThemeId, ThemeStyle> = {
       '0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01)',
     radius: '24px',
     accentStyle: 'gradient',
+    isDark: false,
   },
   bold: {
     // Neo-brutalist, high contrast, sharp edges
@@ -78,6 +82,7 @@ export const THEME_STYLES: Record<ThemeId, ThemeStyle> = {
     shadow: '6px 6px 0px 0px #000000',
     radius: '0px',
     accentStyle: 'solid',
+    isDark: false,
   },
   glassmorphism: {
     // Heavy glass / Apple-style
@@ -90,6 +95,7 @@ export const THEME_STYLES: Record<ThemeId, ThemeStyle> = {
     shadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
     radius: '16px',
     accentStyle: 'glass',
+    isDark: true,
   },
   aurora: {
     // Animated Aurora Borealis
@@ -103,6 +109,7 @@ export const THEME_STYLES: Record<ThemeId, ThemeStyle> = {
     radius: '12px',
     accentStyle: 'neon',
     animation: 'aurora',
+    isDark: true,
   },
 }
 
@@ -190,8 +197,13 @@ export function getThemeStyles(
 
   // If background color is customized, we need to ensure contrast
   let contrastStyles = {}
+  let isDark = baseStyles.isDark
+
   if (backgroundColor) {
     const isLight = isLightColor(backgroundColor)
+    // If background is light, we are NOT dark (isDark = false)
+    isDark = !isLight
+
     if (isLight) {
       // Light background -> Dark text
       contrastStyles = {
@@ -218,6 +230,7 @@ export function getThemeStyles(
     ...contrastStyles,
     background: backgroundColor || baseStyles.background,
     primaryColor,
+    isDark,
   }
 }
 

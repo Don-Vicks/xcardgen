@@ -164,10 +164,42 @@ export class AuthService {
             logo: true,
           },
         },
+        Subscriptions: {
+          where: { status: 'ACTIVE' },
+          select: {
+            id: true,
+            status: true,
+            subscriptionPlan: {
+              select: {
+                id: true,
+                name: true,
+                features: true,
+                maxWorkspaces: true,
+                maxEvents: true,
+                maxMembers: true,
+                maxGenerations: true,
+              },
+            },
+          },
+        },
       },
     });
 
-    return user;
+    if (user) {
+      const { Subscriptions, ...rest } = user;
+      return {
+        ...rest,
+        subscription:
+          Subscriptions && Subscriptions.length > 0
+            ? {
+                ...Subscriptions[0],
+                plan: Subscriptions[0].subscriptionPlan,
+              }
+            : null,
+      };
+    }
+
+    return null;
   }
 
   async logLogin(userId: string, ipAddress: string, userAgent: string) {

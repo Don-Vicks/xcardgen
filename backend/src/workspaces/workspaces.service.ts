@@ -7,12 +7,15 @@ import { EmailService } from 'src/email/email.service';
 
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
+import { PaymentsService } from 'src/payments/payments.service';
+
 @Injectable()
 export class WorkspacesService {
   constructor(
     private prisma: PrismaService,
     private emailService: EmailService,
     private cloudinaryService: CloudinaryService,
+    private paymentsService: PaymentsService,
   ) {}
 
   /**
@@ -22,11 +25,14 @@ export class WorkspacesService {
    * @returns The created workspace.
    */
   async create(userId: string, createWorkspace: CreateWorkspaceDto) {
-    // const existingWorkspace = await this.prisma.workspace.findFirst({
-    //   where: {
-    //     ownerId: userId,
-    //   },
-    // });
+    const currentCount = await this.prisma.workspace.count({
+      where: { ownerId: userId },
+    });
+    await this.paymentsService.checkUsageLimit(
+      userId,
+      'workspaces',
+      currentCount,
+    );
 
     return await this.prisma.workspace.create({
       data: {
@@ -230,11 +236,15 @@ export class WorkspacesService {
       );
     }
 
-    // Check if email is the owner's
-    const owner = await this.prisma.user.findUnique({ where: { id: ownerId } });
-    if (owner?.email === memberEmail) {
-      throw new BadRequestException('Cannot invite yourself');
-    }
+    // Check member limit (excluding owner)
+    const currentMemberCount = await this.prisma.workspaceMember.count({
+      where: { workspaceId, removedAt: null },
+    });
+    await this.paymentsService.checkUsageLimit(
+      ownerId,
+      'members',
+      currentMemberCount,
+    );
 
     // Find the user to invite
     const userToInvite = await this.prisma.user.findUnique({
