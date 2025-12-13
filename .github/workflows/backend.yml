@@ -19,13 +19,20 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: backend/package-lock.json
+          cache-dependency-path: package-lock.json
 
-      - name: Install and build backend
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Types
+        run: npm run build -w @xcardgen/types
+
+      - name: Generate Prisma Client
         working-directory: backend
-        run: |
-          npm install
-          npm run build
+        run: npx prisma generate
+
+      - name: Build Backend
+        run: npm run build -w backend
 
       - name: Upload backend build to server
         uses: appleboy/scp-action@v0.1.7
@@ -33,6 +40,6 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_DEPLOY_KEY }}
-          source: 'backend/dist/*'
+          source: 'backend/dist/*,backend/package.json,backend/prisma/*'
           target: '/var/www/xcardgen_backend'
-          strip_components: 3
+          strip_components: 2
