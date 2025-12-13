@@ -9,6 +9,7 @@ interface Workspace {
   logo?: string
   coverImage?: string
   socialLinks?: any
+  ownerId?: string
 }
 
 interface WorkspaceState {
