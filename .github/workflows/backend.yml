@@ -62,6 +62,11 @@ jobs:
             rm -rf node_modules package-lock.json
             npm install --omit=dev
             export $(grep -v '^#' .env | xargs)
+
+            # DEBUG: Check if .env exists and has key
+            ls -la .env
+            if grep -q "RESEND_API_KEY" .env; then echo "RESEND_API_KEY found in .env"; else echo "RESEND_API_KEY/env missing!"; fi
+
             npx prisma migrate deploy
             # Force restart to ensure new ENV is picked up
             pm2 delete xcardgen-backend || true
