@@ -1,98 +1,188 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# xCardGen Backend API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Welcome to the **xCardGen Backend**, the powerhouse behind the xCardGen platform. This application is built with **NestJS**, following a modular, scalable architecture designed to handle high-throughput event registration and dynamic image generation.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🚀 Technology Stack
 
-## Description
+- **Framework**: [NestJS 11](https://nestjs.com/) (Node.js 20+)
+- **Language**: TypeScript 5.7
+- **Database**: PostgreSQL 16 (Managed via [Prisma ORM](https://www.prisma.io/))
+- **Authentication**: Passport.js (JWT Strategy, Google OAuth 2.0)
+- **Queue Management**: Bull (Redis-backed) for asynchronous image processing
+- **Image Processing**: Canvas API (node-canvas) & Puppeteer (Headless Browser)
+- **Object Storage**: Cloudinary SDK
+- **Payment Gateway**: Stripe (Custom implementation)
+- **Testing**: Jest (Unit & E2E)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 📂 Project Architecture
 
-## Project setup
+The project follows the standard NestJS modular structure, enforcing Separation of Concerns (SoC).
 
-```bash
-$ npm install
+```
+src/
+├── auth/           # Authentication & Authorization (Guards, Strategies, Session Mgmt)
+├── events/         # Event Management, Registration, and Public Access logic
+├── generations/    # Core Engine: Card rendering and generation logic
+├── payments/       # Subscription handling, Stripe webhooks, and Usage Credits
+├── prisma/         # Database connection and Prisma Client wrapper
+├── uploads/        # File upload handling (Cloudinary adapter)
+├── users/          # User profile management
+├── workspaces/     # Multi-tenant workspace isolation logic
+├── common/         # Shared decorators, filters, and interceptors
+└── main.ts         # Application entry point
 ```
 
-## Compile and run the project
+### Key Design Patterns
+
+- **Repository Pattern**: Abstracted via Prisma Service to decouple DB logic.
+- **Queue-Based Processing**: Image generation is offloaded to a Redis queue (`Bull`) to prevent blocking the main event loop during high-load registrations.
+- **Workspace Isolation**: Middleware and Prisma middleware ensure data leakage across workspaces is impossible.
+
+## 🛠️ Installation & Setup
+
+### Prerequisites
+
+- Node.js v20.x or higher
+- PostgreSQL Database
+- Redis Server (Required for Queues)
+- Cloudinary Account
+
+### 1. Clone & Install
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+git clone <repo-url>
+cd backend
+npm install
 ```
 
-## Run tests
+### 2. Environment Configuration
+
+Create a `.env` file in the root directory. See `.env.example` for reference.
+
+```ini
+# Database
+DATABASE_URL="postgresql://user:password@localhost:5432/xcardgen"
+
+# Authentication
+JWT_SECRET="super_secure_secret_key"
+FRONTEND_URL="http://localhost:3000"
+
+# OAuth
+GOOGLE_CLIENT_ID="..."
+GOOGLE_CLIENT_SECRET="..."
+GOOGLE_CALLBACK_URL="http://localhost:3001/auth/google/callback"
+
+# Services
+CLOUDINARY_URL="..."
+REDIS_URL="redis://localhost:6379"
+
+# Feature Flags
+ENABLE_BILLING=true
+```
+
+### 3. Database Setup
+
+Synchronize the Prisma schema with your database:
 
 ```bash
-# unit tests
-$ npm run test
+# Generate Prisma Client
+npx prisma generate
 
-# e2e tests
-$ npm run test:e2e
+# Run Migrations
+npx prisma migrate dev
 
-# test coverage
-$ npm run test:cov
+# Seed Initial Data (Plans, Admin)
+npx prisma db seed
 ```
 
-## Deployment
+## ⚡ Running the Application
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+### Development Mode
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Runs the application with hot-reload enabled.
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm run start:dev
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Production Mode
 
-## Resources
+Builds the application to `dist/` and runs the optimized bundle.
 
-Check out a few resources that may come in handy when working with NestJS:
+```bash
+npm run build
+npm run start:prod
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### Debug Mode
 
-## Support
+```bash
+npm run start:debug
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## 📚 API Module Breakdown
 
-## Stay in touch
+### Authentication (`/auth`)
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- **Strategies**: Supports `jwt` (Bearer token) and `google` strategies.
+- **Sessions**: Implements robust session tracking in the database (`Session` model) to allow revocation of specific devices.
+- **Guards**: `JwtAuthGuard`, `WorkspaceGuard`, `RolesGuard`.
 
-## License
+### Events (`/events`)
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- **CRUD**: Create, Update, Publish events.
+- **Registration**: Public endpoint for attendees to register.
+- **Gating**: Enforces `maxAttendees` limits and credit consumption logic before registration.
+
+### Generations (`/generations`)
+
+- **Engine**: Combines HTML5 Canvas templates with dynamic user data.
+- **Process**:
+  1.  Receives generation request.
+  2.  Pushes job to `generation-queue`.
+  3.  Worker processes job: Renders image -> Uploads to Cloudinary -> Updates DB.
+  4.  Triggers Webhook/Email (optional).
+
+### Payments (`/payments`)
+
+- **Logic**: Manages `SubscriptionPlan` (Free, Pro, Agency).
+- **Credits**: Consumes `generationCount` per registration. Blocks actions if balance is zero.
+
+## 🧪 Testing
+
+We rely on Jest for testing.
+
+```bash
+# Unit Tests
+npm run test
+
+# End-to-End Tests
+npm run test:e2e
+
+# Test Coverage Report
+npm run test:cov
+```
+
+## 🚢 Deployment (Digital Ocean / VPS)
+
+We recommend using **PM2** and **Docker** for production deployment.
+
+### PM2 Setup
+
+```bash
+npm install -g pm2
+npm run build
+pm2 start dist/src/main.js --name xcardgen-backend
+```
+
+### Database Migrations in Prod
+
+Always run migrations before starting the new build:
+
+```bash
+npx prisma migrate deploy
+```
+
+## 📝 License
+
+Proprietary software. All rights reserved.
