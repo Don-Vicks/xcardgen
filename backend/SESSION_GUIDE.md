@@ -7,7 +7,9 @@ This backend now implements a robust session management system that tracks user 
 ## How It Works
 
 ### 1. **Login Creates a Session**
+
 When a user logs in via `POST /auth/login`:
+
 - User credentials are validated
 - JWT token is generated
 - **Session is created** in the database with:
@@ -18,7 +20,9 @@ When a user logs in via `POST /auth/login`:
   - Active status (true)
 
 ### 2. **Every Request Validates the Session**
+
 When a protected route is accessed with `@UseGuards(JwtAuthGuard)`:
+
 - JWT token is extracted from `Authorization: Bearer <token>` header
 - JWT signature is validated
 - **Session is checked** in the database:
@@ -29,7 +33,9 @@ When a protected route is accessed with `@UseGuards(JwtAuthGuard)`:
 - User data is attached to request
 
 ### 3. **Logout Revokes the Session**
+
 When user logs out via `POST /auth/logout`:
+
 - Session is marked as inactive (`isActive: false`)
 - `revokedAt` timestamp is set
 - Token becomes invalid immediately
@@ -37,6 +43,7 @@ When user logs out via `POST /auth/logout`:
 ## API Endpoints
 
 ### Login
+
 ```bash
 POST /auth/login
 Content-Type: application/json
@@ -54,6 +61,7 @@ Content-Type: application/json
 ```
 
 ### Logout (Single Device)
+
 ```bash
 POST /auth/logout
 Authorization: Bearer <token>
@@ -65,6 +73,7 @@ Authorization: Bearer <token>
 ```
 
 ### Logout All Devices
+
 ```bash
 POST /auth/logout-all
 Authorization: Bearer <token>
@@ -77,6 +86,7 @@ Authorization: Bearer <token>
 ```
 
 ### Get Active Sessions
+
 ```bash
 GET /auth/sessions
 Authorization: Bearer <token>
@@ -113,7 +123,7 @@ export class EventsController {
   async create(@CurrentUser() user: any, @Body() dto: CreateEventDto) {
     // user contains: { id, email, name, createdAt, updatedAt }
     console.log('Current user:', user.id);
-    
+
     return this.eventsService.create(user.id, dto);
   }
 
@@ -145,7 +155,7 @@ export class EventsService {
     return this.prisma.event.create({
       data: {
         ...dto,
-        userId, // Use the passed userId
+        userId, // Use the passed userId.
       },
     });
   }
@@ -258,17 +268,20 @@ model Session {
 ## Migration Steps
 
 1. Generate Prisma client with new Session model:
+
    ```bash
    cd backend
    npx prisma generate
    ```
 
 2. Create and apply migration:
+
    ```bash
    npx prisma migrate dev --name add-session-management
    ```
 
 3. Test the endpoints:
+
    ```bash
    # Login
    curl -X POST http://localhost:3000/auth/login \
