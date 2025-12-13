@@ -29,7 +29,12 @@ jobs:
 
       - name: Generate Prisma Client
         working-directory: backend
+        env:
+          DATABASE_URL: 'postgresql://dummy:dummy@localhost:5432/dummy'
         run: npx prisma generate
+
+      - name: Create .env file
+        run: echo "${{ secrets.BACKEND_ENV_FILE }}" > backend/.env
 
       - name: Build Backend
         run: npm run build -w backend
@@ -40,6 +45,20 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_DEPLOY_KEY }}
-          source: 'backend/dist/*,backend/package.json,backend/prisma/*'
+          source: 'backend/dist/*,backend/package.json,backend/prisma/*,backend/.env'
           target: '/var/www/xcardgen_backend'
           strip_components: 2
+
+      - name: Restart Backend via SSH
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_DEPLOY_KEY }}
+          script: |
+            export NVM_DIR=~/.nvm
+            source ~/.nvm/nvm.sh
+            cd /var/www/xcardgen_backend
+            npm ci --omit=dev
+            npx prisma migrate deploy
+            PORT=3001 pm2 reload xcardgen-backend --update-env || PORT=3001 pm2 start dist/main.js --name xcardgen-backend

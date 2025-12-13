@@ -30,12 +30,28 @@ jobs:
       - name: Build Frontend
         run: npm run build -w frontend
 
+      - name: Create .env file
+        run: echo "${{ secrets.FRONTEND_ENV_FILE }}" > frontend/.env
+
       - name: Upload frontend build to server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_DEPLOY_KEY }}
-          source: 'frontend/.next/*,frontend/public/*,frontend/package.json,frontend/next.config.ts'
+          source: 'frontend/.next/*,frontend/public/*,frontend/package.json,frontend/next.config.ts,frontend/.env'
           target: '/var/www/xcardgen_frontend'
           strip_components: 2
+
+      - name: Restart Frontend via SSH
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_DEPLOY_KEY }}
+          script: |
+            export NVM_DIR=~/.nvm
+            source ~/.nvm/nvm.sh
+            cd /var/www/xcardgen_frontend
+            npm ci --omit=dev
+            PORT=3002 pm2 reload xcardgen-frontend --update-env || PORT=3002 pm2 start npm --name xcardgen-frontend -- start
