@@ -34,7 +34,15 @@ jobs:
         run: npx prisma generate
 
       - name: Create .env file
-        run: echo "${{ secrets.BACKEND_ENV_FILE }}" > backend/.env
+        env:
+          ENV_DATA: ${{ secrets.BACKEND_ENV_FILE }}
+        run: |
+          if [ -z "$ENV_DATA" ]; then
+            echo "::error::BACKEND_ENV_FILE secret is EMPTY or MISSING in GitHub Actions!"
+            exit 1
+          fi
+          echo "$ENV_DATA" > backend/.env
+          echo "✅ Created .env file. Size: $(wc -c < backend/.env) bytes"
 
       - name: Build Backend
         run: npm run build -w backend
