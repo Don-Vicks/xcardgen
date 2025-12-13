@@ -61,5 +61,6 @@ jobs:
             cd /var/www/xcardgen_backend
             rm -rf node_modules package-lock.json
             npm install --omit=dev
+            export $(grep -v '^#' .env | xargs)
             npx prisma migrate deploy
-            PORT=3001 pm2 reload xcardgen-backend --update-env || PORT=3001 pm2 start dist/main.js --name xcardgen-backend
+            PORT=3001 pm2 reload xcardgen-backend --update-env || PORT=3001 pm2 start dist/src/main.js --name xcardgen-backend

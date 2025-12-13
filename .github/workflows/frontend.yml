@@ -27,11 +27,11 @@ jobs:
       - name: Build Types
         run: npm run build -w @xcardgen/types
 
-      - name: Build Frontend
-        run: npm run build -w frontend
-
       - name: Create .env file
         run: echo "${{ secrets.FRONTEND_ENV_FILE }}" > frontend/.env
+
+      - name: Build Frontend
+        run: npm run build -w frontend
 
       - name: Upload frontend build to server
         uses: appleboy/scp-action@v0.1.7
@@ -55,4 +55,5 @@ jobs:
             cd /var/www/xcardgen_frontend
             rm -rf node_modules package-lock.json
             npm install --omit=dev
+            export $(grep -v '^#' .env | xargs)
             PORT=3002 pm2 reload xcardgen-frontend --update-env || PORT=3002 pm2 start npm --name xcardgen-frontend -- start
