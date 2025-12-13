@@ -53,5 +53,6 @@ jobs:
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh || true
             cd /var/www/xcardgen_frontend
+            rm -rf node_modules package-lock.json
             npm install --omit=dev
             PORT=3002 pm2 reload xcardgen-frontend --update-env || PORT=3002 pm2 start npm --name xcardgen-frontend -- start
