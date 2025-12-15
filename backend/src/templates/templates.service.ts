@@ -75,7 +75,14 @@ export class TemplatesService {
     });
   }
 
-  async update(id: string, data: Prisma.TemplateUpdateInput) {}
+  async update(id: string, data: Prisma.TemplateUpdateInput) {
+    const updated = await this.prisma.template.update({
+      where: { id },
+      data,
+    });
+    await this.cacheManager.del(`/templates/${id}`); // Invalidate cache if present
+    return updated;
+  }
 
   async remove(id: string) {
     return this.prisma.template.delete({

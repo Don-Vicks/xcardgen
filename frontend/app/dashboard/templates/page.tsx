@@ -11,7 +11,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { LoadingScreen } from "@/components/ui/loading-screen"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useWorkspacePermissions } from "@/hooks/use-workspace-permissions"
 import { Template, templatesRequest } from "@/lib/api/requests/templates.request"
@@ -22,6 +21,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
+import { TemplatesSkeleton } from "./_components/templates-skeleton"
 
 export default function TemplatesPage() {
   const [templates, setTemplates] = useState<Template[]>([])
@@ -120,7 +120,7 @@ export default function TemplatesPage() {
     }
   }
 
-  if (loading && templates.length === 0) return <LoadingScreen />
+  if (loading && templates.length === 0) return <TemplatesSkeleton />
 
   return (
     <div className="space-y-8 p-8 pt-6">
