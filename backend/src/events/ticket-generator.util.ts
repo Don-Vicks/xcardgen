@@ -120,7 +120,7 @@ export function generateTicketHtml(
             ? ''
             : `
         <div style="position: absolute; bottom: 25px; right: 25px; font-family: 'Inter', system-ui, sans-serif; font-size: 20px; color: rgba(255, 255, 255, 0.95); background: rgba(0, 0, 0, 0.25); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.15); padding: 12px 24px; border-radius: 99px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); z-index: 1000; letter-spacing: 0.3px;">
-          <span style="opacity: 0.8; font-weight: 400;">Create yours at</span>
+          <span style="opacity: 0.8; font-weight: 400;">Powered by</span>
           <span style="font-weight: 700; letter-spacing: -0.3px;">xCardGen</span>
         </div>
         `

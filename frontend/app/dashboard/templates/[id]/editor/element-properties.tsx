@@ -156,7 +156,7 @@ export function ElementProperties({ element, onChange, onDelete, onLayerChange, 
                 </div>
               </div>
               <div className="space-y-1">
-                <Label>Color</Label>
+                <Label>Text Color</Label>
                 <div className="flex gap-2">
                   <div className="relative w-9 h-9 shrink-0 overflow-hidden rounded-md border shadow-sm">
                     <Input
@@ -176,6 +176,30 @@ export function ElementProperties({ element, onChange, onDelete, onLayerChange, 
                     className="font-mono"
                   />
                 </div>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <Label>Background Color</Label>
+              <div className="flex gap-2">
+                <div className="relative w-9 h-9 shrink-0 overflow-hidden rounded-md border shadow-sm">
+                  <Input
+                    type="color"
+                    className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] p-0 border-0 cursor-pointer"
+                    value={element.style?.backgroundColor?.toString() || 'transparent'}
+                    onChange={(e) => onChange({
+                      style: { ...element.style, backgroundColor: e.target.value }
+                    })}
+                  />
+                </div>
+                <Input
+                  value={element.style?.backgroundColor?.toString() || 'transparent'}
+                  onChange={(e) => onChange({
+                    style: { ...element.style, backgroundColor: e.target.value }
+                  })}
+                  className="font-mono flex-1"
+                  placeholder="transparent"
+                />
               </div>
             </div>
 

@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { api } from "@/lib/api/api"
 import { useAuth } from "@/stores/auth-store"
 import { CheckCircle2, CreditCard, Globe, Loader2, Wallet, Zap } from "lucide-react"
 import { useEffect, useState } from "react"
@@ -19,6 +20,7 @@ interface Plan {
   description: string
   amount: string
   currency: string
+  interval: 'MONTH' | 'YEAR'
   maxGenerations: number
   maxEvents: number
   maxMembers: number
@@ -33,14 +35,13 @@ interface Subscription {
   endDate: string
 }
 
-import { api } from "@/lib/api/api"
-
 export default function BillingPage() {
   const { user } = useAuth()
   const [plans, setPlans] = useState<Plan[]>([])
   const [currentSubscription, setCurrentSubscription] = useState<Subscription | null>(null)
   const [usage, setUsage] = useState({ generationsUsed: 0, generationsLimit: 100 })
   const [loading, setLoading] = useState(true)
+  const [billingInterval, setBillingInterval] = useState<'MONTH' | 'YEAR'>('MONTH')
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null)
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false)
   const [paymentStep, setPaymentStep] = useState<'select' | 'pending' | 'confirm' | 'credits-select' | 'credits-pending'>('select')
@@ -182,6 +183,12 @@ export default function BillingPage() {
     ? (usage.generationsUsed / usage.generationsLimit) * 100
     : 0
 
+  const filteredPlans = plans.filter(plan => {
+    // Always show free plans (Starter has amount 0)
+    if (parseFloat(plan.amount) === 0) return true;
+    return plan.interval === billingInterval;
+  });
+
   if (loading) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
@@ -248,23 +255,42 @@ export default function BillingPage() {
 
       {/* Available Plans */}
       <div>
-        <h2 className="text-xl font-bold mb-4">Available Plans</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold">Available Plans</h2>
+          <div className="bg-muted p-1 rounded-lg flex items-center">
+            <button
+              onClick={() => setBillingInterval('MONTH')}
+              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${billingInterval === 'MONTH' ? 'bg-background shadow text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setBillingInterval('YEAR')}
+              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${billingInterval === 'YEAR' ? 'bg-background shadow text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              Yearly <span className="ml-1 text-[10px] text-green-600 font-bold bg-green-100 dark:bg-green-900/30 px-1.5 py-0.5 rounded-full">-17%</span>
+            </button>
+          </div>
+        </div>
+
         <div className="grid md:grid-cols-3 gap-6">
-          {plans.map((plan) => {
+          {filteredPlans.map((plan) => {
             const isCurrentPlan = currentSubscription?.subscriptionPlan?.id === plan.id
+            const displayName = plan.name.replace(' Monthly', '').replace(' Yearly', '');
+
             return (
-              <Card key={plan.id} className={`relative ${isCurrentPlan ? 'border-primary' : ''}`}>
+              <Card key={plan.id} className={`relative flex flex-col ${isCurrentPlan ? 'border-primary' : ''}`}>
                 {isCurrentPlan && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                     <Badge>Current Plan</Badge>
                   </div>
                 )}
                 <CardHeader>
-                  <CardTitle>{plan.name}</CardTitle>
+                  <CardTitle>{displayName}</CardTitle>
                   <CardDescription>{plan.description}</CardDescription>
                   <div className="mt-4">
                     <span className="text-4xl font-bold">${plan.amount}</span>
-                    <span className="text-muted-foreground">/mo</span>
+                    <span className="text-muted-foreground">/{plan.interval === 'YEAR' ? 'yr' : 'mo'}</span>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -328,7 +354,7 @@ export default function BillingPage() {
                     })}
                   </ul>
                 </CardContent>
-                <CardFooter>
+                <CardFooter className="mt-auto">
                   <Dialog open={paymentDialogOpen && selectedPlan?.id === plan.id} onOpenChange={(open) => {
                     setPaymentDialogOpen(open)
                     if (!open) {
@@ -479,12 +505,12 @@ export default function BillingPage() {
               </ul>
             </CardContent>
             <CardFooter>
-              {currentSubscription?.subscriptionPlan?.name === 'Business' ? (
+              {currentSubscription?.subscriptionPlan?.name.includes('Business') ? (
                 <Button className="w-full" variant="outline" disabled>Included in Business</Button>
-              ) : currentSubscription?.subscriptionPlan?.name === 'Pro' ? (
+              ) : currentSubscription?.subscriptionPlan?.name.includes('Pro') ? (
                 <Button className="w-full" disabled>Subscribe (Coming Soon)</Button>
               ) : (
-                <Button className="w-full" variant="ghost" disabled>Requires Pro Plan</Button> // Or upgrade link
+                <Button className="w-full" variant="ghost" disabled>Requires Pro Plan</Button>
               )}
             </CardFooter>
           </Card>

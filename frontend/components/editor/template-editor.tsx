@@ -729,7 +729,7 @@ export function TemplateEditor({ initialData, onSave, onBack, backLink = "/dashb
                   className="group"
                 >
                   <div
-                    className={`w-full h-full flex items-center justify-center overflow-hidden transition-all duration-200
+                    className={`w-full h-full flex items-center justify-center overflow-hidden transition-all duration-200 cursor-move
                     ${selectedId === el.id ? "ring-2 ring-blue-500 ring-offset-2 ring-offset-transparent" : "hover:ring-1 hover:ring-blue-500/50"}
                     ${el.isDynamic && !parseInt(el.style?.borderWidth as string || "0") ? "border-2 border-dashed border-blue-500/50" : ""}
                     ${el.isDynamic && !el.style?.backgroundColor ? "bg-blue-50/20" : ""}
@@ -740,9 +740,17 @@ export function TemplateEditor({ initialData, onSave, onBack, backLink = "/dashb
                       setSelectedId(el.id);
                     }}
                   >
+                    {/* Move Handle Indicator */}
+                    {selectedId === el.id && (
+                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-white p-1 rounded-full shadow-md z-50 pointer-events-none opacity-80 hover:opacity-100 transition-opacity">
+                        <div className="w-1.5 h-1.5 rounded-full bg-white" />
+                      </div>
+                    )}
+
+
                     {/* Dynamic Label Badge */}
                     {el.isDynamic && (
-                      <div className="absolute -top-6 left-0 bg-primary text-primary-foreground text-[10px] px-2 py-0.5 rounded-t-md font-bold tracking-wider shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="absolute -bottom-6 left-0 bg-primary text-primary-foreground text-[10px] px-2 py-0.5 rounded-b-md font-bold tracking-wider shadow-sm transition-opacity">
                         USER INPUT
                       </div>
                     )}

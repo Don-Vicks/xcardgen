@@ -363,7 +363,7 @@ export default function Home() {
                     <Link href="/dashboard">Get Started</Link>
                   </Button>
                   <ul className="space-y-4 text-sm">
-                    <li className="flex items-center gap-3"><Check className="w-4 h-4 text-primary" /> 100 Generations/mo</li>
+                    <li className="flex items-center gap-3"><Check className="w-4 h-4 text-primary" /> 50 Generations/mo</li>
                     <li className="flex items-center gap-3"><Check className="w-4 h-4 text-primary" /> 1 Workspace (Solo)</li>
                     <li className="flex items-center gap-3"><Check className="w-4 h-4 text-primary" /> 3 Active Events</li>
                     <li className="flex items-center gap-3"><Check className="w-4 h-4 text-primary" /> Basic Analytics</li>
@@ -381,7 +381,7 @@ export default function Home() {
                   <div className="mb-8">
                     <h3 className="text-xl font-bold mb-2 text-primary">Pro</h3>
                     <div className="flex items-baseline gap-1">
-                      <span className="text-4xl font-bold">{isAnnual ? '$24' : '$29'}</span>
+                      <span className="text-4xl font-bold">$49</span>
                       <span className="text-muted-foreground">/mo</span>
                     </div>
                     <p className="text-sm text-muted-foreground mt-4">For serious community managers and organizers.</p>
@@ -404,7 +404,7 @@ export default function Home() {
                   <div className="mb-8">
                     <h3 className="text-xl font-bold mb-2">Business</h3>
                     <div className="flex items-baseline gap-1">
-                      <span className="text-4xl font-bold">{isAnnual ? '$79' : '$99'}</span>
+                      <span className="text-4xl font-bold">$199</span>
                       <span className="text-muted-foreground">/mo</span>
                     </div>
                     <p className="text-sm text-muted-foreground mt-4">For agencies and large-scale event series.</p>

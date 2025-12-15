@@ -122,12 +122,22 @@ export class PaymentsService {
    * Activate or update user subscription
    */
   private async activateSubscription(userId: string, planId: string) {
+    const plan = await this.prisma.subscriptionPlan.findUnique({
+      where: { id: planId },
+    });
+
+    if (!plan) throw new Error('Plan not found during activation');
+
     const existingSubscription = await this.prisma.subscriptions.findFirst({
       where: { userId, status: 'ACTIVE' },
     });
 
-    const oneMonthFromNow = new Date();
-    oneMonthFromNow.setMonth(oneMonthFromNow.getMonth() + 1);
+    const endDate = new Date();
+    if (plan.interval === 'YEAR') {
+      endDate.setFullYear(endDate.getFullYear() + 1);
+    } else {
+      endDate.setMonth(endDate.getMonth() + 1);
+    }
 
     if (existingSubscription) {
       // Extend or upgrade existing subscription
@@ -135,7 +145,7 @@ export class PaymentsService {
         where: { id: existingSubscription.id },
         data: {
           subscriptionPlanId: planId,
-          endDate: oneMonthFromNow,
+          endDate,
         },
       });
     } else {
@@ -145,7 +155,7 @@ export class PaymentsService {
           userId,
           subscriptionPlanId: planId,
           status: 'ACTIVE',
-          endDate: oneMonthFromNow,
+          endDate,
         },
       });
     }

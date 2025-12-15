@@ -62,7 +62,7 @@ export default function WorkspacePublicPage() {
   return (
     <div
       className={cn(
-        "min-h-screen bg-background font-sans antialiased selection:bg-primary/20 selection:text-primary relative isolate",
+        "min-h-screen bg-background font-sans antialiased selection:bg-primary/20 selection:text-primary relative isolate overflow-x-hidden",
         isDark ? "dark" : ""
       )}
       style={{
@@ -95,7 +95,7 @@ export default function WorkspacePublicPage() {
 
       {/* xCardGen Header */}
       <header className="fixed top-0 inset-x-0 z-50 border-b bg-background/80 backdrop-blur-md transition-all" style={{ borderBottomColor: 'var(--border)' }}>
-        <div className="container mx-auto px-6 h-16 flex items-center justify-between max-w-7xl">
+        <div className="container mx-auto px-4 md:px-6 h-16 flex items-center justify-between max-w-7xl">
           <Link href="/" className="flex items-center gap-2 font-bold text-lg tracking-tight">
             {workspace.logo ? (
               <div className="size-8 relative rounded-lg overflow-hidden shadow-lg shadow-primary/20">
@@ -121,7 +121,7 @@ export default function WorkspacePublicPage() {
       <WorkspaceHero workspace={workspace} appearance={appearance} />
 
       {/* Events Section */}
-      <section className="container mx-auto px-6 py-16 md:py-24 max-w-7xl space-y-24">
+      <section className="container mx-auto px-4 md:px-6 py-12 md:py-24 max-w-7xl space-y-24">
         {/* Active / Future xCards */}
         <div>
           <div className="flex items-center justify-between mb-12">

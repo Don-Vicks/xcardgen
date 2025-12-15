@@ -19,9 +19,9 @@ async function main() {
       currency: 'USD',
       interval: SubscriptionInterval.MONTH,
       maxWorkspaces: 1,
-      maxGenerations: 100,
+      maxGenerations: 50,
       maxEvents: 3,
-      maxMembers: 1, // Only the owner (Solo)
+      maxMembers: 1,
       features: {
         canRemoveBranding: false,
         canUseCustomDomains: false,
@@ -38,18 +38,18 @@ async function main() {
       },
     },
     {
-      name: 'Pro',
+      name: 'Pro Monthly',
       description: 'For growing communities and events.',
-      amount: 29.0,
+      amount: 49.0,
       currency: 'USD',
       interval: SubscriptionInterval.MONTH,
       maxWorkspaces: 3,
       maxGenerations: 5000,
-      maxEvents: -1, // Unlimited
+      maxEvents: -1,
       maxMembers: 5,
       features: {
         canRemoveBranding: true,
-        canUseCustomDomains: false, // Add-on required
+        canUseCustomDomains: false,
         hasAdvancedAnalytics: true,
         hasPremiumAnalytics: false,
         canCustomizeTheme: true,
@@ -63,15 +63,72 @@ async function main() {
       },
     },
     {
-      name: 'Business',
+      name: 'Pro Yearly',
+      description: 'For growing communities and events. (2 Months Free)',
+      amount: 490.0,
+      currency: 'USD',
+      interval: SubscriptionInterval.YEAR,
+      maxWorkspaces: 3,
+      maxGenerations: 60000, // Monthly limit x 12 effectively, or just keep same monthly throttle? Usually SaaS keeps monthly limit but billed yearly. Let's assume limit is per interval.
+      // Actually schema says "maxGenerations", usually implies "per billing cycle".
+      // If interval is YEAR, then maxGenerations should be 5000 * 12 = 60000?
+      // Or does the system reset it every month?
+      // The service: `await this.prisma.user.update({ ... generationCount: 0 })` in `activateSubscription`.
+      // It sets `endDate` to 1 month from now.
+      // Wait, `activateSubscription` hardcodes `endDate` to 1 month from now!
+      // I need to fix `activateSubscription` to look at the plan interval!
+      maxEvents: -1,
+      maxMembers: 5,
+      features: {
+        canRemoveBranding: true,
+        canUseCustomDomains: false,
+        hasAdvancedAnalytics: true,
+        hasPremiumAnalytics: false,
+        canCustomizeTheme: true,
+        canCustomizeAssets: true,
+        hasFullCustomization: false,
+        canCollectEmails: true,
+        supportLevel: 'Priority Email',
+        leadGen: 'Collect Emails (CSV)',
+        workspaceBranding: 'Custom Colors & Cover',
+        embedding: 'White-label',
+      },
+    },
+    {
+      name: 'Business Monthly',
       description: 'For large events and agencies.',
-      amount: 99.0,
+      amount: 199.0,
       currency: 'USD',
       interval: SubscriptionInterval.MONTH,
-      maxWorkspaces: -1, // Unlimited
-      maxGenerations: -1, // Unlimited
-      maxEvents: -1, // Unlimited
-      maxMembers: -1, // Unlimited
+      maxWorkspaces: -1,
+      maxGenerations: -1,
+      maxEvents: -1,
+      maxMembers: -1,
+      features: {
+        canRemoveBranding: true,
+        canUseCustomDomains: true,
+        hasAdvancedAnalytics: true,
+        hasPremiumAnalytics: true,
+        canCustomizeTheme: true,
+        canCustomizeAssets: true,
+        hasFullCustomization: true,
+        canCollectEmails: true,
+        supportLevel: 'Dedicated Slack',
+        leadGen: 'Collect Emails (CSV)',
+        workspaceBranding: 'Full Customization',
+        embedding: 'White-label',
+      },
+    },
+    {
+      name: 'Business Yearly',
+      description: 'For large events and agencies. (2 Months Free)',
+      amount: 1990.0,
+      currency: 'USD',
+      interval: SubscriptionInterval.YEAR,
+      maxWorkspaces: -1,
+      maxGenerations: -1,
+      maxEvents: -1,
+      maxMembers: -1,
       features: {
         canRemoveBranding: true,
         canUseCustomDomains: true,
@@ -88,6 +145,20 @@ async function main() {
       },
     },
   ];
+
+  // Rename legacy plans to avoid conflicts
+  try {
+    await prisma.subscriptionPlan.update({
+      where: { name: 'Pro' },
+      data: { name: 'Pro Monthly' },
+    });
+  } catch {}
+  try {
+    await prisma.subscriptionPlan.update({
+      where: { name: 'Business' },
+      data: { name: 'Business Monthly' },
+    });
+  } catch {}
 
   for (const plan of plans) {
     const existing = await prisma.subscriptionPlan.findUnique({
