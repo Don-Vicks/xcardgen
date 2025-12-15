@@ -18,6 +18,8 @@ export interface BuyCreditsDto {
   currency: 'ETH' | 'SOL' | 'USDC';
 }
 
+import { ConfigService } from '@nestjs/config';
+
 @Injectable()
 export class PaymentsService {
   private readonly PRICE_PER_GENERATION = 0.02; // $0.02 per generation
@@ -29,12 +31,23 @@ export class PaymentsService {
     USDC: process.env.USDC_WALLET_ADDRESS || '0x...',
   };
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly configService: ConfigService,
+  ) {}
+
+  private isBillingEnabled(): boolean {
+    return this.configService.get('ENABLE_BILLING') === 'true';
+  }
 
   /**
    * Initialize a crypto payment intent
    */
   async initCryptoPayment(userId: string, dto: InitCryptoPaymentDto) {
+    if (!this.isBillingEnabled()) {
+      throw new BadRequestException('Billing is currently disabled.');
+    }
+
     const plan = await this.prisma.subscriptionPlan.findUnique({
       where: { id: dto.planId },
     });
@@ -170,6 +183,10 @@ export class PaymentsService {
    * Initiate purchase of extra credits
    */
   async buyCredits(userId: string, dto: BuyCreditsDto) {
+    if (!this.isBillingEnabled()) {
+      throw new BadRequestException('Billing is currently disabled.');
+    }
+
     const priceUsd = dto.amount * this.PRICE_PER_GENERATION;
 
     // Create pending credit purchase
@@ -277,6 +294,10 @@ export class PaymentsService {
     resource: 'workspaces' | 'events' | 'members',
     currentCount: number,
   ) {
+    if (!this.isBillingEnabled()) {
+      return true; // Bypass limits if billing disabled
+    }
+
     const { subscription } = await this.getCurrentSubscription(userId);
     const plan = subscription?.subscriptionPlan;
 
@@ -307,6 +328,10 @@ export class PaymentsService {
    * Throws BadRequestException if denied.
    */
   async checkFeatureAccess(userId: string, feature: string) {
+    if (!this.isBillingEnabled()) {
+      return true; // Bypass feature gating if billing disabled
+    }
+
     const { subscription } = await this.getCurrentSubscription(userId);
     const features = subscription?.subscriptionPlan?.features as Record<
       string,
@@ -338,6 +363,15 @@ export class PaymentsService {
    * Checks monthly limit + extra credits.
    */
   async checkAndConsumeGeneration(userId: string) {
+    // Increment generation count regardless of billing status (for usage tracking)
+    if (!this.isBillingEnabled()) {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { generationCount: { increment: 1 } },
+      });
+      return { source: 'unlimited' };
+    }
+
     const { subscription, usage } = await this.getCurrentSubscription(userId);
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
 

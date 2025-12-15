@@ -144,26 +144,28 @@ export function SidebarNav({ className, setOpen }: { className?: string, setOpen
           </div>
 
           <nav className="space-y-2">
-            {routes.map((route) => {
-              const active = route.href === "/dashboard"
-                ? pathname === route.href
-                : pathname?.startsWith(route.href)
+            {routes
+              .filter(route => route.label !== 'Billing' || process.env.NEXT_PUBLIC_ENABLE_BILLING === 'true')
+              .map((route) => {
+                const active = route.href === "/dashboard"
+                  ? pathname === route.href
+                  : pathname?.startsWith(route.href)
 
-              return (
-                <Link
-                  key={route.href}
-                  href={route.href}
-                  onClick={() => setOpen?.(false)}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${active
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                    }`}
-                >
-                  <route.icon className="h-4 w-4" />
-                  {route.label}
-                </Link>
-              )
-            })}
+                return (
+                  <Link
+                    key={route.href}
+                    href={route.href}
+                    onClick={() => setOpen?.(false)}
+                    className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${active
+                      ? "bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      }`}
+                  >
+                    <route.icon className="h-4 w-4" />
+                    {route.label}
+                  </Link>
+                )
+              })}
 
             {currentWorkspace?.slug && (
               <>

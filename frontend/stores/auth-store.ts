@@ -87,6 +87,37 @@ export const useAuth = create<AuthState>((set, get) => ({
         user: { ...response.data, subscription: subscriptionData },
         loading: false,
       })
+
+      // If Billing is DISABLED, override subscription to UNLIMITED
+      const isBillingEnabled = process.env.NEXT_PUBLIC_ENABLE_BILLING === 'true'
+      if (!isBillingEnabled) {
+        set((state) => ({
+          user: state.user
+            ? {
+                ...state.user,
+                subscription: {
+                  plan: {
+                    id: 'unlimited',
+                    name: 'Unlimited (Dev)',
+                    maxWorkspaces: -1,
+                    maxMembers: -1,
+                    maxEvents: -1,
+                    features: {
+                      hasAdvancedAnalytics: true,
+                      hasPremiumAnalytics: true,
+                      canRemoveBranding: true,
+                      canUseCustomDomains: true,
+                      canCustomizeTheme: true,
+                      canCustomizeAssets: true,
+                      canCollectEmails: true,
+                      supportLevel: 'Dedicated',
+                    },
+                  },
+                },
+              }
+            : null,
+        }))
+      }
     } catch (error) {
       console.error('Store: checkAuth Failed:', error)
       set({ user: null, loading: false })
@@ -95,6 +126,31 @@ export const useAuth = create<AuthState>((set, get) => ({
 
   setUser: (user) => {
     console.log('Store: setUser called', user)
+
+    // Apply Billing Override logic to setUser as well
+    const isBillingEnabled = process.env.NEXT_PUBLIC_ENABLE_BILLING === 'true'
+    if (!isBillingEnabled && user) {
+      user.subscription = {
+        plan: {
+          id: 'unlimited',
+          name: 'Unlimited (Dev)',
+          maxWorkspaces: -1,
+          maxMembers: -1,
+          maxEvents: -1,
+          features: {
+            hasAdvancedAnalytics: true,
+            hasPremiumAnalytics: true,
+            canRemoveBranding: true,
+            canUseCustomDomains: true,
+            canCustomizeTheme: true,
+            canCustomizeAssets: true,
+            canCollectEmails: true,
+            supportLevel: 'Dedicated',
+          },
+        },
+      }
+    }
+
     set({ user })
   },
 
