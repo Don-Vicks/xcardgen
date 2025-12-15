@@ -121,7 +121,7 @@ export default function WorkspaceDetailPage() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             {workspace.name}
           </h1>
-          <p className="text-muted-foreground">/{workspace.slug}</p>
+          <p className="text-muted-foreground">/w/{workspace.slug}</p>
         </div>
         <Link href={`/dashboard/workspaces/${workspaceSlug}/settings`}>
           <Button variant="outline" size="icon">
@@ -238,7 +238,7 @@ export default function WorkspaceDetailPage() {
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                          <Link href={`/e/${event.slug}`} target="_blank">
+                          <Link href={`/x/${event.slug}`} target="_blank">
                             Public Page
                           </Link>
                         </DropdownMenuItem>
