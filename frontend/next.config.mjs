@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   transpilePackages: ['konva', 'react-konva'],
   webpack: (config) => {
     config.externals = [...(config.externals || []), { canvas: 'canvas' }]
