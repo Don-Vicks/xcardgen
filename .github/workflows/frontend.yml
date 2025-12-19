@@ -39,7 +39,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_DEPLOY_KEY }}
-          source: 'frontend/.next,frontend/public,frontend/package.json,frontend/next.config.mjs,frontend/.env'
+          source: 'frontend/.next,frontend/public,frontend/package.json,frontend/package-lock.json,frontend/next.config.mjs,frontend/.env'
           target: '/var/www/xcardgen_frontend'
           strip_components: 1
 
@@ -53,7 +53,8 @@ jobs:
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh || true
             cd /var/www/xcardgen_frontend
-            rm -rf node_modules package-lock.json
+            rm -f next.config.ts
+            rm -rf node_modules
             npm install --omit=dev
             export $(grep -v '^#' .env | xargs)
             PORT=3002 pm2 reload xcardgen-frontend --update-env || PORT=3002 pm2 start npm --name xcardgen-frontend -- start
