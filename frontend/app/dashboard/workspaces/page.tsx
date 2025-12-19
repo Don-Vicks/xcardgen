@@ -206,7 +206,7 @@ export default function WorkspacesPage() {
                         className="w-10 h-10 rounded-lg object-cover"
                       />
                     ) : (
-                      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-lg bg-linear-to-br from-primary/20 to-primary/40 flex items-center justify-center">
                         <span className="text-lg font-bold text-primary">
                           {workspace.name.charAt(0).toUpperCase()}
                         </span>

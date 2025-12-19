@@ -185,7 +185,7 @@ export function EventAppearanceSettings({ event, onUpdate }: EventAppearanceSett
                   {/* Theme Preview */}
                   <div
                     className={cn(
-                      "aspect-[4/3] rounded-lg flex items-center justify-center",
+                      "aspect-4/3 rounded-lg flex items-center justify-center",
                       theme.previewClass
                     )}
                   >

@@ -103,7 +103,7 @@ export function CanvasRenderer({
           return (
             <div key={el.id} style={style} className="flex items-center justify-center overflow-hidden">
               {el.type === "text" && (
-                <span className="w-full break-words whitespace-pre-wrap" style={{ lineHeight: 1.2 }}>
+                <span className="w-full wrap-break-word whitespace-pre-wrap" style={{ lineHeight: 1.2 }}>
                   {el.content}
                 </span>
               )}

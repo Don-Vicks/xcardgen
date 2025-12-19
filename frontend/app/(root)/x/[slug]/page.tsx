@@ -51,7 +51,7 @@ export default async function PublicEventPage({ params, searchParams }: PageProp
   const isEmbed = embed === 'true'
 
   return (
-    <main className={`min-h-[100dvh] bg-neutral-50 ${isEmbed ? 'overflow-hidden' : ''}`}>
+    <main className={`min-h-dvh flex flex-col bg-background font-sans antialiased selection:bg-primary/20 selection:text-primary relative isolate overflow-x-hidden${isEmbed ? ' overflow-hidden' : ''}`}>
       <EventRegistrationView event={event} template={template} isEmbed={isEmbed} />
     </main>
   )

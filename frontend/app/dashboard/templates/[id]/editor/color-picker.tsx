@@ -69,7 +69,7 @@ export function ColorPicker({ value, onChange, label }: ColorPickerProps) {
               ))}
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-full h-[1px] bg-border" />
+              <div className="w-full h-px bg-border" />
             </div>
             <div className="space-y-1">
               <Label className="text-xs">Hex Code</Label>

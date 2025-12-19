@@ -365,7 +365,7 @@ export function EventRegistrationView({ event, template, isEmbed = false }: Even
 
   return (
     <div
-      className="min-h-[100dvh] lg:h-screen flex flex-col lg:flex-row font-sans lg:overflow-hidden"
+      className="min-h-dvh lg:h-screen flex flex-col lg:flex-row font-sans lg:overflow-hidden relative"
       style={{
         background: themeStyles.background,
         color: themeStyles.textColor,
@@ -382,7 +382,7 @@ export function EventRegistrationView({ event, template, isEmbed = false }: Even
       {/* Left: Content */}
       <div className="flex-1 w-full lg:overflow-hidden flex flex-col relative z-10">
         <div className="h-full w-full lg:overflow-y-auto custom-scrollbar">
-          <div className="flex flex-col p-6 lg:p-12 pb-10 lg:pb-12">
+          <div className="flex flex-col p-4 sm:p-6 lg:p-12 pb-10 lg:pb-12">
             <div className="max-w-xl mx-auto w-full space-y-8">
 
               {/* Organizer Badge - Hide on embed */}
@@ -505,7 +505,7 @@ export function EventRegistrationView({ event, template, isEmbed = false }: Even
                     height={template.properties?.height || 400}
                     backgroundImage={template.backgroundImage}
                     values={values}
-                    scale={Math.min(1, 350 / (template.properties?.width || 600))}
+                    scale={Math.min(1, 300 / (template.properties?.width || 600))}
                   />
                 </div>
               </div>
@@ -548,7 +548,7 @@ export function EventRegistrationView({ event, template, isEmbed = false }: Even
                               value={name}
                               onChange={e => setName(e.target.value)}
                               required
-                              className="h-12 pl-10 focus:ring-2 transition-all text-base placeholder:text-[var(--placeholder-color)]"
+                              className="h-12 pl-10 focus:ring-2 transition-all text-base placeholder:text-(--placeholder-color)"
                               style={{
                                 backgroundColor: 'rgba(255, 255, 255, 0.05)',
                                 borderColor: themeStyles.borderColor,
@@ -568,7 +568,7 @@ export function EventRegistrationView({ event, template, isEmbed = false }: Even
                               value={email}
                               onChange={e => setEmail(e.target.value)}
                               required
-                              className="h-12 pl-10 focus:ring-2 transition-all text-base placeholder:text-[var(--placeholder-color)]"
+                              className="h-12 pl-10 focus:ring-2 transition-all text-base placeholder:text-(--placeholder-color)"
                               style={{
                                 backgroundColor: 'rgba(255, 255, 255, 0.05)',
                                 borderColor: themeStyles.borderColor,
@@ -619,7 +619,7 @@ export function EventRegistrationView({ event, template, isEmbed = false }: Even
                                     }}
                                   >
                                     {values[key] ? (
-                                      <div className="relative w-full aspect-video sm:aspect-[2/1] rounded-lg overflow-hidden shadow-sm">
+                                      <div className="relative w-full aspect-video sm:aspect-2/1 rounded-lg overflow-hidden shadow-sm">
                                         <img src={values[key]} className="w-full h-full object-cover" />
                                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                           <div className="bg-white/90 backdrop-blur text-slate-900 px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2 shadow-lg">
@@ -646,7 +646,7 @@ export function EventRegistrationView({ event, template, isEmbed = false }: Even
                                   placeholder={field.fieldDescription || `Enter ${key}`}
                                   value={values[key] || ''}
                                   onChange={e => setValues(prev => ({ ...prev, [key]: e.target.value }))}
-                                  className="h-12 transition-all text-base placeholder:text-[var(--placeholder-color)]"
+                                  className="h-12 transition-all text-base placeholder:text-(--placeholder-color)"
                                   style={{
                                     backgroundColor: 'rgba(255, 255, 255, 0.05)',
                                     borderColor: themeStyles.borderColor,

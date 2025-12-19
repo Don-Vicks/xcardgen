@@ -18,7 +18,7 @@ async function bootstrap() {
   // Enable CORS
   app.enableCors({
     origin: [
-      'http://localhost:3000',
+      'http://localhost:3001',
       'http://127.0.0.1:3000',
       process.env.FRONTEND_URL,
       'https://xcardgen.com',

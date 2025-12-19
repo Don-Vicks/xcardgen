@@ -205,7 +205,7 @@ export default function TemplatesPage() {
                     No Preview
                   </span>
                 )}
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity flex justify-end">
+                <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/60 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity flex justify-end">
                   <Button variant="destructive" size="icon" className="h-8 w-8" onClick={(e) => confirmDelete(template, e)}>
                     <Trash2 className="h-4 w-4" />
                   </Button>

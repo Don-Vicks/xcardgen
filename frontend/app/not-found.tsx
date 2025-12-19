@@ -25,7 +25,7 @@ export default function NotFound() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-4xl font-bold tracking-tighter sm:text-6xl bg-gradient-to-br from-foreground to-muted-foreground bg-clip-text text-transparent">
+          <h2 className="text-4xl font-bold tracking-tighter sm:text-6xl bg-linear-to-br from-foreground to-muted-foreground bg-clip-text text-transparent">
             Lost in Space?
           </h2>
           <p className="mx-auto text-muted-foreground text-lg md:text-xl font-light">
