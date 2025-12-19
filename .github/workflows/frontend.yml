@@ -33,15 +33,25 @@ jobs:
       - name: Build Frontend
         run: npm run build -w frontend
 
+      - name: Prepare Standalone Build
+        run: |
+          # Copy static assets to standalone
+          mkdir -p frontend/.next/standalone/.next
+          cp -r frontend/.next/static frontend/.next/standalone/.next/static
+          cp -r frontend/public frontend/.next/standalone/public
+
+          # Copy .env to standalone
+          cp frontend/.env frontend/.next/standalone/.env
+
       - name: Upload frontend build to server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_DEPLOY_KEY }}
-          source: 'frontend/.next,frontend/public,frontend/package.json,frontend/package-lock.json,frontend/next.config.mjs,frontend/.env'
+          source: 'frontend/.next/standalone/*'
           target: '/var/www/xcardgen_frontend'
-          strip_components: 1
+          strip_components: 3
 
       - name: Restart Frontend via SSH
         uses: appleboy/ssh-action@v0.1.7
@@ -53,8 +63,10 @@ jobs:
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh || true
             cd /var/www/xcardgen_frontend
-            rm -f next.config.ts
-            rm -rf node_modules
-            npm install --omit=dev
-            export $(grep -v '^#' .env | xargs)
-            PORT=3002 pm2 reload xcardgen-frontend --update-env || PORT=3002 pm2 start npm --name xcardgen-frontend -- start
+
+            # Clean up old root files (except standalone content we just uploaded)
+            # Use 'server.js' as the marker for our new app
+
+            # Start App directly with Node
+            pm2 delete xcardgen-frontend || true
+            PORT=3002 pm2 start server.js --name xcardgen-frontend
