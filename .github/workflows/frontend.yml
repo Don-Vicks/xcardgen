@@ -35,13 +35,14 @@ jobs:
 
       - name: Prepare Standalone Build
         run: |
-          # Copy static assets to standalone
-          mkdir -p frontend/.next/standalone/.next
-          cp -r frontend/.next/static frontend/.next/standalone/.next/static
-          cp -r frontend/public frontend/.next/standalone/public
+          # Copy static assets to standalone (nested under frontend/)
+          mkdir -p frontend/.next/standalone/frontend/.next
+          cp -r frontend/.next/static frontend/.next/standalone/frontend/.next/static
+          cp -r frontend/public frontend/.next/standalone/frontend/public
 
-          # Copy .env to standalone
+          # Copy .env to standalone root and nested
           cp frontend/.env frontend/.next/standalone/.env
+          cp frontend/.env frontend/.next/standalone/frontend/.env
 
       - name: Upload frontend build to server
         uses: appleboy/scp-action@v0.1.7
@@ -64,9 +65,7 @@ jobs:
             source ~/.nvm/nvm.sh || true
             cd /var/www/xcardgen_frontend
 
-            # Clean up old root files (except standalone content we just uploaded)
-            # Use 'server.js' as the marker for our new app
-
-            # Start App directly with Node
+            # Start App directly with Node (Standalone mode)
+            # server.js is located in frontend/server.js due to monorepo structure
             pm2 delete xcardgen-frontend || true
-            PORT=3002 pm2 start server.js --name xcardgen-frontend
+            PORT=3002 pm2 start frontend/server.js --name xcardgen-frontend
