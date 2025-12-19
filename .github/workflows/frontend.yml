@@ -39,7 +39,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_DEPLOY_KEY }}
-          source: 'frontend/.next,frontend/public,frontend/package.json,frontend/next.config.ts,frontend/.env'
+          source: 'frontend/.next,frontend/public,frontend/package.json,frontend/next.config.mjs,frontend/.env'
           target: '/var/www/xcardgen_frontend'
           strip_components: 1
 
