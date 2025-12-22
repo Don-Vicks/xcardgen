@@ -42,7 +42,7 @@ export default function OnboardingPage() {
 
   return (
     <div className="container mx-auto flex min-h-screen flex-col items-center justify-center max-w-2xl py-10">
-      <Card>
+      <Card className="w-full">
         <CardHeader>
           <CardTitle>Create Your Workspace</CardTitle>
           <CardDescription>

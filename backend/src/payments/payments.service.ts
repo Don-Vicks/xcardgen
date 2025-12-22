@@ -1,5 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PaymentStatus } from '../../generated/client';
+import { EmailService } from '../email/email.service';
+import { getEmailTemplate } from '../email/email.templates';
 import { PrismaService } from '../prisma.service';
 
 export interface InitCryptoPaymentDto {
@@ -34,10 +36,183 @@ export class PaymentsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
+    private readonly emailService: EmailService,
   ) {}
 
   private isBillingEnabled(): boolean {
     return this.configService.get('ENABLE_BILLING') === 'true';
+  }
+
+  /**
+   * Verify a Solana transaction signature on-chain
+   */
+  async verifySolanaPayment(userId: string, signature: string) {
+    if (!this.isBillingEnabled()) {
+      throw new BadRequestException('Billing disabled');
+    }
+
+    // Dynamic import to avoid build issues if package missing (though we installed it)
+    const { Connection, PublicKey } = await import('@solana/web3.js');
+
+    // Connect to Solana (Mainnet or Devnet based on Env)
+    // Defaulting to Mainnet for production
+    // Connect to Solana (Devnet requested by user)
+    const rpcUrl =
+      process.env.SOLANA_RPC_URL || 'https://api.devnet.solana.com';
+    const connection = new Connection(rpcUrl, 'confirmed');
+
+    let transaction;
+    try {
+      transaction = await connection.getParsedTransaction(signature, {
+        maxSupportedTransactionVersion: 0,
+        commitment: 'confirmed',
+      });
+    } catch (error) {
+      console.error('Solana verify error:', error);
+      throw new BadRequestException(
+        'Invalid signature or transaction not found',
+      );
+    }
+
+    if (!transaction) {
+      throw new BadRequestException('Transaction not found on chain');
+    }
+
+    if (transaction.meta?.err) {
+      throw new BadRequestException('Transaction failed on-chain');
+    }
+
+    // Verify Recipient (Merchant Wallet)
+    const merchantWallet = this.RECEIVING_WALLETS.SOL;
+
+    // Strategy 1: Check Token Transfers (USDC/SPL)
+    // In SPL transfers, the merchant's wallet is the 'owner' of the Token Account
+    const merchantTokenBalance = transaction.meta?.postTokenBalances?.find(
+      (b) => b.owner === merchantWallet, // Matches our wallet address
+    );
+
+    if (merchantTokenBalance) {
+      // It's a token transfer! Verify amount.
+      const accountIndex = merchantTokenBalance.accountIndex;
+      const preToken = transaction.meta?.preTokenBalances?.find(
+        (b) => b.accountIndex === accountIndex,
+      );
+
+      const preAmount = parseFloat(preToken?.uiTokenAmount?.amount || '0');
+      const postAmount = parseFloat(
+        merchantTokenBalance.uiTokenAmount?.amount || '0',
+      );
+      const tokenChange = postAmount - preAmount;
+
+      console.log(
+        `[VerifySolana] Token Payment Detected. Mint: ${merchantTokenBalance.mint}, Change: ${tokenChange}`,
+      );
+
+      if (tokenChange <= 0) {
+        throw new BadRequestException(
+          `No token funds received (Change: ${tokenChange})`,
+        );
+      }
+
+      // Success for Token
+      console.log(`[VerifySolana] Token Verification Successful`);
+    } else {
+      // Strategy 2: Check Native SOL Transfers
+      // In SOL transfers, the merchant wallet is a direct account key
+      const accountKeys = transaction.transaction.message.accountKeys;
+      const merchantIndex = accountKeys.findIndex((key: any) => {
+        const pubkey = key.pubkey ? key.pubkey.toString() : key.toString();
+        return pubkey === merchantWallet;
+      });
+
+      if (merchantIndex === -1) {
+        console.error(
+          `[VerifySolana] Merchant ${merchantWallet} not found in keys or token owners.`,
+        );
+        throw new BadRequestException(
+          'Transaction does not involve merchant wallet',
+        );
+      }
+
+      // Check SOL Balance Change
+      const preBalance = transaction.meta.preBalances[merchantIndex];
+      const postBalance = transaction.meta.postBalances[merchantIndex];
+      const balanceChange = postBalance - preBalance;
+
+      console.log(
+        `[VerifySolana] SOL Payment Detected. Change: ${balanceChange}`,
+      );
+
+      if (balanceChange <= 0) {
+        throw new BadRequestException('No SOL funds received');
+      }
+    }
+
+    // Idempotency: Check if signature already used
+    const existing = await this.prisma.payment.findFirst({
+      where: { txHash: signature },
+    });
+    if (existing) {
+      throw new BadRequestException('Transaction already used');
+    }
+
+    return true;
+  }
+
+  /**
+   * Finalize verification and activate
+   */
+  async verifyAndActivate(
+    userId: string,
+    body: { signature: string; planId?: string; credits?: number },
+  ) {
+    await this.verifySolanaPayment(userId, body.signature);
+
+    // If verification passed:
+    if (body.planId) {
+      // Activate Plan
+      // We need to fetch plan details to log the payment correctly
+      const plan = await this.prisma.subscriptionPlan.findUnique({
+        where: { id: body.planId },
+      });
+      if (!plan) throw new BadRequestException('Plan not found');
+
+      await this.prisma.payment.create({
+        data: {
+          userId,
+          amount: plan.amount, // stored as string
+          currency: 'SOL_TX',
+          provider: 'SOLANA_KIT',
+          status: PaymentStatus.COMPLETED,
+          txHash: body.signature,
+          metadata: { planId: body.planId },
+        },
+      });
+      await this.activateSubscription(userId, body.planId);
+      return { success: true, message: 'Plan Upgraded' };
+    }
+
+    if (body.credits) {
+      // Add Credits
+      // Calculate implied price or just log it
+      await this.prisma.creditPurchase.create({
+        data: {
+          userId,
+          amount: body.credits,
+          price: 0, // Unknown/Dynamic
+          currency: 'SOL_TX',
+          status: PaymentStatus.COMPLETED,
+          txHash: body.signature,
+        },
+      });
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { extraCredits: { increment: body.credits } },
+      });
+      return { success: true, message: 'Credits Added' };
+    }
+
+    throw new BadRequestException('No planId or credits specified');
   }
 
   /**
@@ -119,9 +294,25 @@ export class PaymentsService {
   }
 
   /**
+   * Admin: Manually upgrade a user's subscription
+   * Allows specifying a custom interval (overriding plan default if needed)
+   */
+  async adminUpgradeUser(
+    userId: string,
+    planId: string,
+    intervalOverride?: 'MONTH' | 'YEAR',
+  ) {
+    return this.activateSubscription(userId, planId, intervalOverride);
+  }
+
+  /**
    * Activate or update user subscription
    */
-  private async activateSubscription(userId: string, planId: string) {
+  private async activateSubscription(
+    userId: string,
+    planId: string,
+    intervalOverride?: 'MONTH' | 'YEAR',
+  ) {
     const plan = await this.prisma.subscriptionPlan.findUnique({
       where: { id: planId },
     });
@@ -132,8 +323,11 @@ export class PaymentsService {
       where: { userId, status: 'ACTIVE' },
     });
 
+    // Determine interval: use override if provided, else plan default
+    const effectiveInterval = intervalOverride || plan.interval;
+
     const endDate = new Date();
-    if (plan.interval === 'YEAR') {
+    if (effectiveInterval === 'YEAR') {
       endDate.setFullYear(endDate.getFullYear() + 1);
     } else {
       endDate.setMonth(endDate.getMonth() + 1);
@@ -160,11 +354,39 @@ export class PaymentsService {
       });
     }
 
+    // Send Welcome Email
+    try {
+      const user = await this.prisma.user.findUnique({ where: { id: userId } });
+      const plan = await this.prisma.subscriptionPlan.findUnique({
+        where: { id: planId },
+      });
+
+      if (user?.email && plan) {
+        this.emailService.sendEmail(
+          user.email,
+          `Welcome to xCardGen ${plan.name}`,
+          getEmailTemplate(
+            'Subscription Activated',
+            `<p>Hi ${user.name || 'User'},</p><p>Thank you for subscribing to the <strong>${plan.name}</strong> plan.</p><p>You now have access to ${plan.maxGenerations} generations per month and all premium features.</p>`,
+            `${process.env.FRONTEND_URL}/dashboard`,
+            'Go to Dashboard',
+          ),
+        );
+      }
+    } catch (e) {
+      console.error('Failed to send welcome email', e);
+    }
+
     // Reset generation count for the new billing cycle
     await this.prisma.user.update({
       where: { id: userId },
       data: { generationCount: 0 },
     });
+
+    return {
+      success: true,
+      message: `User moved to ${plan.name} (${effectiveInterval})`,
+    };
   }
 
   /**
@@ -264,10 +486,62 @@ export class PaymentsService {
    * Get user's current subscription
    */
   async getCurrentSubscription(userId: string) {
-    const subscription = await this.prisma.subscriptions.findFirst({
+    let subscription = await this.prisma.subscriptions.findFirst({
       where: { userId, status: 'ACTIVE' },
       include: { subscriptionPlan: true },
     });
+
+    // Lazy Expiration Check
+    if (subscription?.endDate) {
+      console.log(
+        `[Subscription Check] User: ${userId}, EndDate: ${subscription.endDate}, Now: ${new Date()}`,
+      );
+    }
+
+    if (subscription?.endDate && new Date() > subscription.endDate) {
+      console.log(
+        `[Subscription] Expiring subscription ${subscription.id} for user ${userId}`,
+      );
+
+      // 1. Update status to EXPIRED
+      await this.prisma.subscriptions.update({
+        where: { id: subscription.id },
+        data: { status: 'EXPIRED' },
+      });
+
+      // 2. Reset Generation Count
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { generationCount: 0 },
+      });
+
+      // 3. Send Notification Email
+      const userData = await this.prisma.user.findUnique({
+        where: { id: userId },
+        select: { email: true },
+      });
+      console.log(`[Subscription] User Email: ${userData?.email}`);
+      if (userData?.email) {
+        console.log('[Subscription] Attempting to send email...');
+        // Fire and forget email (don't await to avoid blocking UI)
+        this.emailService
+          .sendEmail(
+            userData.email,
+            'Your xCardGen Subscription has Expired',
+            getEmailTemplate(
+              'Subscription Expired',
+              '<p>Your premium subscription has ended. You have been moved to the Free tier.</p><p>To continue enjoying premium features and higher limits, please renew your subscription.</p>',
+              `${process.env.FRONTEND_URL}/dashboard/billing`,
+              'Renew Subscription',
+            ),
+          )
+          .then(() => console.log('[Subscription] Email sent successfully'))
+          .catch((e) => console.error('Failed to send expiration email', e));
+      }
+
+      // Treat as no active subscription
+      subscription = null;
+    }
 
     const user = await this.prisma.user.findUnique({
       where: { id: userId },

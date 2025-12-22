@@ -76,17 +76,27 @@ export function CreateWorkspaceForm({ onSuccess }: CreateWorkspaceFormProps) {
 
     if (file.size > 5 * 1024 * 1024) {
       toast.error("File size too large (max 5MB)")
+      form.setError("logo", { message: "File size must be less than 5MB" })
+      // Reset input
+      e.target.value = ""
       return
     }
 
     setIsUploading(true)
+    // Clear any previous errors
+    form.clearErrors("logo")
+
     try {
       const secureUrl = await uploadToCloudinary(file)
-      form.setValue("logo", secureUrl, { shouldValidate: true })
+      // Ensure we set the value and trigger validation
+      form.setValue("logo", secureUrl, { shouldValidate: true, shouldDirty: true, shouldTouch: true })
       toast.success("Logo uploaded successfully")
     } catch (error) {
       console.error("Upload error:", error)
       toast.error("Failed to upload logo")
+      form.setError("logo", { type: "custom", message: "Failed to upload image. Please try another." })
+      // Reset input so they can retry
+      e.target.value = ""
     } finally {
       setIsUploading(false)
     }
@@ -260,6 +270,12 @@ export function CreateWorkspaceForm({ onSuccess }: CreateWorkspaceFormProps) {
                 </FormControl>
                 <FormDescription>Accepted formats: .jpg, .png. Max 5MB.</FormDescription>
                 <FormMessage />
+                {/* Fallback explicit error display */}
+                {form.formState.errors.logo && (
+                  <p className="text-sm font-medium text-destructive">
+                    {form.formState.errors.logo.message}
+                  </p>
+                )}
               </FormItem>
             )}
           />

@@ -70,6 +70,17 @@ export class PaymentsController {
   }
 
   /**
+   * Verify Solana Payment (Kit)
+   */
+  @Post('crypto/verify-solana')
+  async verifySolana(
+    @Request() req,
+    @Body() body: { signature: string; planId?: string; credits?: number },
+  ) {
+    return this.paymentsService.verifyAndActivate(req.user.id, body);
+  }
+
+  /**
    * Confirm credit purchase
    */
   @Post('credits/confirm')
@@ -78,5 +89,24 @@ export class PaymentsController {
     @Body() dto: ConfirmCryptoPaymentDto,
   ) {
     return this.paymentsService.confirmCreditPurchase(req.user.id, dto);
+  }
+  /**
+   * Admin: Manual Upgrade
+   */
+  @Post('admin/upgrade')
+  async adminUpgrade(
+    @Body()
+    body: {
+      userId: string;
+      planId: string;
+      interval?: 'MONTH' | 'YEAR';
+    },
+  ) {
+    // In a real app, verify Admin Role or Secret Header here
+    return this.paymentsService.adminUpgradeUser(
+      body.userId,
+      body.planId,
+      body.interval,
+    );
   }
 }

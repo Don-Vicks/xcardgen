@@ -30,7 +30,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const LOGOS = [
-  { src: "/logos/meridian.svg", label: "Meridian '25", alt: "Meridian Logo", className: "brightness-0 invert p-2" }, // Force white & smaller
+  { src: "/logos/meridian.svg", label: "Meridian '25", alt: "Meridian Logo", className: "p-2" }, // Force white & smaller
   { src: "/logos/ethereum.png", label: "EthCC[8]", alt: "Ethereum" },
   { src: "/logos/solana-tour.png", label: "Solana Tour", alt: "Solana Tour" },
   { src: "/logos/startup-village-nigeria.png", label: "Startup Village", alt: "Startup Village" },
@@ -127,10 +127,10 @@ export default function Home() {
 
               <h1 className="text-5xl md:text-7xl font-bold font-[family-name:var(--font-syne)] tracking-tight mb-8 leading-[1.1] animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
                 Turn Attendees into your <br className="hidden md:block" />
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">Marketing Team</span>
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60 break-words">Marketing Team</span>
               </h1>
 
-              <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mb-10 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+              <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mb-10 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200 break-words px-4">
                 Create stunning, personalized "I'm Attending" cards for your event. Let your community spread the word for you.
               </p>
 
@@ -182,45 +182,43 @@ export default function Home() {
               Trusted by the World's Biggest Crypto Events
             </p>
 
-            <div className="relative w-full overflow-hidden mask-linear-fade">
-              <div className="flex w-max animate-marquee gap-16 md:gap-24 items-center">
+            <div className="relative w-full max-w-full overflow-hidden mask-linear-fade">
+              <div className="flex w-max animate-marquee gap-8 md:gap-24 items-center">
                 {/* First Copy */}
                 {LOGOS.map((logo, i) => (
-                  <div key={i} className="flex flex-col items-center gap-4 min-w-[140px] group cursor-pointer transition-all duration-500 hover:scale-110">
-                    <div className="h-14 w-auto relative opacity-60 grayscale-[0.5] group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-500 group-hover:drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+                  <div key={i} className="flex flex-col items-center gap-4 w-[140px] shrink-0 group cursor-pointer transition-all duration-500 hover:scale-110">
+                    <div className="h-14 w-full relative opacity-60 grayscale-[0.5] group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-500 group-hover:drop-shadow-[0_0_20px_rgba(0,0,0,0.1)] dark:group-hover:drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]">
                       <Image
                         src={logo.src}
                         alt={logo.alt}
-                        width={0}
-                        height={0}
-                        sizes="100vw"
-                        className={`w-auto h-full object-contain ${logo.className || ''}`}
+                        fill
+                        className={`object-contain brightness-0 dark:invert transition-all duration-500 ${logo.className || ''}`}
                       />
                     </div>
-                    <span className="text-[10px] font-semibold tracking-wide text-muted-foreground/30 uppercase group-hover:text-primary transition-colors duration-500">{logo.label}</span>
+                    <span className="text-[10px] font-semibold tracking-wide text-muted-foreground/30 uppercase group-hover:text-primary transition-colors duration-500 text-center">{logo.label}</span>
                   </div>
                 ))}
 
                 {/* Second Copy (For Loop) */}
-                {LOGOS.map((logo, i) => (
-                  <div key={`dup-${i}`} className="flex flex-col items-center gap-4 min-w-[140px] group cursor-pointer transition-all duration-500 hover:scale-110">
-                    <div className="h-14 w-auto relative opacity-60 grayscale-[0.5] group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-500 group-hover:drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]">
-                      <Image
-                        src={logo.src}
-                        alt={logo.alt}
-                        width={0}
-                        height={0}
-                        sizes="100vw"
-                        className={`w-auto h-full object-contain ${logo.className || ''}`}
-                      />
+                {
+                  LOGOS.map((logo, i) => (
+                    <div key={`dup-${i}`} className="flex flex-col items-center gap-4 w-[140px] shrink-0 group cursor-pointer transition-all duration-500 hover:scale-110">
+                      <div className="h-14 w-full relative opacity-60 grayscale-[0.5] group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-500 group-hover:drop-shadow-[0_0_20px_rgba(0,0,0,0.1)] dark:group-hover:drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+                        <Image
+                          src={logo.src}
+                          alt={logo.alt}
+                          fill
+                          className={`object-contain brightness-0 dark:invert transition-all duration-500 ${logo.className || ''}`}
+                        />
+                      </div>
+                      <span className="text-[10px] font-semibold tracking-wide text-muted-foreground/30 uppercase group-hover:text-primary transition-colors duration-500 text-center">{logo.label}</span>
                     </div>
-                    <span className="text-[10px] font-semibold tracking-wide text-muted-foreground/30 uppercase group-hover:text-primary transition-colors duration-500">{logo.label}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </motion.section>
+                  ))
+                }
+              </div >
+            </div >
+          </div >
+        </motion.section >
 
         {/* How It Works Section */}
         {/* How It Works Section (Grassroots Growth Engine) */}
@@ -299,7 +297,7 @@ export default function Home() {
               whileInView="visible"
               viewport={{ once: true }}
               variants={staggerContainer}
-              className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             >
               {[
                 { icon: Globe, title: "Custom Domains", desc: "Host on your own domain (e.g., cards.myevent.com) for full brand authority." },
@@ -346,7 +344,7 @@ export default function Home() {
               whileInView="visible"
               viewport={{ once: true }}
               variants={staggerContainer}
-              className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto"
+              className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto"
             >
               {/* Starter */}
               <motion.div variants={fadeInUp}>
@@ -490,7 +488,7 @@ export default function Home() {
             </div>
           </div>
         </footer>
-      </main>
-    </div>
+      </main >
+    </div >
   )
 }

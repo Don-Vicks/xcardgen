@@ -416,7 +416,7 @@ export default function WorkspaceSettingsPage() {
 
         <TabsContent value="team">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
+            <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-0">
               <div>
                 <CardTitle className="flex items-center gap-2">
                   <Users className="h-5 w-5" />
@@ -547,30 +547,30 @@ export default function WorkspaceSettingsPage() {
                     const isSelf = member.user?.id === user?.id;
 
                     return (
-                      <div key={member.id} className="flex items-center justify-between p-3 rounded-lg border">
-                        <div className="flex items-center gap-3">
-                          <Avatar className="h-10 w-10">
+                      <div key={member.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg border gap-4 sm:gap-0">
+                        <div className="flex items-center gap-3 w-full sm:w-auto min-w-0">
+                          <Avatar className="h-10 w-10 shrink-0">
                             <AvatarFallback>
                               {(member.user?.name || member.inviteEmail)?.charAt(0)?.toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
-                          <div>
-                            <div className="font-medium flex items-center">
-                              {member.user?.name || member.inviteEmail}
+                          <div className="min-w-0 flex-1">
+                            <div className="font-medium flex items-center truncate">
+                              <span className="truncate">{member.user?.name || member.inviteEmail}</span>
                               {!member.acceptedAt && (
-                                <Badge variant="outline" className="ml-2 text-xs">Pending</Badge>
+                                <Badge variant="outline" className="ml-2 text-xs shrink-0">Pending</Badge>
                               )}
                               {isSelf && (
-                                <Badge className="ml-2 text-xs" variant="secondary">You</Badge>
+                                <Badge className="ml-2 text-xs shrink-0" variant="secondary">You</Badge>
                               )}
                             </div>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-sm text-muted-foreground truncate">
                               {member.user?.email || member.inviteEmail}
                             </p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Badge variant={member.role === "ADMIN" ? "default" : "secondary"}>
+                        <div className="flex items-center justify-end sm:justify-start gap-2 w-full sm:w-auto">
+                          <Badge variant={member.role === "ADMIN" ? "default" : "secondary"} className="shrink-0">
                             {member.role}
                           </Badge>
 

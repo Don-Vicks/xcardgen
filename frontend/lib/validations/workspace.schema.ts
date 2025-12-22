@@ -3,7 +3,7 @@ import { z } from 'zod'
 // Create Workspace
 export const createWorkspace = z.object({
   name: z.string().min(3).max(255).trim(),
-  logo: z.string().url(),
+  logo: z.string().url({ message: 'Please upload a workspace logo' }),
   coverImage: z.string().url().optional(),
   slug: z.string().min(3).max(255).trim(),
   type: z.enum([

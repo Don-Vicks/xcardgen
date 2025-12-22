@@ -2,7 +2,7 @@ import { Layers, Loader2 } from "lucide-react"
 
 export function LoadingScreen({ text = "Loading..." }: { text?: string }) {
   return (
-    <div className="flex min-h-[50vh] flex-col items-center justify-center p-8 text-center animate-in fade-in duration-500">
+    <div className="flex w-full h-full min-h-[50vh] flex-col items-center justify-center p-8 text-center animate-in fade-in duration-500">
       <div className="relative mb-4">
         {/* Logo/Icon layer */}
         <div className="size-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 relative z-10">

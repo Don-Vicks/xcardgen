@@ -113,27 +113,31 @@ export default function WorkspaceDetailPage() {
   return (
     <div className="space-y-6">
       {/* Breadcrumb & Header */}
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" className="cursor-pointer" onClick={() => router.push('/dashboard/workspaces')}>
-          <ArrowLeft className="w-5 h-5" />
-        </Button>
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {workspace.name}
-          </h1>
-          <p className="text-muted-foreground">/w/{workspace.slug}</p>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+        <div className="flex items-center gap-4 w-full sm:w-auto">
+          <Button variant="ghost" size="icon" className="cursor-pointer shrink-0" onClick={() => router.push('/dashboard/workspaces')}>
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white truncate">
+              {workspace.name}
+            </h1>
+            <p className="text-muted-foreground truncate">/w/{workspace.slug}</p>
+          </div>
         </div>
-        <Link href={`/dashboard/workspaces/${workspaceSlug}/settings`}>
-          <Button variant="outline" size="icon">
-            <Settings className="w-4 h-4" />
-          </Button>
-        </Link>
-        <Link href={`/dashboard/workspaces/${workspaceSlug}/members`}>
-          <Button variant="outline" className="gap-2">
-            <Users className="w-4 h-4" />
-            Members
-          </Button>
-        </Link>
+        <div className="flex gap-2 w-full sm:w-auto justify-end">
+          <Link href={`/dashboard/workspaces/${workspaceSlug}/settings`}>
+            <Button variant="outline" size="icon">
+              <Settings className="w-4 h-4" />
+            </Button>
+          </Link>
+          <Link href={`/dashboard/workspaces/${workspaceSlug}/members`}>
+            <Button variant="outline" className="gap-2">
+              <Users className="w-4 h-4" />
+              Members
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Quick Stats */}
@@ -204,10 +208,10 @@ export default function WorkspaceDetailPage() {
                 transition={{ delay: index * 0.05 }}
               >
                 <Card className="hover:shadow-md transition-shadow">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-0 pb-2">
                     <div className="flex items-center gap-3">
                       <div>
-                        <CardTitle className="text-lg flex items-center gap-2">
+                        <CardTitle className="text-lg flex items-center gap-2 flex-wrap">
                           {event.name}
                           <Badge variant={event.isActive ? 'default' : 'secondary'}>
                             {event.isActive ? 'Active' : 'Inactive'}
@@ -222,7 +226,7 @@ export default function WorkspaceDetailPage() {
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon" className="self-end sm:self-auto">
                           <MoreHorizontal className="w-4 h-4" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -246,7 +250,7 @@ export default function WorkspaceDetailPage() {
                     </DropdownMenu>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-4 gap-4 text-sm">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                       <div className="flex items-center gap-2">
                         <Eye className="w-4 h-4 text-muted-foreground" />
                         <span>{event.stats?.totalVisits || 0} visits</span>
@@ -259,14 +263,14 @@ export default function WorkspaceDetailPage() {
                         <Share2 className="w-4 h-4 text-muted-foreground" />
                         <span>{event.stats?.totalShares || 0} shares</span>
                       </div>
-                      <div className="flex justify-end gap-2">
-                        <Link href={`/dashboard/events/${event.slug}/analytics`}>
-                          <Button variant="outline" size="sm">
+                      <div className="flex flex-col sm:flex-row justify-end gap-2 col-span-2 md:col-span-1">
+                        <Link href={`/dashboard/events/${event.slug}/analytics`} className="w-full sm:w-auto">
+                          <Button variant="outline" size="sm" className="w-full">
                             Analytics
                           </Button>
                         </Link>
-                        <Link href={`/dashboard/events/${event.slug}/design`}>
-                          <Button size="sm">Edit</Button>
+                        <Link href={`/dashboard/events/${event.slug}/design`} className="w-full sm:w-auto">
+                          <Button size="sm" className="w-full">Edit</Button>
                         </Link>
                       </div>
                     </div>

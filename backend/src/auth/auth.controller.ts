@@ -39,7 +39,8 @@ export class AuthController {
       sameSite: 'lax',
       maxAge: 60 * 60 * 1000, // 60 minutes
     });
-    res.redirect(`http://localhost:3000/callback`);
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
+    res.redirect(`${frontendUrl}/callback`);
   }
 
   // ... register and login methods (already set cookies) ...

@@ -1,16 +1,14 @@
 'use client'
 
+import { SolanaPaymentButton } from "@/components/billing/solana-payment-button"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Progress } from "@/components/ui/progress"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { api } from "@/lib/api/api"
 import { useAuth } from "@/stores/auth-store"
-import { CheckCircle2, CreditCard, Globe, Loader2, Wallet, Zap } from "lucide-react"
+import { CheckCircle2, Globe, Loader2, Zap } from "lucide-react"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
@@ -44,16 +42,7 @@ export default function BillingPage() {
   const [billingInterval, setBillingInterval] = useState<'MONTH' | 'YEAR'>('MONTH')
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null)
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false)
-  const [paymentStep, setPaymentStep] = useState<'select' | 'pending' | 'confirm' | 'credits-select' | 'credits-pending'>('select')
-  const [paymentInfo, setPaymentInfo] = useState<{
-    paymentId: string
-    receivingAddress: string
-    amount: string
-    currency: string
-  } | null>(null)
-  const [txHash, setTxHash] = useState('')
-  const [walletAddress, setWalletAddress] = useState('')
-  const [processing, setProcessing] = useState(false)
+  const [paymentStep, setPaymentStep] = useState<'select' | 'credits-select'>('select')
   const [creditsAmount, setCreditsAmount] = useState(2500)
 
   useEffect(() => {
@@ -79,105 +68,8 @@ export default function BillingPage() {
     }
   }
 
-  const initCryptoPayment = async (currency: 'ETH' | 'SOL' | 'USDC') => {
-    if (!selectedPlan) return
-    setProcessing(true)
-
-    try {
-      const res = await api.post('/payments/crypto/init', {
-        planId: selectedPlan.id,
-        currency
-      })
-
-      const data = res.data
-      setPaymentInfo({
-        paymentId: data.paymentId,
-        receivingAddress: data.receivingAddress,
-        amount: data.amount,
-        currency: data.currency
-      })
-      setPaymentStep('pending')
-
-    } catch (error) {
-      toast.error('Payment initialization failed')
-    } finally {
-      setProcessing(false)
-    }
-  }
-
-  const confirmPayment = async () => {
-    if (!paymentInfo || !txHash) return
-    setProcessing(true)
-
-    try {
-      await api.post('/payments/crypto/confirm', {
-        paymentId: paymentInfo.paymentId,
-        txHash,
-        walletAddress
-      })
-
-      toast.success('Payment confirmed! Your subscription is now active.')
-      setPaymentDialogOpen(false)
-      setPaymentStep('select')
-      setSelectedPlan(null)
-      setPaymentInfo(null)
-      setTxHash('')
-      setWalletAddress('')
-      fetchData()
-
-    } catch (error) {
-      toast.error('Payment confirmation failed')
-    } finally {
-      setProcessing(false)
-    }
-  }
-
-  const initCreditsPayment = async (currency: 'ETH' | 'SOL' | 'USDC') => {
-    setProcessing(true)
-    try {
-      const res = await api.post('/payments/credits/init', {
-        amount: creditsAmount,
-        currency
-      })
-
-      const data = res.data
-      setPaymentInfo({
-        paymentId: data.paymentId,
-        receivingAddress: data.receivingAddress,
-        amount: data.amount, // This comes back as USD price
-        currency: data.currency
-      })
-      setPaymentStep('credits-pending')
-    } catch (error) {
-      toast.error('Failed to initialize credit purchase')
-    } finally {
-      setProcessing(false)
-    }
-  }
-
-  const confirmCreditsPayment = async () => {
-    if (!paymentInfo || !txHash) return
-    setProcessing(true)
-
-    try {
-      await api.post('/payments/credits/confirm', {
-        paymentId: paymentInfo.paymentId,
-        txHash,
-        walletAddress
-      })
-
-      toast.success(`Successfully added ${creditsAmount} credits!`)
-      setPaymentDialogOpen(false)
-      setPaymentStep('select')
-      setPaymentInfo(null)
-      setTxHash('')
-      fetchData()
-    } catch (error) {
-      toast.error('Credit purchase confirmation failed')
-    } finally {
-      setProcessing(false)
-    }
-  }
+  // Unused payment functions removed. 
+  // Payment is now handled by SolanaPaymentButton component.
 
   const usagePercentage = usage.generationsLimit > 0
     ? (usage.generationsUsed / usage.generationsLimit) * 100
@@ -219,7 +111,9 @@ export default function BillingPage() {
                 {currentSubscription?.subscriptionPlan?.name || 'Starter'}
               </h3>
               <p className="text-sm text-muted-foreground">
-                {currentSubscription ? `Renews ${new Date(currentSubscription.endDate).toLocaleDateString()}` : 'Free forever'}
+                {currentSubscription?.endDate && new Date(currentSubscription.endDate).getFullYear() > 2020
+                  ? `Renews ${new Date(currentSubscription.endDate).toLocaleDateString()}`
+                  : 'No expiration'}
               </p>
             </div>
             <Badge variant={currentSubscription ? 'default' : 'secondary'}>
@@ -359,7 +253,6 @@ export default function BillingPage() {
                     setPaymentDialogOpen(open)
                     if (!open) {
                       setPaymentStep('select')
-                      setPaymentInfo(null)
                     }
                   }}>
                     {parseFloat(plan.amount) > parseFloat(currentSubscription?.subscriptionPlan?.amount || '0') ? (
@@ -390,83 +283,30 @@ export default function BillingPage() {
                       </DialogHeader>
 
                       {paymentStep === 'select' && (
-                        <Tabs defaultValue="crypto" className="w-full">
-                          <TabsList className="grid w-full grid-cols-2">
-                            <TabsTrigger value="crypto">
-                              <Wallet className="h-4 w-4 mr-2" /> Crypto
-                            </TabsTrigger>
-                            <TabsTrigger value="card" disabled>
-                              <CreditCard className="h-4 w-4 mr-2" /> Card
-                            </TabsTrigger>
-                          </TabsList>
-                          <TabsContent value="crypto" className="space-y-4 mt-4">
-                            <p className="text-sm text-muted-foreground">
-                              Select your preferred cryptocurrency:
-                            </p>
-                            <div className="grid grid-cols-3 gap-2">
-                              {['ETH', 'SOL', 'USDC'].map((currency) => (
-                                <Button
-                                  key={currency}
-                                  variant="outline"
-                                  onClick={() => initCryptoPayment(currency as 'ETH' | 'SOL' | 'USDC')}
-                                  disabled={processing}
-                                >
-                                  {processing ? <Loader2 className="h-4 w-4 animate-spin" /> : currency}
-                                </Button>
-                              ))}
-                            </div>
-                          </TabsContent>
-                          <TabsContent value="card" className="mt-4">
-                            <p className="text-sm text-muted-foreground text-center py-8">
-                              Card payments coming soon. Please use crypto for now.
-                            </p>
-                          </TabsContent>
-                        </Tabs>
-                      )}
-
-                      {paymentStep === 'pending' && paymentInfo && (
                         <div className="space-y-4">
-                          <div className="p-4 bg-muted rounded-lg text-center">
-                            <p className="text-sm text-muted-foreground mb-2">Send exactly</p>
-                            <p className="text-2xl font-bold">{paymentInfo.amount} {paymentInfo.currency}</p>
-                            <p className="text-sm text-muted-foreground mt-2">to this address:</p>
-                            <code className="block mt-2 p-2 bg-background rounded text-xs break-all">
-                              {paymentInfo.receivingAddress}
-                            </code>
+                          <div className="p-4 bg-muted/50 rounded-lg space-y-2">
+                            <p className="text-sm font-medium">Secure Checkout</p>
+                            <p className="text-xs text-muted-foreground">
+                              Pay securely with <strong>USDC</strong> on Solana.
+                              Ensures instant activation.
+                            </p>
                           </div>
 
-                          <div className="space-y-2">
-                            <Label htmlFor="txHash">Transaction Hash</Label>
-                            <Input
-                              id="txHash"
-                              placeholder="0x..."
-                              value={txHash}
-                              onChange={(e) => setTxHash(e.target.value)}
-                            />
-                          </div>
-
-                          <div className="space-y-2">
-                            <Label htmlFor="wallet">Your Wallet Address</Label>
-                            <Input
-                              id="wallet"
-                              placeholder="Your sending wallet"
-                              value={walletAddress}
-                              onChange={(e) => setWalletAddress(e.target.value)}
-                            />
-                          </div>
-
-                          <DialogFooter>
-                            <Button
-                              onClick={confirmPayment}
-                              disabled={!txHash || processing}
-                              className="w-full"
-                            >
-                              {processing ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                              Confirm Payment
-                            </Button>
-                          </DialogFooter>
+                          <SolanaPaymentButton
+                            description={`Upgrade to ${plan.name}`}
+                            amount={parseFloat(plan.amount)}
+                            planId={plan.id}
+                            label={`Pay $${plan.amount}`}
+                            onSuccess={() => {
+                              setPaymentDialogOpen(false);
+                              fetchData();
+                            }}
+                          />
+                          <p className="text-[10px] text-center text-muted-foreground">Powered by Solana Commerce Kit</p>
                         </div>
                       )}
+
+
                     </DialogContent>
                   </Dialog>
                 </CardFooter>
@@ -568,12 +408,11 @@ export default function BillingPage() {
               </div>
             </CardContent>
             <CardFooter>
-              <Dialog open={paymentDialogOpen && (paymentStep === 'credits-select' || paymentStep === 'credits-pending')} onOpenChange={(open) => {
+              <Dialog open={paymentDialogOpen && paymentStep === 'credits-select'} onOpenChange={(open) => {
                 setPaymentDialogOpen(open)
                 if (open) setPaymentStep('credits-select')
                 if (!open) {
                   setPaymentStep('select')
-                  setPaymentInfo(null)
                 }
               }}>
                 <DialogTrigger asChild>
@@ -588,63 +427,36 @@ export default function BillingPage() {
                   </DialogHeader>
 
                   {paymentStep === 'credits-select' && (
-                    <Tabs defaultValue="crypto" className="w-full">
-                      <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="crypto"><Wallet className="h-4 w-4 mr-2" /> Crypto</TabsTrigger>
-                        <TabsTrigger value="card" disabled><CreditCard className="h-4 w-4 mr-2" /> Card</TabsTrigger>
-                      </TabsList>
-                      <TabsContent value="crypto" className="space-y-4 mt-4">
-                        <p className="text-sm text-muted-foreground">Select Payment Method:</p>
-                        <div className="grid grid-cols-3 gap-2">
-                          {['ETH', 'SOL', 'USDC'].map(c => (
-                            <Button key={c} variant="outline" onClick={() => initCreditsPayment(c as any)} disabled={processing}>
-                              {processing ? <Loader2 className="h-4 w-4 animate-spin" /> : c}
-                            </Button>
-                          ))}
-                        </div>
-                      </TabsContent>
-                    </Tabs>
-                  )}
-
-                  {paymentStep === 'credits-pending' && paymentInfo && (
                     <div className="space-y-4">
-                      <div className="p-4 bg-muted rounded-lg text-center">
-                        <p className="text-sm text-muted-foreground mb-1">Send exactly</p>
-                        <p className="text-2xl font-bold text-primary mb-1">{parseFloat(paymentInfo.amount).toFixed(2)} {paymentInfo.currency}</p>
-                        <p className="text-xs text-muted-foreground mb-4">(${paymentInfo.amount} USD value)</p>
-
-                        <p className="text-sm text-muted-foreground mb-2">to this address:</p>
-                        <code className="block p-3 bg-background rounded border text-xs break-all select-all font-mono">
-                          {paymentInfo.receivingAddress}
-                        </code>
+                      <div className="p-4 bg-muted/50 rounded-lg space-y-2">
+                        <p className="text-sm font-medium">Secure Checkout</p>
+                        <p className="text-xs text-muted-foreground">
+                          Pay securely with SOL or USDC using Solana Pay.
+                          Credits added instantly.
+                        </p>
                       </div>
 
-                      <div className="space-y-2">
-                        <Label>Transaction Hash</Label>
-                        <Input placeholder="0x..." value={txHash} onChange={e => setTxHash(e.target.value)} />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label>Your Wallet</Label>
-                        <Input
-                          placeholder="Your sending wallet"
-                          value={walletAddress}
-                          onChange={(e) => setWalletAddress(e.target.value)}
-                        />
-                      </div>
-
-                      <Button onClick={confirmCreditsPayment} disabled={!txHash || processing} className="w-full">
-                        {processing ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : 'Confirm Payment'}
-                      </Button>
+                      <SolanaPaymentButton
+                        description={`Buy ${creditsAmount.toLocaleString()} Credits`}
+                        amount={creditsAmount * 0.02}
+                        credits={creditsAmount}
+                        label={`Pay $${(creditsAmount * 0.02).toFixed(2)}`}
+                        onSuccess={() => {
+                          setPaymentDialogOpen(false);
+                          fetchData();
+                        }}
+                      />
+                      <p className="text-[10px] text-center text-muted-foreground">Powered by Solana Commerce Kit</p>
                     </div>
                   )}
+
+
                 </DialogContent>
               </Dialog>
             </CardFooter>
           </Card>
         </div>
       </div>
-
     </div>
   )
 }

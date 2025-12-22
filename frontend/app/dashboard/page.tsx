@@ -74,7 +74,7 @@ export default function DashboardPage() {
           <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
           <p className="text-muted-foreground">Global analytics and real-time activity across your organization.</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
           <Button asChild variant="outline">
             <Link href="/dashboard/templates">
               <Layout className="mr-2 h-4 w-4" />
@@ -91,7 +91,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Overview */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active xCards</CardTitle>
@@ -135,20 +135,27 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 relative">
-        <div className={`col-span-4 ${!hasAdvancedStats ? "blur-2xl opacity-25 pointer-events-none" : ""}`}>
+        <div className={`col-span-4 transition-all duration-300 ${!hasAdvancedStats ? "blur-sm opacity-50 pointer-events-none grayscale" : ""}`}>
           <DashboardCharts data={data.activityTrend} />
         </div>
         {!hasAdvancedStats && (
           <div className="absolute inset-0 z-10 flex items-center justify-center">
-            <div className="flex flex-col items-center gap-2 bg-background/95 px-6 py-4 rounded-xl shadow-lg border">
-              <BarChart3 className="h-8 w-8 text-primary" />
-              <div className="text-center">
-                <h3 className="font-semibold">Unlock Advanced Analytics</h3>
-                <p className="text-xs text-muted-foreground mb-2">See detailed activity trends and audience breakdown</p>
-                <Link href="/dashboard/billing">
-                  <Button size="sm">Upgrade to Pro</Button>
-                </Link>
+            {/* Glassmorphic Minimal Card */}
+            <div className="flex flex-col items-center gap-3 bg-white/10 dark:bg-black/40 backdrop-blur-md border border-white/20 dark:border-white/10 px-8 py-6 rounded-2xl shadow-2xl animate-in zoom-in-95 duration-500">
+              <div className="p-2 rounded-full bg-primary/10 text-primary">
+                <BarChart3 className="h-6 w-6" />
               </div>
+              <div className="text-center space-y-1">
+                <h3 className="font-semibold text-lg tracking-tight">Advanced Analytics</h3>
+                <p className="text-xs text-muted-foreground/80 max-w-[200px] leading-relaxed">
+                  Unlock detailed trends and audience insights.
+                </p>
+              </div>
+              <Button size="sm" className="w-full rounded-full h-8 text-xs font-medium bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary" asChild>
+                <Link href="/dashboard/billing">
+                  Upgrade to Pro
+                </Link>
+              </Button>
             </div>
           </div>
         )}
@@ -156,15 +163,15 @@ export default function DashboardPage() {
       </div>
 
       <div className="relative">
-        <div className={!hasAdvancedStats ? "blur-2xl opacity-25 pointer-events-none" : ""}>
+        <div className={!hasAdvancedStats ? "blur-sm opacity-50 pointer-events-none grayscale" : ""}>
           <AudienceOverview audience={data.audience} />
         </div>
         {!hasAdvancedStats && (
           <div className="absolute inset-0 z-10 flex items-center justify-center">
-            <div className="flex items-center gap-2 bg-background/95 px-4 py-2 rounded-full border shadow-sm">
-              <BarChart3 className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-semibold">Audience data is locked for Pro plans</span>
-            </div>
+            <Link href="/dashboard/billing" className="group flex items-center gap-2 bg-background/80 hover:bg-background/95 backdrop-blur-sm px-4 py-2 rounded-full border shadow-sm transition-all hover:scale-105 active:scale-95 cursor-pointer">
+              <BarChart3 className="h-4 w-4 text-primary group-hover:text-primary/80 transition-colors" />
+              <span className="text-xs font-semibold">Unlock Audience Data</span>
+            </Link>
           </div>
         )}
       </div>
