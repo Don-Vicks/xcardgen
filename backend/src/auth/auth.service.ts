@@ -60,7 +60,10 @@ export class AuthService {
     };
   }
 
-  async loginGoogle(user: any) {
+  async loginGoogle(
+    user: any,
+    context: { ipAddress: string; userAgent: string },
+  ) {
     let existingUser = await this.prisma.user.findUnique({
       where: { email: user.email },
     });
@@ -81,6 +84,18 @@ export class AuthService {
     }
 
     const accessToken = this.generateToken(existingUser);
+
+    // Create session (CRITICAL for JwtStrategy)
+    await this.sessionService.createSession(
+      existingUser.id,
+      accessToken,
+      context.ipAddress,
+      context.userAgent,
+    );
+
+    // Log the login
+    await this.logLogin(existingUser.id, context.ipAddress, context.userAgent);
+
     return { accessToken, user: existingUser };
   }
 

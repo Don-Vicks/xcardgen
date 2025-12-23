@@ -387,8 +387,8 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Main Charts Row */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-          <Card className="col-span-4">
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-7">
+          <Card className="col-span-1 md:col-span-2 lg:col-span-4">
             <CardHeader>
               <CardTitle>Visits Over Time</CardTitle>
             </CardHeader>
@@ -413,7 +413,7 @@ export default function AnalyticsPage() {
           </Card>
 
           {/* Conversion Funnel */}
-          <Card className="col-span-3">
+          <Card className="col-span-1 md:col-span-2 lg:col-span-3">
             <CardHeader>
               <CardTitle>Conversion Funnel</CardTitle>
               <CardDescription>User journey drop-off.</CardDescription>
@@ -438,8 +438,8 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Premium: Activity & Audience */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-          <Card className="col-span-4 relative group">
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-7">
+          <Card className="col-span-1 md:col-span-2 lg:col-span-4 relative group">
             {!hasAdvancedStats && <PremiumOverlay label="Peak Activity Locked" />}
             <CardHeader>
               <CardTitle>Peak Activity (UTC)</CardTitle>
@@ -458,7 +458,7 @@ export default function AnalyticsPage() {
             </CardContent>
           </Card>
 
-          <Card className="col-span-3 relative">
+          <Card className="col-span-1 md:col-span-2 lg:col-span-3 relative">
             {!hasAdvancedStats && <PremiumOverlay label="Audience Quality Locked" />}
             <CardHeader>
               <CardTitle>Participating Organizations</CardTitle>
@@ -479,7 +479,7 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Detailed Stats Row */}
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
           {/* Traffic Sources */}
           <Card className="col-span-1 relative">
             {!hasAdvancedStats && <PremiumOverlay label="Traffic Sources Locked" />}

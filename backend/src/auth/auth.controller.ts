@@ -32,7 +32,23 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req, @Res() res: Response) {
-    const { accessToken } = await this.authService.loginGoogle(req.user);
+    // Extract IP and UA for session creation
+    const forwarded = req.headers['x-forwarded-for'];
+    const ipAddress =
+      (typeof forwarded === 'string'
+        ? forwarded.split(',')[0].trim()
+        : undefined) ||
+      (req as any).connection?.remoteAddress ||
+      (req as any).socket?.remoteAddress ||
+      (req as any).info?.remoteAddress ||
+      undefined;
+    const userAgent = req.headers['user-agent'] || 'Unknown';
+
+    const { accessToken } = await this.authService.loginGoogle(req.user, {
+      ipAddress,
+      userAgent,
+    });
+
     res.cookie('access_token', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
