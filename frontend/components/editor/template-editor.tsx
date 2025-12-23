@@ -419,29 +419,29 @@ export function TemplateEditor({ initialData, onSave, onBack, backLink = "/dashb
       </div>
 
       {/* Header */}
-      <header className="h-14 border-b bg-background flex items-center justify-between px-4 z-10 basis-14 shrink-0 shadow-sm">
-        <div className="flex items-center gap-4">
+      <header className="h-14 border-b bg-background flex items-center justify-between px-4 z-10 basis-14 shrink-0 shadow-sm gap-2">
+        <div className="flex items-center gap-2 sm:gap-4 shrink min-w-0">
           {onBack ? (
-            <Button variant="ghost" size="icon" onClick={onBack}>
+            <Button variant="ghost" size="icon" onClick={onBack} className="shrink-0">
               <ArrowLeft className="h-4 w-4" />
             </Button>
           ) : (
-            <Button variant="ghost" size="icon" asChild>
+            <Button variant="ghost" size="icon" asChild className="shrink-0">
               <Link href={backLink}>
                 <ArrowLeft className="h-4 w-4" />
               </Link>
             </Button>
           )}
 
-          <div className="flex flex-col">
+          <div className="flex flex-col min-w-0 flex-1">
             <Input
               value={template.name}
               onChange={(e) => setTemplate({ ...template, name: e.target.value })}
-              className="h-7 w-64 border-transparent hover:border-input focus:border-input shadow-none font-semibold text-sm px-2 focus-visible:ring-1 transition-all"
+              className="h-7 w-32 sm:w-64 border-transparent hover:border-input focus:border-input shadow-none font-semibold text-sm px-2 focus-visible:ring-1 transition-all truncate"
               placeholder="Untitled Design"
               disabled={isPreview}
             />
-            <div className="flex items-center gap-2 mt-0.5 px-2 h-4">
+            <div className="hidden sm:flex items-center gap-2 mt-0.5 px-2 h-4">
               <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">Editor</span>
               <span className="text-muted-foreground/20 text-[10px]">|</span>
               {saving ? (
@@ -458,13 +458,13 @@ export function TemplateEditor({ initialData, onSave, onBack, backLink = "/dashb
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
 
           {/* Download Sample Button - Only in Preview */}
           {isPreview && (
             <Button variant="outline" size="sm" className="h-8 gap-2 mr-2" onClick={handleDownloadSample}>
               <Download className="h-3.5 w-3.5" />
-              Download Sample
+              <span className="hidden sm:inline">Download Sample</span>
             </Button>
           )}
 
@@ -480,12 +480,12 @@ export function TemplateEditor({ initialData, onSave, onBack, backLink = "/dashb
             title={isPreview ? "Back to Edit" : "Preview with Data"}
           >
             {isPreview ? <Pencil className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-            {isPreview ? "Edit" : "Preview"}
+            <span className="hidden sm:inline">{isPreview ? "Edit" : "Preview"}</span>
           </Button>
 
-          {/* Undo/Redo Controls - Hide in Preview */}
+          {/* Undo/Redo Controls - Hide in Preview & Hide on Mobile */}
           {!isPreview && (
-            <div className="flex items-center gap-0.5 mr-2 border-r pr-3 border-border/50">
+            <div className="hidden md:flex items-center gap-0.5 mr-2 border-r pr-3 border-border/50">
               <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" onClick={undo} disabled={!canUndo} title="Undo (Ctrl+Z)">
                 <Undo className="h-4 w-4" />
               </Button>
@@ -497,7 +497,7 @@ export function TemplateEditor({ initialData, onSave, onBack, backLink = "/dashb
 
           <Button onClick={handleManualSave} disabled={saving || isPreview} size="sm" className="h-8">
             <Save className="mr-2 h-3.5 w-3.5" />
-            {saving ? "Saving..." : saveButtonLabel}
+            <span className="hidden sm:inline">{saving ? "Saving..." : saveButtonLabel}</span>
           </Button>
         </div>
       </header>

@@ -123,7 +123,7 @@ export function EventCard({ event, onEmbed }: EventCardProps) {
       </CardHeader>
 
       <CardContent className="p-4 pt-2">
-        <div className="grid grid-cols-4 gap-2 text-center text-xs text-muted-foreground bg-muted/30 p-2 rounded-md">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs text-muted-foreground bg-muted/30 p-2 rounded-md">
           <div className="space-y-1">
             <Eye className="h-4 w-4 mx-auto mb-1" />
             <span className="font-semibold text-foreground">{stats.views}</span>

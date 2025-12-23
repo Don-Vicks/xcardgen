@@ -84,8 +84,8 @@ export function TemplatePicker({ onSelect, onCancel }: TemplatePickerProps) {
 
       <div className="w-full max-w-5xl space-y-4">
         {/* Toolbar */}
-        <div className="flex items-center justify-between gap-4">
-          <div className="relative flex-1 max-w-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="relative flex-1 w-full sm:max-w-sm">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search templates..."
@@ -94,7 +94,7 @@ export function TemplatePicker({ onSelect, onCancel }: TemplatePickerProps) {
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-          <span className="text-xs text-muted-foreground">
+          <span className="text-xs text-muted-foreground text-center sm:text-right">
             {meta?.total ? `${meta.total} templates found` : ""}
           </span>
         </div>

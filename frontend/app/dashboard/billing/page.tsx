@@ -149,9 +149,9 @@ export default function BillingPage() {
 
       {/* Available Plans */}
       <div>
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <h2 className="text-xl font-bold">Available Plans</h2>
-          <div className="bg-muted p-1 rounded-lg flex items-center">
+          <div className="bg-muted p-1 rounded-lg flex items-center w-fit">
             <button
               onClick={() => setBillingInterval('MONTH')}
               className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${billingInterval === 'MONTH' ? 'bg-background shadow text-foreground' : 'text-muted-foreground hover:text-foreground'}`}

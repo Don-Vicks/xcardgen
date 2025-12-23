@@ -3,11 +3,11 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { apiRequest } from "@/lib/api/requests/auth.request"
+import { LoginLog, Session } from "@/types/models"
 import { format } from "date-fns"
 import { Laptop, LogOut, Phone, Shield, Smartphone } from "lucide-react"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
-import { LoginLog, Session } from "@/types/models"
 
 const authRequest = new apiRequest()
 
@@ -62,14 +62,14 @@ export function SecurityView() {
     <div className="space-y-4">
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <CardTitle>Active Sessions</CardTitle>
               <CardDescription>
                 Manage devices where you are currently logged in.
               </CardDescription>
             </div>
-            <Button variant="destructive" size="sm" onClick={handleLogoutAll}>
+            <Button variant="destructive" size="sm" onClick={handleLogoutAll} className="w-full sm:w-auto">
               <LogOut className="mr-2 h-4 w-4" />
               Sign out all devices
             </Button>
@@ -78,21 +78,21 @@ export function SecurityView() {
         <CardContent>
           <div className="space-y-8">
             {sessions.map((session) => (
-              <div key={session.id} className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <div className="rounded-full bg-muted p-2">
+              <div key={session.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-3 border rounded-lg sm:border-0 sm:p-0">
+                <div className="flex items-center space-x-4 min-w-0">
+                  <div className="rounded-full bg-muted p-2 shrink-0">
                     {getDeviceIcon(session.userAgent || "")}
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium leading-none">
+                  <div className="space-y-1 min-w-0">
+                    <p className="text-sm font-medium leading-none truncate pr-2">
                       {session.userAgent?.substring(0, 40) || "Unknown Device"}
                       {new Date().getTime() - new Date(session.lastActivity).getTime() < 10 * 60 * 1000 ? (
-                        <span className="ml-2 text-xs text-green-500">(Active)</span>
+                        <span className="ml-2 text-xs text-green-500 font-normal">(Active)</span>
                       ) : (
-                        <span className="ml-2 text-xs text-red-500">(Inactive)</span>
+                        <span className="ml-2 text-xs text-red-500 font-normal">(Inactive)</span>
                       )}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-muted-foreground truncate">
                       {session.ipAddress} • Last active {format(new Date(session.lastActivity), "MMM d, yyyy HH:mm")}
                     </p>
                   </div>
@@ -100,6 +100,7 @@ export function SecurityView() {
                 <Button
                   variant="outline"
                   size="sm"
+                  className="w-full sm:w-auto mt-2 sm:mt-0"
                   onClick={async () => {
                     try {
                       await authRequest.revokeSession(session.id)
