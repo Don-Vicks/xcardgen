@@ -107,12 +107,11 @@ export class EventsService {
   }
 
   async findPublic(slugOrId: string) {
-    // Bypass cache for debugging
-    // const cacheKey = `public_event_${slugOrId}`;
-    // const cached = await this.cacheManager.get(cacheKey);
-    // if (cached) {
-    //   return cached as any;
-    // }
+    const cacheKey = `public_event_${slugOrId}`;
+    const cached = await this.cacheManager.get(cacheKey);
+    if (cached) {
+      return cached as any;
+    }
 
     const event = await this.prisma.event.findFirst({
       where: {
@@ -133,14 +132,12 @@ export class EventsService {
       throw new NotFoundException('Event not found');
     }
 
-    // console.log(`[EventsService] Found event: ${event.name} (${event.id})`);
-
     // Check Branding Feature
     const canRemoveBranding = await this.paymentsService
       .hasFeatureAccess(event.userId, 'canRemoveBranding')
       .catch(() => false);
 
-    // await this.cacheManager.set(cacheKey, event, 3600000);
+    await this.cacheManager.set(cacheKey, event, 3600000);
     return { ...event, showBranding: !canRemoveBranding };
   }
 
@@ -546,7 +543,7 @@ export class EventsService {
 
       // Navigate to the report page
       // Using localhost for now - in prod this should be an ENV var
-      const reportUrl = `http://localhost:3000/report/${event.slug}`;
+      const reportUrl = `${process.env.FRONTEND_URL}/report/${event.slug}`;
       console.log(`Generating ${format.toUpperCase()} from: ${reportUrl}`);
 
       await page.goto(reportUrl, {

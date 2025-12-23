@@ -31,7 +31,6 @@ export class EventsController {
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() createEventDto: CreateEventDto, @CurrentUser() user: User) {
-    console.log('User ID', user.id);
     return this.eventsService.create(createEventDto, user.id);
   }
 
@@ -72,7 +71,7 @@ export class EventsController {
     return this.eventsService.getAnalytics(id, startDate, endDate);
   }
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOneEvent(
     @Param('id') id: string,

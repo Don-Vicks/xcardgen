@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: `${event.name} - Registration`,
     description: `Register for ${event.name} and get your personalized xCard.`,
     openGraph: {
-      images: event.coverImage ? [event.coverImage] : [],
+      ...(event.coverImage ? { images: [event.coverImage] } : {}),
       title: event.name,
       description: `Register for ${event.name}`,
     }
