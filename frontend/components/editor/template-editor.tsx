@@ -545,9 +545,9 @@ export function TemplateEditor({ initialData, onSave, onBack, backLink = "/dashb
           {template.backgroundImage && (
             <div className="flex bg-muted p-1 rounded-lg gap-1">
               {[
-                { id: "cover", icon: <Monitor className="w-3 h-3" />, label: "Cover" },
-                { id: "contain", icon: <Square className="w-3 h-3" />, label: "Fit" },
-                { id: "fill", icon: <LayoutTemplate className="w-3 h-3" />, label: "Fill" },
+                { id: "cover" as const, icon: <Monitor className="w-3 h-3" />, label: "Cover" },
+                { id: "contain" as const, icon: <Square className="w-3 h-3" />, label: "Fit" },
+                { id: "fill" as const, icon: <LayoutTemplate className="w-3 h-3" />, label: "Fill" },
               ].map((opt) => (
                 <button
                   key={opt.id}
@@ -567,7 +567,7 @@ export function TemplateEditor({ initialData, onSave, onBack, backLink = "/dashb
             </div>
           )}
 
-          <div className="w-8 h-[1px] bg-border my-2" />
+          <div className="w-8 h-px bg-border my-2" />
 
           {/* Core User Inputs */}
           <Button variant="ghost" size="icon" className="h-10 w-10 text-primary hover:bg-primary/10" onClick={() => handleAddElement("avatar")} title="Add User Avatar">
@@ -616,7 +616,7 @@ export function TemplateEditor({ initialData, onSave, onBack, backLink = "/dashb
             <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => setScale(s => Math.min(3, s + 0.1))} title="Zoom In">
               <ZoomIn className="h-4 w-4" />
             </Button>
-            <div className="w-[1px] h-4 bg-border mx-1" />
+            <div className="w-px h-4 bg-border mx-1" />
             <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={fitCanvas} title="Fit to Screen">
               <Monitor className="h-4 w-4" />
             </Button>
@@ -652,7 +652,7 @@ export function TemplateEditor({ initialData, onSave, onBack, backLink = "/dashb
             {!isPreview && guides.map((guide, i) => (
               <div
                 key={i}
-                className={`absolute bg-pink-500 z-[9999] pointer-events-none ${guide.type === 'vertical' ? 'w-[1px] h-full top-0' : 'h-[1px] w-full left-0'}`}
+                className={`absolute bg-pink-500 z-50 pointer-events-none ${guide.type === 'vertical' ? 'w-px h-full top-0' : 'h-px w-full left-0'}`}
                 style={guide.type === 'vertical' ? { left: guide.position } : { top: guide.position }}
               />
             ))}
@@ -675,7 +675,7 @@ export function TemplateEditor({ initialData, onSave, onBack, backLink = "/dashb
                   >
                     <div className="w-full h-full flex items-center justify-center overflow-hidden">
                       {el.type === "text" && (
-                        <span className="w-full break-words" style={{ lineHeight: 1.2 }}>
+                        <span className="w-full wrap-break-word" style={{ lineHeight: 1.2 }}>
                           {getPreviewContent(el)}
                         </span>
                       )}
@@ -784,7 +784,7 @@ export function TemplateEditor({ initialData, onSave, onBack, backLink = "/dashb
                     )}
 
                     {el.type === "text" && (
-                      <span className="w-full break-words select-none pointer-events-none" style={{ lineHeight: 1.2 }}>
+                      <span className="w-full wrap-break-word select-none pointer-events-none" style={{ lineHeight: 1.2 }}>
                         {el.content}
                       </span>
                     )}
