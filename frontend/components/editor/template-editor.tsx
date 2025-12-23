@@ -11,7 +11,7 @@ import { useSnapping } from "@/hooks/use-snapping"
 import { Template } from "@/lib/api/requests/templates.request"
 import { GOOGLE_FONTS } from "@/lib/constants/fonts"
 import { toPng } from "html-to-image"
-import { ArrowLeft, Braces, Check, Circle, Download, Eye, Image as ImageIcon, Loader2, Minus, Monitor, Pencil, QrCode, Redo, Save, Square, Type, Undo, UserRound, ZoomIn, ZoomOut } from "lucide-react"
+import { ArrowLeft, Braces, Check, Circle, Download, Eye, Image as ImageIcon, LayoutTemplate, Loader2, Minus, Monitor, Pencil, QrCode, Redo, Save, Square, Type, Undo, UserRound, ZoomIn, ZoomOut } from "lucide-react"
 import Link from "next/link"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import QRCode from "react-qr-code"
@@ -414,6 +414,7 @@ export function TemplateEditor({ initialData, onSave, onBack, backLink = "/dashb
             backgroundImage={template.backgroundImage}
             values={sampleValues}
             scale={1}
+            backgroundFit={template.properties?.backgroundFit as any || "fill"}
           />
         </div>
       </div>
@@ -540,6 +541,32 @@ export function TemplateEditor({ initialData, onSave, onBack, backLink = "/dashb
             />
           </div>
 
+          {/* Background Fit Controls */}
+          {template.backgroundImage && (
+            <div className="flex bg-muted p-1 rounded-lg gap-1">
+              {[
+                { id: "cover", icon: <Monitor className="w-3 h-3" />, label: "Cover" },
+                { id: "contain", icon: <Square className="w-3 h-3" />, label: "Fit" },
+                { id: "fill", icon: <LayoutTemplate className="w-3 h-3" />, label: "Fill" },
+              ].map((opt) => (
+                <button
+                  key={opt.id}
+                  onClick={() => setTemplate({
+                    ...template,
+                    properties: { ...template.properties, backgroundFit: opt.id }
+                  })}
+                  className={`p-1.5 rounded-md transition-all ${(template.properties?.backgroundFit || 'fill') === opt.id
+                    ? "bg-background shadow text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  title={opt.label}
+                >
+                  {opt.icon}
+                </button>
+              ))}
+            </div>
+          )}
+
           <div className="w-8 h-[1px] bg-border my-2" />
 
           {/* Core User Inputs */}
@@ -611,8 +638,9 @@ export function TemplateEditor({ initialData, onSave, onBack, backLink = "/dashb
               top: '50%',
               left: '50%',
               backgroundImage: `url(${template.backgroundImage})`,
-              backgroundSize: '100% 100%',
+              backgroundSize: template.properties?.backgroundFit === "fill" ? "100% 100%" : (template.properties?.backgroundFit || "100% 100%"),
               backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'center',
               transform: `translate(-50%, -50%) scale(${scale})`,
               transformOrigin: 'center center',
               boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)'

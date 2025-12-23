@@ -10,6 +10,7 @@ export interface Template {
   properties?: {
     width?: number
     height?: number
+    backgroundFit?: 'cover' | 'contain' | 'fill'
   }
   workspaceId?: string
   createdAt: string

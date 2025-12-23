@@ -131,7 +131,7 @@ export default function EventDashboardPage({ params }: { params: Promise<{ slug:
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2 bg-muted/50 p-1.5 rounded-lg border">
             <span className="text-xs font-medium px-2 text-muted-foreground">Publish</span>
             <Switch

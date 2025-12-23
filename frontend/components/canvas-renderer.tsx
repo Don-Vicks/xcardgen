@@ -15,6 +15,7 @@ interface CanvasRendererProps {
   values: Record<string, any>
   scale?: number
   className?: string
+  backgroundFit?: "cover" | "contain" | "fill"
 }
 
 export function CanvasRenderer({
@@ -24,7 +25,8 @@ export function CanvasRenderer({
   backgroundImage,
   values,
   scale = 1,
-  className
+  className,
+  backgroundFit = "fill"
 }: CanvasRendererProps) {
 
   // Substitution Logic
@@ -80,8 +82,9 @@ export function CanvasRenderer({
           transform: `scale(${scale})`,
           transformOrigin: 'top left',
           backgroundImage: `url(${backgroundImage})`,
-          backgroundSize: '100% 100%',
+          backgroundSize: backgroundFit === "fill" ? "100% 100%" : backgroundFit,
           backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
           position: 'relative'
         }}
       >
