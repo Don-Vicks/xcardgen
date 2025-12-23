@@ -543,11 +543,11 @@ export function TemplateEditor({ initialData, onSave, onBack, backLink = "/dashb
 
           {/* Background Fit Controls */}
           {template.backgroundImage && (
-            <div className="flex bg-muted p-1 rounded-lg gap-1">
+            <div className="flex flex-col bg-muted/50 p-1 rounded-lg gap-1 mt-1">
               {[
-                { id: "cover" as const, icon: <Monitor className="w-3 h-3" />, label: "Cover" },
-                { id: "contain" as const, icon: <Square className="w-3 h-3" />, label: "Fit" },
-                { id: "fill" as const, icon: <LayoutTemplate className="w-3 h-3" />, label: "Fill" },
+                { id: "cover" as const, icon: <Monitor className="w-4 h-4" />, label: "Cover" },
+                { id: "contain" as const, icon: <Square className="w-4 h-4" />, label: "Fit" },
+                { id: "fill" as const, icon: <LayoutTemplate className="w-4 h-4" />, label: "Fill" },
               ].map((opt) => (
                 <button
                   key={opt.id}
@@ -555,9 +555,9 @@ export function TemplateEditor({ initialData, onSave, onBack, backLink = "/dashb
                     ...template,
                     properties: { ...template.properties, backgroundFit: opt.id }
                   })}
-                  className={`p-1.5 rounded-md transition-all ${(template.properties?.backgroundFit || 'fill') === opt.id
-                    ? "bg-background shadow text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
+                  className={`p-2 rounded-md transition-all ${(template.properties?.backgroundFit || 'fill') === opt.id
+                      ? "bg-background shadow-sm text-foreground ring-1 ring-black/5"
+                      : "text-muted-foreground hover:text-foreground hover:bg-background/50"
                     }`}
                   title={opt.label}
                 >
