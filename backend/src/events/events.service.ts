@@ -159,6 +159,22 @@ export class EventsService {
     });
   }
 
+  async findOnePublic(idOrSlug: string) {
+    return this.prisma.event.findFirst({
+      where: {
+        AND: [
+          {
+            OR: [{ id: idOrSlug }, { slug: idOrSlug }],
+          },
+        ],
+      },
+      include: {
+        stats: true,
+        template: true,
+      },
+    });
+  }
+
   async update(id: string, userId: string, data: any) {
     // 1. Update
     // Check Limit if publishing

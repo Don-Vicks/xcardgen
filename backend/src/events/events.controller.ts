@@ -81,6 +81,11 @@ export class EventsController {
     return this.eventsService.findOne(id, user.id, workspaceId);
   }
 
+  @Get('/report/:id')
+  findOnePublic(@Param('id') id: string) {
+    return this.eventsService.findOnePublic(id);
+  }
+
   @Public()
   @Get(':id/export/pdf')
   @Header('Content-Type', 'application/pdf')

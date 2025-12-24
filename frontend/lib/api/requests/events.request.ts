@@ -118,6 +118,10 @@ export class EventsRequest {
     return api.get<Event>(`/events/${id}${query}`)
   }
 
+  async getReport(id: string) {
+    return api.get<Event>(`/events/report/${id}`)
+  }
+
   async getPublic(slug: string) {
     return api.get<Event>(`/events/public/${slug}`)
   }

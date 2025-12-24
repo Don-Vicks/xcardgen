@@ -46,12 +46,13 @@ export default function ReportPage() {
       // ALL OF THIS REPLACES THE getAll LOGIC
       try {
         // 1. Resolve Slug/ID directly via public API
-        const eventRes = await eventsRequest.getById(slugOrId)
+        const eventRes = await eventsRequest.getReport(slugOrId)
         const event = eventRes.data
 
         if (event) {
           // 2. Fetch Deep Analytics (Still might be protected! But let's try)
           const res = await eventsRequest.getAnalytics(event.id)
+          console.log(res)
 
           // 3. Transform Data
           const rawStats = res.data.stats || {}

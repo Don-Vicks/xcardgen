@@ -179,7 +179,7 @@ export default function Home() {
 
           <div className="container mx-auto px-4 text-center relative z-10">
             <p className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-[0.2em] mb-12">
-              Trusted by the World's Biggest Crypto Events
+              Trusted by 5,000+ Attendees & the World's Biggest Crypto Events
             </p>
 
             <div className="relative w-full max-w-full overflow-hidden mask-linear-fade">
