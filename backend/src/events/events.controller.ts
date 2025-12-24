@@ -71,7 +71,7 @@ export class EventsController {
     return this.eventsService.getAnalytics(id, startDate, endDate);
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOneEvent(
     @Param('id') id: string,
