@@ -49,6 +49,9 @@ export class AuthController {
       userAgent,
     });
 
+    // Generate refresh token
+    const refreshToken = this.authService.generateRefreshToken(req.user);
+
     res.cookie('access_token', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -56,6 +59,15 @@ export class AuthController {
       path: '/',
       maxAge: 60 * 60 * 1000, // 60 minutes
     });
+
+    res.cookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
     res.redirect(`${frontendUrl}/callback`);
   }
@@ -67,8 +79,9 @@ export class AuthController {
     // Create user using users service
     const user = await this.usersService.create(registerDto);
 
-    // Generate token using auth service
+    // Generate tokens
     const accessToken = this.authService.generateToken(user);
+    const refreshToken = this.authService.generateRefreshToken(user);
 
     res.cookie('access_token', accessToken, {
       httpOnly: true,
@@ -76,6 +89,14 @@ export class AuthController {
       sameSite: 'lax',
       path: '/',
       maxAge: 60 * 60 * 1000, // 60 minutes
+    });
+
+    res.cookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
     return res.json({
@@ -108,12 +129,25 @@ export class AuthController {
     });
 
     if (loginResult && loginResult.accessToken) {
+      // Generate refresh token
+      const refreshToken = this.authService.generateRefreshToken(
+        loginResult.user,
+      );
+
       res.cookie('access_token', loginResult.accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         path: '/',
         maxAge: 60 * 60 * 1000, // 60 minutes
+      });
+
+      res.cookie('refresh_token', refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
     }
 
@@ -132,6 +166,36 @@ export class AuthController {
     return { valid: true, user };
   }
 
+  @Post('refresh')
+  async refresh(@Req() req: Request, @Res() res: Response) {
+    const refreshToken = req.cookies?.refresh_token;
+
+    if (!refreshToken) {
+      return res.status(401).json({ message: 'Refresh token not found' });
+    }
+
+    try {
+      const { accessToken, user } =
+        await this.authService.refreshAccessToken(refreshToken);
+
+      res.cookie('access_token', accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 60 * 1000, // 60 minutes
+      });
+
+      return res.json({ accessToken, user });
+    } catch (error) {
+      res.clearCookie('access_token');
+      res.clearCookie('refresh_token');
+      return res
+        .status(401)
+        .json({ message: 'Invalid or expired refresh token' });
+    }
+  }
+
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   async logout(@Req() req: Request, @Res() res: Response) {
@@ -146,6 +210,7 @@ export class AuthController {
     }
 
     res.clearCookie('access_token');
+    res.clearCookie('refresh_token');
     return res.json({ message: 'Logged out successfully' });
   }
 

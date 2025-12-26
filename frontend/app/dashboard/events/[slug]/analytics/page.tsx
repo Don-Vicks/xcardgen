@@ -224,7 +224,7 @@ export default function AnalyticsPage() {
   ]
 
   return (
-    <div className="flex-1 space-y-6 p-8 pt-6">
+    <div className="flex-1 space-y-6 p-4 md:p-8 pt-6">
       {/* Event Header */}
       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
         <div className="flex items-center gap-4">
@@ -334,7 +334,7 @@ export default function AnalyticsPage() {
 
       <div ref={analyticsRef} className="space-y-6">
         {/* KPI Cards */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+        <div className="grid gap-4 grid-cols-2 lg:grid-cols-5">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Visits</CardTitle>
@@ -388,7 +388,7 @@ export default function AnalyticsPage() {
 
         {/* Main Charts Row */}
         <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-7">
-          <Card className="col-span-1 md:col-span-2 lg:col-span-4">
+          <Card className="col-span-1 md:col-span-2 lg:col-span-4 min-w-0">
             <CardHeader>
               <CardTitle>Visits Over Time</CardTitle>
             </CardHeader>
@@ -413,7 +413,7 @@ export default function AnalyticsPage() {
           </Card>
 
           {/* Conversion Funnel */}
-          <Card className="col-span-1 md:col-span-2 lg:col-span-3">
+          <Card className="col-span-1 md:col-span-2 lg:col-span-3 min-w-0">
             <CardHeader>
               <CardTitle>Conversion Funnel</CardTitle>
               <CardDescription>User journey drop-off.</CardDescription>
@@ -439,7 +439,7 @@ export default function AnalyticsPage() {
 
         {/* Premium: Activity & Audience */}
         <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-7">
-          <Card className="col-span-1 md:col-span-2 lg:col-span-4 relative group">
+          <Card className="col-span-1 md:col-span-2 lg:col-span-4 relative group min-w-0">
             {!hasAdvancedStats && <PremiumOverlay label="Peak Activity Locked" />}
             <CardHeader>
               <CardTitle>Peak Activity (UTC)</CardTitle>
@@ -458,7 +458,7 @@ export default function AnalyticsPage() {
             </CardContent>
           </Card>
 
-          <Card className="col-span-1 md:col-span-2 lg:col-span-3 relative">
+          <Card className="col-span-1 md:col-span-2 lg:col-span-3 relative min-w-0">
             {!hasAdvancedStats && <PremiumOverlay label="Audience Quality Locked" />}
             <CardHeader>
               <CardTitle>Participating Organizations</CardTitle>
@@ -481,7 +481,7 @@ export default function AnalyticsPage() {
         {/* Detailed Stats Row */}
         <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
           {/* Traffic Sources */}
-          <Card className="col-span-1 relative">
+          <Card className="col-span-1 relative min-w-0">
             {!hasAdvancedStats && <PremiumOverlay label="Traffic Sources Locked" />}
             <CardHeader>
               <CardTitle>Traffic Sources</CardTitle>
@@ -507,7 +507,7 @@ export default function AnalyticsPage() {
           </Card>
 
           {/* Demographics */}
-          <Card className="col-span-1 relative">
+          <Card className="col-span-1 relative min-w-0">
             {!hasAdvancedStats && <PremiumOverlay label="Demographics Locked" />}
             <CardHeader>
               <CardTitle>Demographics</CardTitle>
@@ -533,7 +533,7 @@ export default function AnalyticsPage() {
           </Card>
 
           {/* Activity Feed */}
-          <Card className="col-span-1">
+          <Card className="col-span-1 min-w-0">
             <CardHeader>
               <CardTitle>Recent Activity</CardTitle>
               <CardDescription>Latest actions.</CardDescription>

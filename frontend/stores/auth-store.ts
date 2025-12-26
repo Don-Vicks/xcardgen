@@ -118,9 +118,15 @@ export const useAuth = create<AuthState>((set, get) => ({
             : null,
         }))
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Store: checkAuth Failed:', error)
-      set({ user: null, loading: false })
+      // If unauthorized, clear user to prevent redirect loops
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        set({ user: null, loading: false })
+      } else {
+        // For other errors, we might still want to clear user or handle gracefully
+        set({ user: null, loading: false })
+      }
     }
   },
 

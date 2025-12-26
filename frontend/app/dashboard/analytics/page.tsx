@@ -125,7 +125,7 @@ export default function AnalyticsPage() {
   const conversionRate = stats.views > 0 ? ((stats.generations / stats.views) * 100).toFixed(1) : "0"
 
   return (
-    <div className="flex-1 space-y-6 p-8 pt-6">
+    <div className="flex-1 space-y-6 p-4 md:p-8 pt-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -150,8 +150,9 @@ export default function AnalyticsPage() {
 
       {/* KPI Cards */}
       {/* KPI Cards */}
-      <div className="flex flex-nowrap gap-4 overflow-x-auto pb-4">
-        <Card className="min-w-[240px] flex-1">
+      {/* KPI Cards */}
+      <div className="grid grid-cols-2 gap-4 md:flex md:flex-nowrap md:overflow-x-auto pb-4">
+        <Card className="md:min-w-[240px] flex-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Views</CardTitle>
             <Eye className="h-4 w-4 text-muted-foreground" />
@@ -161,7 +162,7 @@ export default function AnalyticsPage() {
             <p className="text-xs text-muted-foreground">Across all xCards</p>
           </CardContent>
         </Card>
-        <Card className="min-w-[240px] flex-1">
+        <Card className="md:min-w-[240px] flex-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Cards Generated</CardTitle>
             <CreditCard className="h-4 w-4 text-muted-foreground" />
@@ -171,7 +172,7 @@ export default function AnalyticsPage() {
             <p className="text-xs text-muted-foreground">{conversionRate}% conversion rate</p>
           </CardContent>
         </Card>
-        <Card className="min-w-[240px] flex-1">
+        <Card className="md:min-w-[240px] flex-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Registrations</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
@@ -181,7 +182,7 @@ export default function AnalyticsPage() {
             <p className="text-xs text-muted-foreground">Unique participants</p>
           </CardContent>
         </Card>
-        <Card className="min-w-[240px] flex-1">
+        <Card className="md:min-w-[240px] flex-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Downloads</CardTitle>
             <Download className="h-4 w-4 text-muted-foreground" />
@@ -191,7 +192,7 @@ export default function AnalyticsPage() {
             <p className="text-xs text-muted-foreground">Cards saved to device</p>
           </CardContent>
         </Card>
-        <Card className="min-w-[240px] flex-1">
+        <Card className="md:min-w-[240px] flex-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Shares</CardTitle>
             <Share2 className="h-4 w-4 text-muted-foreground" />
@@ -223,7 +224,7 @@ export default function AnalyticsPage() {
         )}
 
         {/* Activity Trend */}
-        <Card className="col-span-4">
+        <Card className="col-span-7 lg:col-span-4 min-w-0">
           <CardHeader>
             <CardTitle>Activity Over Time</CardTitle>
             <CardDescription>Views and card generations</CardDescription>
@@ -261,7 +262,7 @@ export default function AnalyticsPage() {
         </Card>
 
         {/* Device Breakdown */}
-        <Card className="col-span-3">
+        <Card className="col-span-7 lg:col-span-3 min-w-0">
           <CardHeader>
             <CardTitle>Device Breakdown</CardTitle>
             <CardDescription>Visitor devices</CardDescription>
@@ -302,7 +303,7 @@ export default function AnalyticsPage() {
       {/* Countries & xCards Table */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 relative">
         {/* Top Countries */}
-        <Card className="col-span-2 relative overflow-hidden">
+        <Card className="col-span-7 lg:col-span-2 relative overflow-hidden min-w-0">
           {!hasAdvancedStats && (
             <div className="absolute inset-0 z-10 bg-background/60 backdrop-blur-[2px] flex items-center justify-center">
               <div className="flex items-center gap-2 bg-background/90 px-3 py-1.5 rounded-full border shadow-sm">
@@ -336,57 +337,60 @@ export default function AnalyticsPage() {
         </Card>
 
         {/* xCards Performance Table */}
-        <Card className="col-span-5">
+        <Card className="col-span-7 lg:col-span-5 min-w-0">
           <CardHeader>
             <CardTitle>xCards Performance</CardTitle>
             <CardDescription>Individual xCard metrics</CardDescription>
           </CardHeader>
           <CardContent>
             {events.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Views</TableHead>
-                    <TableHead className="text-right">Generations</TableHead>
-                    <TableHead className="text-right">Attendees</TableHead>
-                    <TableHead className="text-right">Downloads</TableHead>
-                    <TableHead className="text-right">Shares</TableHead>
-                    <TableHead></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {events.slice(0, 5).map((event) => (
-                    <TableRow key={event.id}>
-                      <TableCell className="font-medium">{event.name}</TableCell>
-                      <TableCell>
-                        <Badge variant={event.status === 'PUBLISHED' ? "default" : "secondary"}>
-                          {event.status || 'DRAFT'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right">{event.stats?.views || 0}</TableCell>
-                      <TableCell className="text-right">{event.stats?.generations || 0}</TableCell>
-                      <TableCell className="text-right">{event.stats?.attendees || 0}</TableCell>
-                      <TableCell className="text-right">{event.stats?.downloads || 0}</TableCell>
-                      <TableCell className="text-right">{event.stats?.shares || 0}</TableCell>
-                      <TableCell>
-                        <Link href={`/dashboard/events/${event.slug}/analytics`}>
-                          <Button variant="ghost" size="sm" className="gap-1">
-                            Details <ArrowRight className="h-3 w-3" />
-                          </Button>
-                        </Link>
-                      </TableCell>
+              <div className="w-full overflow-x-auto max-w-[85vw] md:max-w-full">
+                <Table className="min-w-[600px]">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-right">Views</TableHead>
+                      <TableHead className="text-right">Generations</TableHead>
+                      <TableHead className="text-right">Attendees</TableHead>
+                      <TableHead className="text-right">Downloads</TableHead>
+                      <TableHead className="text-right">Shares</TableHead>
+                      <TableHead></TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {events.slice(0, 5).map((event) => (
+                      <TableRow key={event.id}>
+                        <TableCell className="font-medium">{event.name}</TableCell>
+                        <TableCell>
+                          <Badge variant={event.status === 'PUBLISHED' ? "default" : "secondary"}>
+                            {event.status || 'DRAFT'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">{event.stats?.views || 0}</TableCell>
+                        <TableCell className="text-right">{event.stats?.generations || 0}</TableCell>
+                        <TableCell className="text-right">{event.stats?.attendees || 0}</TableCell>
+                        <TableCell className="text-right">{event.stats?.downloads || 0}</TableCell>
+                        <TableCell className="text-right">{event.stats?.shares || 0}</TableCell>
+                        <TableCell>
+                          <Link href={`/dashboard/events/${event.slug}/analytics`}>
+                            <Button variant="ghost" size="sm" className="gap-1">
+                              Details <ArrowRight className="h-3 w-3" />
+                            </Button>
+                          </Link>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             ) : (
               <div className="py-8 text-center text-muted-foreground">
                 <BarChart3 className="h-8 w-8 mx-auto mb-2 opacity-50" />
                 <p>No xCards yet. Create one to see analytics.</p>
               </div>
-            )}
+            )
+            }
 
             {events.length > 5 && (
               <div className="mt-4 text-center">
@@ -400,6 +404,6 @@ export default function AnalyticsPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </div >
   )
 }

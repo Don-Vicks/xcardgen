@@ -112,6 +112,34 @@ export class AuthService {
     return this.jwtService.sign(payload);
   }
 
+  generateRefreshToken(user: any): string {
+    const payload = { email: user.email, sub: user.id, type: 'refresh' };
+    return this.jwtService.sign(payload, { expiresIn: '7d' });
+  }
+
+  async refreshAccessToken(
+    refreshToken: string,
+  ): Promise<{ accessToken: string; user: any }> {
+    try {
+      const payload = this.jwtService.verify(refreshToken);
+
+      // Ensure it's a refresh token
+      if (payload.type !== 'refresh') {
+        throw new UnauthorizedException('Invalid token type');
+      }
+
+      const user = await this.validateUserById(payload.sub);
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+
+      const accessToken = this.generateToken(user);
+      return { accessToken, user };
+    } catch (error) {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
+  }
+
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.prisma.user.findUnique({
       where: { email },
