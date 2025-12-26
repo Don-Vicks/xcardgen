@@ -185,7 +185,10 @@ export class PaymentsService {
           provider: 'SOLANA_KIT',
           status: PaymentStatus.COMPLETED,
           txHash: body.signature,
-          metadata: { planId: body.planId },
+          metadata: {
+            planId: body.planId,
+            planName: plan.name,
+          },
         },
       });
       await this.activateSubscription(userId, body.planId);
@@ -390,10 +393,11 @@ export class PaymentsService {
   }
 
   /**
-   * Get user's payment history
+   * Get user's payment history (Paginated)
    */
-  async getPaymentHistory(userId: string) {
+  async getPaymentHistory(userId: string, page = 1, limit = 10) {
     // Combine regular payments and credit purchases
+    // Note: For true scalability, this should be a UNION query, but for now fetching all is acceptable
     const [payments, creditPurchases] = await Promise.all([
       this.prisma.payment.findMany({
         where: { userId },
@@ -405,10 +409,39 @@ export class PaymentsService {
       }),
     ]);
 
-    // Normalize and sort locally (simple implementation)
-    return [...payments, ...creditPurchases].sort(
+    // Normalize, Sort, and Map to DTO
+    const sorted = [...payments, ...creditPurchases].sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
+
+    const total = sorted.length;
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedItems = sorted.slice(startIndex, endIndex);
+
+    const data = paginatedItems.map((item) => {
+      const isPayment = 'provider' in item; // Distinguish Payment vs CreditPurchase
+      return {
+        id: item.id,
+        date: item.createdAt, // Frontend expects 'date'
+        amount: Number(item.amount),
+        currency: item.currency,
+        status: item.status,
+        txHash: item.txHash,
+        description: isPayment
+          ? (item.metadata as any)?.planName
+            ? `Subscription: ${(item.metadata as any).planName}`
+            : 'Subscription Payment'
+          : `Credit Purchase (${item.amount} credits)`,
+      };
+    });
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+    };
   }
 
   /**
@@ -690,5 +723,49 @@ export class PaymentsService {
       data: { generationCount: { increment: 1 } },
     });
     return { source: 'monthly' };
+  }
+
+  /**
+   * Get user's usage history (card generations)
+   */
+  async getUsageHistory(userId: string, page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.cardGeneration.findMany({
+        where: {
+          event: {
+            userId,
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+        skip,
+        take: limit,
+        include: {
+          event: {
+            select: { name: true, slug: true },
+          },
+          attendee: {
+            select: { name: true, email: true },
+          },
+        },
+      }),
+      this.prisma.cardGeneration.count({
+        where: {
+          event: {
+            userId,
+          },
+        },
+      }),
+    ]);
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+    };
   }
 }

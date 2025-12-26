@@ -788,50 +788,40 @@ export class EventsService {
       `[Register] Email: ${body.email}, ExistingGen: ${!!existingGen}`,
     );
 
-    if (!existingGen) {
-      // Consume Generation Credit (Owner pays)
-      console.log(`[Register] New generation. Checking limits...`);
-      await this.paymentsService.checkAndConsumeGeneration(event.userId);
+    // Always consume credit for every generation attempt
+    console.log(`[Register] New generation request. Consuming credit...`);
+    await this.paymentsService.checkAndConsumeGeneration(event.userId);
 
-      const newGen = await this.prisma.cardGeneration.create({
-        data: {
-          eventId: event.id,
-          attendeeId: attendee.id,
-          imageUrl: imageUrl,
-        },
-      });
-      generationId = newGen.id;
+    const newGen = await this.prisma.cardGeneration.create({
+      data: {
+        eventId: event.id,
+        attendeeId: attendee.id,
+        imageUrl: imageUrl,
+      },
+    });
+    generationId = newGen.id;
 
-      // Only increment stats if it's a new generation
-      await this.prisma.eventStats.upsert({
-        where: {
-          eventId: event.id,
+    // Update Stats
+    await this.prisma.eventStats.upsert({
+      where: {
+        eventId: event.id,
+      },
+      update: {
+        generations: {
+          increment: 1,
         },
-        update: {
-          generations: {
-            increment: 1,
-          },
-          attendees: {
-            increment: 1, // This might over-count if attendee existed but had no card? But typically they go together.
-            // Actually, if attendee was upserted (updated), we shouldn't increment attendees count again?
-            // Let's refine stat counting.
-          },
+        // Only increment unique attendees count if this person didn't exist before
+        attendees: {
+          increment: existingAttendee ? 0 : 1,
         },
-        create: {
-          eventId: event.id,
-          generations: 1,
-          downloads: 0,
-          attendees: 1,
-        },
-      });
-    } else {
-      // Update the existing generation with new URL just in case the template changed.
-      await this.prisma.cardGeneration.update({
-        where: { id: existingGen.id },
-        data: { imageUrl },
-      });
-      // Do NOT increment stats
-    }
+      },
+      create: {
+        eventId: event.id,
+        generations: 1,
+        downloads: 0,
+        attendees: 1,
+      },
+    });
 
     return { url: imageUrl };
   }

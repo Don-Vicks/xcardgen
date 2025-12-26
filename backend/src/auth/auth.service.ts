@@ -16,9 +16,10 @@ export class AuthService {
     private sessionService: SessionService,
   ) {}
 
-  async login(loginDto: LoginDto, logingLog: LoginLogDto) {
+  async login(loginDto: LoginDto, loginLog: LoginLogDto) {
     const { email, password } = loginDto;
-    const { ipAddress, userAgent } = logingLog;
+    const { ipAddress, userAgent } = loginLog;
+    const normalizedEmail = email.toLowerCase();
 
     // const { error } = await loginSchema.safeParse({ email, password });
     // if (error) {
@@ -27,7 +28,7 @@ export class AuthService {
     //     message: error,
     //   };
     // }
-    const user = await this.validateUser(email, password);
+    const user = await this.validateUser(normalizedEmail, password);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
@@ -64,14 +65,16 @@ export class AuthService {
     user: any,
     context: { ipAddress: string; userAgent: string },
   ) {
+    const normalizedEmail = user.email.toLowerCase();
+
     let existingUser = await this.prisma.user.findUnique({
-      where: { email: user.email },
+      where: { email: normalizedEmail },
     });
 
     if (!existingUser) {
       existingUser = await this.prisma.user.create({
         data: {
-          email: user.email,
+          email: normalizedEmail,
           name: `${user.firstName} ${user.lastName}`,
           googleId: user.googleId,
         },

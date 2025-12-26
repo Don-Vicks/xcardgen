@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -38,8 +39,32 @@ export class PaymentsController {
    * Get payment history
    */
   @Get('history')
-  async getPaymentHistory(@Request() req) {
-    return this.paymentsService.getPaymentHistory(req.user.id);
+  async getPaymentHistory(
+    @Request() req,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ) {
+    return this.paymentsService.getPaymentHistory(
+      req.user.id,
+      Number(page),
+      Number(limit),
+    );
+  }
+
+  /**
+   * Get usage history
+   */
+  @Get('usage')
+  async getUsageHistory(
+    @Request() req,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ) {
+    return this.paymentsService.getUsageHistory(
+      req.user.id,
+      Number(page),
+      Number(limit),
+    );
   }
 
   /**
