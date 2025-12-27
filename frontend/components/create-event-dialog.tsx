@@ -44,8 +44,6 @@ import * as z from "zod"
 type EventFormValues = z.infer<typeof eventSchema>
 
 
-// ...
-
 export function CreateEventDialog() {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -96,9 +94,10 @@ export function CreateEventDialog() {
     reader.readAsDataURL(file)
   }
 
-  const handleCropComplete = async (croppedFile: File) => {
+  const handleCropComplete = async (croppedBlob: Blob) => {
     setIsUploading(true)
     try {
+      const croppedFile = new File([croppedBlob], "cover-image.jpg", { type: "image/jpeg" })
       const secureUrl = await uploadToCloudinary(croppedFile)
       form.setValue("coverImage", secureUrl, { shouldValidate: true })
       toast.success("Cover image uploaded successfully")
@@ -296,11 +295,11 @@ export function CreateEventDialog() {
         </Form>
       </DialogContent>
       <ImageCropper
-        isOpen={cropperOpen}
+        open={cropperOpen}
         onClose={() => setCropperOpen(false)}
-        imageSrc={imageToCrop}
+        image={imageToCrop}
         onCropComplete={handleCropComplete}
-        aspect={2.5}
+        aspectRatio={2.5}
       />
     </Dialog>
   )
