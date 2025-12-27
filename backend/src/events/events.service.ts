@@ -137,8 +137,15 @@ export class EventsService {
       .hasFeatureAccess(event.userId, 'canRemoveBranding')
       .catch(() => false);
 
+    // User must have the feature AND have enabled the toggle in appearance settings
+    const userWantsToRemoveBranding =
+      (event as any).appearance?.removeBranding === true;
+    const shouldShowBranding = !(
+      canRemoveBranding && userWantsToRemoveBranding
+    );
+
     await this.cacheManager.set(cacheKey, event, 3600000);
-    return { ...event, showBranding: !canRemoveBranding };
+    return { ...event, showBranding: shouldShowBranding };
   }
 
   async findOne(idOrSlug: string, userId: string, workspaceId?: string) {

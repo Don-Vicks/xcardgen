@@ -412,7 +412,7 @@ export function EventRegistrationView({ event, template, isEmbed = false }: Even
                     <span className="text-sm font-medium" style={{ color: themeStyles.mutedColor }}>
                       Hosted by{" "}
                       <Link
-                        href={`w/${workspace.slug}`}
+                        href={`/w/${workspace.slug}`}
                         className="font-semibold hover:underline underline-offset-4 decoration-2"
                         style={{ color: themeStyles.textColor, textDecorationColor: themeStyles.primaryColor }}
                       >

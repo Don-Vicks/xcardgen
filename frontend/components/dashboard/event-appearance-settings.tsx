@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
 import { eventsRequest } from "@/lib/api/requests/events.request"
 import { ThemeId, getButtonStyle, getCardStyle, getThemeStyles } from "@/lib/theme-utils"
 import { cn } from "@/lib/utils"
@@ -86,6 +87,7 @@ interface EventAppearanceSettingsProps {
       theme?: string
       primaryColor?: string
       backgroundColor?: string
+      removeBranding?: boolean
     }
   }
   onUpdate?: (appearance: any) => void
@@ -126,6 +128,7 @@ export function EventAppearanceSettings({ event, onUpdate }: EventAppearanceSett
   // ...
   const [primaryColor, setPrimaryColor] = useState(event.appearance?.primaryColor || "#000000")
   const [backgroundColor, setBackgroundColor] = useState(event.appearance?.backgroundColor || "")
+  const [removeBranding, setRemoveBranding] = useState(event.appearance?.removeBranding || false)
   const [saving, setSaving] = useState(false)
 
   const handleSave = async () => {
@@ -135,6 +138,7 @@ export function EventAppearanceSettings({ event, onUpdate }: EventAppearanceSett
         theme: selectedTheme,
         primaryColor,
         backgroundColor: backgroundColor || undefined,
+        removeBranding: canRemoveBranding ? removeBranding : false, // Only save if user has permission
       }
 
       await eventsRequest.update(event.id, { appearance })
@@ -284,34 +288,24 @@ export function EventAppearanceSettings({ event, onUpdate }: EventAppearanceSett
         <CardContent>
           <div className="flex items-center justify-between p-4 border rounded-lg bg-muted/40">
             <div className="space-y-1">
-              <Label className="text-base">xCardGen Watermark</Label>
+              <Label htmlFor="branding-toggle" className="text-base">Hide xCardGen Branding</Label>
               <p className="text-sm text-muted-foreground">
                 {canRemoveBranding
-                  ? "You can disable the 'Powered by xCardGen' badge."
-                  : "Upgrade to remove the 'Powered by xCardGen' badge."}
+                  ? "Remove the 'Powered by xCardGen' badge from your event page."
+                  : "Upgrade to Pro to remove the 'Powered by xCardGen' badge."}
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              {!canRemoveBranding && <span className="text-xs font-medium text-amber-600 bg-amber-100 px-2 py-1 rounded">Pro Feature</span>}
-              {/* 
-                     Logic: If user can remove branding, they see a toggle.
-                     If they CANNOT, the toggle is forced ON (checked) and disabled.
-                     Wait, usually 'removeBranding' means TRUE to REMOVE.
-                     So if they can't remove, the toggle 'Remove Branding' should be OFF and Disabled.
-                     Or 'Show Branding' should be ON and Disabled.
-                     Let's verify the backend logic: `options?.removeBranding` was passed. 
-                     So the feature is "Remove Branding".
-                 */}
-              {/* Implementing as "Remove Branding" Toggle */}
-              <Button
-                variant={canRemoveBranding ? "outline" : "ghost"}
-                className={!canRemoveBranding ? "opacity-50 cursor-not-allowed" : ""}
-                disabled={true}
-              >
-                {/* Simplified UI: Just a text status if not implemented fully with a real toggle yet. */}
-                {canRemoveBranding ? "Allowed" : "Locked"}
-              </Button>
-              {/* Actually, let's look for a Switch component if available or just use a checkbox */}
+            <div className="flex items-center gap-3">
+              {!canRemoveBranding && (
+                <span className="text-xs font-medium text-amber-600 bg-amber-100 px-2 py-1 rounded">Pro Feature</span>
+              )}
+              <Switch
+                id="branding-toggle"
+                checked={removeBranding}
+                onCheckedChange={setRemoveBranding}
+                disabled={!canRemoveBranding}
+                className={!canRemoveBranding ? "opacity-50" : ""}
+              />
             </div>
           </div>
         </CardContent>
