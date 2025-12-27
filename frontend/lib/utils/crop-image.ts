@@ -33,13 +33,13 @@ export default async function getCroppedImg(
   pixelCrop: { x: number; y: number; width: number; height: number },
   rotation = 0,
   flip = { horizontal: false, vertical: false }
-) {
+): Promise<Blob | null> {
   const image = await createImage(imageSrc)
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
 
   if (!ctx) {
-    return { file: null, url: '' }
+    return null
   }
 
   const rotRad = getRadianAngle(rotation)
@@ -80,19 +80,10 @@ export default async function getCroppedImg(
   // paste generated rotate image at the top left corner
   ctx.putImageData(data, 0, 0)
 
-  // As Base64 string
-  // return canvas.toDataURL('image/jpeg');
-
-  // As Blob
-  return new Promise<{ file: File; url: string }>((resolve, reject) => {
+  // As a blob
+  return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
-      if (!blob) {
-        reject(new Error('Canvas is empty'))
-        return
-      }
-      const file = new File([blob], 'cropped.jpg', { type: 'image/jpeg' }) // Generic name
-      const url = URL.createObjectURL(blob)
-      resolve({ file, url })
+      resolve(blob)
     }, 'image/jpeg')
   })
 }

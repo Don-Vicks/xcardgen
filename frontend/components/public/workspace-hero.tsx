@@ -28,7 +28,7 @@ export function WorkspaceHero({ workspace, appearance }: WorkspaceHeroProps) {
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {workspace.coverImage ? (
           <>
-            <Image src={workspace.coverImage} alt="Cover" fill className="object-cover" />
+            <Image src={workspace.coverImage} alt="Cover" fill className="object-cover" priority />
             <div
               className="absolute inset-0"
               style={{

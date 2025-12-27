@@ -4,104 +4,108 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Slider } from "@/components/ui/slider"
 import getCroppedImg from "@/lib/utils/crop-image"
-import { Loader2, RotateCw } from "lucide-react"
-import { useState } from "react"
-import Cropper, { Area } from "react-easy-crop"
+import { Loader2 } from "lucide-react"
+import { useCallback, useState } from "react"
+import Cropper from "react-easy-crop"
+import { toast } from "sonner"
 
 interface ImageCropperProps {
-  imageSrc: string | null
-  isOpen: boolean
+  open: boolean
+  image: string | null
+  aspectRatio?: number
   onClose: () => void
-  onCropComplete: (file: File, url: string) => void
-  aspect?: number
+  onCropComplete: (croppedBlob: Blob) => void
+  title?: string
+  description?: string
 }
 
-export function ImageCropper({ imageSrc, isOpen, onClose, onCropComplete, aspect = 1 }: ImageCropperProps) {
+export function ImageCropper({
+  open,
+  image,
+  aspectRatio = 16 / 9,
+  onClose,
+  onCropComplete,
+  title = "Crop Image",
+  description = "Adjust the image to fit the frame."
+}: ImageCropperProps) {
   const [crop, setCrop] = useState({ x: 0, y: 0 })
   const [zoom, setZoom] = useState(1)
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null)
   const [loading, setLoading] = useState(false)
-  const [rotation, setRotation] = useState(0)
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
 
-  const handleCropComplete = (croppedArea: Area, croppedAreaPixels: Area) => {
-    setCroppedAreaPixels(croppedAreaPixels)
+  const onCropChange = (crop: { x: number; y: number }) => {
+    setCrop(crop)
   }
 
+  const onZoomChange = (zoom: number) => {
+    setZoom(zoom)
+  }
+
+  const onCropCompleteCallback = useCallback((croppedArea: any, croppedAreaPixels: any) => {
+    setCroppedAreaPixels(croppedAreaPixels)
+  }, [])
+
   const handleSave = async () => {
-    if (!imageSrc || !croppedAreaPixels) return
+    if (!image || !croppedAreaPixels) return
 
     setLoading(true)
     try {
-      const { file, url } = await getCroppedImg(imageSrc, croppedAreaPixels, rotation)
-      if (file) {
-        onCropComplete(file, url)
+      const croppedImage = await getCroppedImg(image, croppedAreaPixels)
+      if (croppedImage) {
+        onCropComplete(croppedImage)
+        onClose()
       }
-      onClose()
     } catch (e) {
       console.error(e)
+      toast.error("Failed to crop image")
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Dialog open={open} onOpenChange={(val) => !val && !loading && onClose()}>
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
-          <DialogTitle>Edit Image</DialogTitle>
-          <DialogDescription>
-            Drag to position and pinch/scroll to zoom.
-          </DialogDescription>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
 
-        <div className="relative w-full h-[400px] bg-black/5 rounded-lg overflow-hidden">
-          {imageSrc && (
+        <div className="relative w-full h-[400px] bg-black rounded-md overflow-hidden my-4">
+          {image && (
             <Cropper
-              image={imageSrc}
+              image={image}
               crop={crop}
               zoom={zoom}
-              rotation={rotation}
-              aspect={aspect}
-              onCropChange={setCrop}
-              onCropComplete={handleCropComplete}
-              onZoomChange={setZoom}
+              aspect={aspectRatio}
+              onCropChange={onCropChange}
+              onCropComplete={onCropCompleteCallback}
+              onZoomChange={onZoomChange}
             />
           )}
         </div>
 
-        <div className="space-y-4 py-4">
-          <div className="flex items-center gap-4">
-            <span className="text-sm font-medium w-12">Zoom</span>
-            <Slider
-              value={[zoom]}
-              min={1}
-              max={3}
-              step={0.1}
-              onValueChange={(vals: number[]) => setZoom(vals[0])}
-              className="flex-1"
-            />
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <span>Zoom</span>
+            <span>{Math.round(zoom * 100)}%</span>
           </div>
-          <div className="flex items-center gap-4">
-            <span className="text-sm font-medium w-12">Rotate</span>
-            <Slider
-              value={[rotation]}
-              min={0}
-              max={360}
-              step={90}
-              onValueChange={(vals: number[]) => setRotation(vals[0])}
-              className="flex-1"
-            />
-            <Button size="icon" variant="ghost" onClick={() => setRotation((r) => r + 90)}>
-              <RotateCw className="w-4 h-4" />
-            </Button>
-          </div>
+          <Slider
+            value={[zoom]}
+            min={1}
+            max={3}
+            step={0.1}
+            onValueChange={(val) => setZoom(val[0])}
+          />
         </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose} disabled={loading}>Cancel</Button>
+        <DialogFooter className="mt-4">
+          <Button variant="outline" onClick={onClose} disabled={loading}>
+            Cancel
+          </Button>
           <Button onClick={handleSave} disabled={loading}>
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Save Changes
+            Apply Crop
           </Button>
         </DialogFooter>
       </DialogContent>

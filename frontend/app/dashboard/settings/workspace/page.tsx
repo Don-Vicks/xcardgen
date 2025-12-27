@@ -1,7 +1,7 @@
 "use client"
 
 import { WorkspaceAppearanceSettings } from "@/components/dashboard/workspace-appearance-settings"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -20,6 +20,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { ImageCropper } from "@/components/ui/image-cropper"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
@@ -63,6 +64,10 @@ export default function WorkspaceSettingsPage() {
   })
   const [uploadingLogo, setUploadingLogo] = useState(false)
   const [uploadingCover, setUploadingCover] = useState(false)
+
+  // Cropper state
+  const [cropperOpen, setCropperOpen] = useState(false)
+  const [selectedFile, setSelectedFile] = useState<string | null>(null)
 
   // Invite dialog
   const [inviteOpen, setInviteOpen] = useState(false)
@@ -183,14 +188,26 @@ export default function WorkspaceSettingsPage() {
     }
   }
 
-  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCoverFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+
+    // Create object URL for preview/cropper
+    const url = URL.createObjectURL(file)
+    setSelectedFile(url)
+    setCropperOpen(true)
+
+    // Reset input so same file can be selected again
+    e.target.value = ""
+  }
+
+  const handleCropComplete = async (croppedBlob: Blob) => {
     setUploadingCover(true)
     try {
+      const file = new File([croppedBlob], "cover-image.jpg", { type: "image/jpeg" })
       const res = await workspacesRequest.uploadCover(file)
       setCoverImage(res.data.url)
-      toast.success("Cover image uploaded")
+      toast.success("Cover image updated")
     } catch (error) {
       toast.error("Failed to upload cover")
     } finally {
@@ -330,10 +347,10 @@ export default function WorkspaceSettingsPage() {
                   <Label>Workspace Logo</Label>
                   <div className="flex items-center gap-4">
                     <Avatar className="h-20 w-20 border">
+                      <AvatarImage src={logo} className="object-cover" />
                       <AvatarFallback className="text-xl">
                         {name?.charAt(0)?.toUpperCase()}
                       </AvatarFallback>
-                      {logo && <img src={logo} alt="Logo" className="object-cover w-full h-full" />}
                     </Avatar>
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
@@ -361,7 +378,7 @@ export default function WorkspaceSettingsPage() {
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                         <Button variant="secondary" size="sm" className="relative cursor-pointer">
                           {uploadingCover ? <Loader2 className="animate-spin h-4 w-4" /> : "Change Cover"}
-                          <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept="image/*" onChange={handleCoverUpload} disabled={uploadingCover} />
+                          <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept="image/*" onChange={handleCoverFileSelect} disabled={uploadingCover} />
                         </Button>
                       </div>
                     )}
@@ -674,6 +691,16 @@ export default function WorkspaceSettingsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog >
+
+      <ImageCropper
+        open={cropperOpen}
+        onClose={() => setCropperOpen(false)}
+        image={selectedFile}
+        onCropComplete={handleCropComplete}
+        aspectRatio={3 / 1} // 3:1 for wide hero banner
+        title="Crop Cover Image"
+        description="Adjust your cover image to look great on the public page."
+      />
     </div >
   )
 }

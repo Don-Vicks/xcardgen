@@ -40,6 +40,7 @@ export class WorkspacesService {
         slug: createWorkspace.slug,
         name: createWorkspace.name,
         logo: createWorkspace.logo,
+        coverImage: createWorkspace.coverImage,
         type: createWorkspace.type,
         description: createWorkspace.description,
         socialLinks: createWorkspace.socialLinks,
