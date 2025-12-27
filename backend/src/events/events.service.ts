@@ -721,6 +721,11 @@ export class EventsService {
       'canRemoveBranding',
     );
 
+    // User must have the feature AND have enabled the toggle in appearance settings
+    const userWantsToRemoveBranding =
+      (event as any).appearance?.removeBranding === true;
+    const shouldRemoveBranding = canRemoveBranding && userWantsToRemoveBranding;
+
     // Generate HTML
     const html = generateTicketHtml(
       event.template,
@@ -729,7 +734,7 @@ export class EventsService {
         name: body.name,
         email: body.email,
       },
-      { removeBranding: canRemoveBranding },
+      { removeBranding: shouldRemoveBranding },
     );
 
     // Generate Image via Puppeteer
