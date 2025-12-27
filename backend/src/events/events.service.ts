@@ -144,8 +144,10 @@ export class EventsService {
       canRemoveBranding && userWantsToRemoveBranding
     );
 
-    await this.cacheManager.set(cacheKey, event, 3600000);
-    return { ...event, showBranding: shouldShowBranding };
+    // Cache the COMPUTED result with showBranding included
+    const result = { ...event, showBranding: shouldShowBranding };
+    await this.cacheManager.set(cacheKey, result, 3600000);
+    return result;
   }
 
   async findOne(idOrSlug: string, userId: string, workspaceId?: string) {
