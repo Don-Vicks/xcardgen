@@ -23,7 +23,7 @@ import { routes } from "@/lib/constants/menu"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/stores/auth-store"
 import { useWorkspace } from "@/stores/workspace-store"
-import { Check, ChevronsUpDown, Globe, Layers, LogOut, Plus, Settings, User } from "lucide-react"
+import { Check, ChevronsUpDown, Globe, LogOut, Plus, Settings, User } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -62,9 +62,7 @@ export function SidebarNav({ className, setOpen }: { className?: string, setOpen
     <div className={`flex flex-col justify-between h-full ${className}`}>
       <div className="flex h-16 items-center px-6 border-b border-border/40">
         <Link className="flex items-center gap-2 font-bold text-xl tracking-tight" href="/" onClick={() => setOpen?.(false)}>
-          <div className="size-8 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/20">
-            <Layers className="h-5 w-5 text-primary-foreground" />
-          </div>
+          <Image src="/logo.png" alt="xCardGen" width={32} height={32} className="rounded-lg" />
           <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
             xCardGen
           </span>

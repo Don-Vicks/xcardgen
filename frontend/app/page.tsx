@@ -78,9 +78,7 @@ export default function Home() {
       <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-background/80 backdrop-blur-md border-b' : 'bg-transparent'}`}>
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
-              <Sparkles className="h-5 w-5 text-primary-foreground" />
-            </div>
+            <Image src="/logo.png" alt="xCardGen" width={32} height={32} className="rounded-lg" />
             <span className="font-bold text-xl font-[family-name:var(--font-syne)] tracking-tight">xCardGen</span>
           </div>
 

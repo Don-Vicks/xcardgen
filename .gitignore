@@ -16,6 +16,9 @@ dist/
 # Production
 build
 
+brand-assets/
+DESIGNER_BRIEF.md
+
 # Misc
 .DS_Store
 *.pem
