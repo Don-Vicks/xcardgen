@@ -130,6 +130,7 @@ export class EventsController {
     res.send(csv);
   }
 
+  @Public()
   @Post(':id/visit')
   async recordVisit(
     @Param('id') id: string,
