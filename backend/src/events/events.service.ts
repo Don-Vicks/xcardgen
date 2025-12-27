@@ -144,6 +144,16 @@ export class EventsService {
       canRemoveBranding && userWantsToRemoveBranding
     );
 
+    // Debug logging
+    console.log('[findPublic Branding Debug]', {
+      eventId: event.id,
+      eventSlug: event.slug,
+      appearance: (event as any).appearance,
+      canRemoveBranding,
+      userWantsToRemoveBranding,
+      shouldShowBranding,
+    });
+
     // Cache the COMPUTED result with showBranding included
     const result = { ...event, showBranding: shouldShowBranding };
     await this.cacheManager.set(cacheKey, result, 3600000);
@@ -725,6 +735,16 @@ export class EventsService {
     const userWantsToRemoveBranding =
       (event as any).appearance?.removeBranding === true;
     const shouldRemoveBranding = canRemoveBranding && userWantsToRemoveBranding;
+
+    // Debug logging
+    console.log('[Branding Debug]', {
+      eventId: event.id,
+      eventSlug: event.slug,
+      appearance: (event as any).appearance,
+      canRemoveBranding,
+      userWantsToRemoveBranding,
+      shouldRemoveBranding,
+    });
 
     // Generate HTML
     const html = generateTicketHtml(
