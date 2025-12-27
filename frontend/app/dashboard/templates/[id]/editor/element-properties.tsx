@@ -504,7 +504,9 @@ export function ElementProperties({ element, onChange, onDelete, onLayerChange, 
                 {/* If features object is empty or missing 'advancedEditor', we lock it. */}
                 {/* Let's use 'canRemoveBranding' as a proxy for "Pro" features for now, or just check subscription existence. */}
                 {/* Actually, let's assume 'branding' is the key one user cares about gating visually. */}
-                {!features.canRemoveBranding && <PremiumLock label="Pro Plan" />}
+
+                {/* Tempoary disable Data Element Custom Binding  */}
+                {/* {!features.canRemoveBranding && <PremiumLock label="Pro Plan" />} */}
 
                 <div className="space-y-1">
                   <Label className="text-xs font-semibold text-foreground">Preset Fields</Label>

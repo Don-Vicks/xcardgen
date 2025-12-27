@@ -325,7 +325,7 @@ export default function WorkspaceSettingsPage() {
               <CardDescription>Customize your workspace appearance.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <Label>Workspace Logo</Label>
                   <div className="flex items-center gap-4">
@@ -350,6 +350,7 @@ export default function WorkspaceSettingsPage() {
                 </div>
                 <div className="space-y-4">
                   <Label>Cover Image</Label>
+                  <p className="text-xs text-muted-foreground">Displayed as a hero banner on your public workspace page.</p>
                   <div className="relative group rounded-md overflow-hidden border aspect-video bg-muted/30">
                     {coverImage ? (
                       <img src={coverImage} alt="Cover" className="w-full h-full object-cover" />
@@ -367,6 +368,14 @@ export default function WorkspaceSettingsPage() {
                   </div>
                 </div>
               </div>
+              {isWorkspaceAdmin && (
+                <div className="flex justify-end pt-4 border-t">
+                  <Button onClick={handleSaveGeneral} disabled={loading}>
+                    {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Save Branding
+                  </Button>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -387,7 +396,7 @@ export default function WorkspaceSettingsPage() {
                 </div>
                 <div className="space-y-2">
                   <Label>Twitter / X</Label>
-                  <Input placeholder="@username" value={socialLinks.twitter} onChange={e => setSocialLinks({ ...socialLinks, twitter: e.target.value })} disabled={!isWorkspaceAdmin} />
+                  <Input placeholder="https://x.com/@username" value={socialLinks.twitter} onChange={e => setSocialLinks({ ...socialLinks, twitter: e.target.value })} disabled={!isWorkspaceAdmin} />
                 </div>
                 <div className="space-y-2">
                   <Label>LinkedIn</Label>

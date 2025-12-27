@@ -24,14 +24,16 @@ export function WorkspaceHero({ workspace, appearance }: WorkspaceHeroProps) {
         backgroundColor: appearance ? 'transparent' : undefined
       }}
     >
-      {/* Dynamic Background Glow - Only if NO cover image and NO custom theme */}
+      {/* Dynamic Background - Cover Image as Hero Banner */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {workspace.coverImage ? (
           <>
-            <Image src={workspace.coverImage} alt="Cover" fill className="object-cover opacity-20 blur-sm" />
+            <Image src={workspace.coverImage} alt="Cover" fill className="object-cover" />
             <div
               className="absolute inset-0"
-              style={{ paddingBottom: '1px', background: `linear-gradient(to bottom, ${styles.background}CC, ${styles.background})` }}
+              style={{
+                background: `linear-gradient(to bottom, ${styles.background}80 0%, ${styles.background}CC 50%, ${styles.background} 100%)`
+              }}
             />
           </>
         ) : !appearance ? (
