@@ -1,6 +1,5 @@
 "use client"
 
-import { FontLoader } from "@/components/font-loader"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -18,6 +17,7 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { CanvasRenderer } from "../canvas-renderer"
+import { FontLoader } from "../font-loader"
 import { AnimatedBackground } from "./animated-background"
 
 interface EventRegistrationViewProps {
@@ -152,12 +152,16 @@ export function EventRegistrationView({ event, template, isEmbed = false }: Even
     reader.readAsDataURL(file)
   }
 
-  const handleCropComplete = (croppedFile: File, croppedUrl: string) => {
+  const handleCropComplete = (croppedBlob: Blob) => {
     if (!fileToCrop) return
+    const croppedUrl = URL.createObjectURL(croppedBlob)
+    // Convert blob to file for upload
+    const croppedFile = new File([croppedBlob], `cropped-${fileToCrop.key}.jpg`, { type: "image/jpeg" })
+
     setValues(prev => ({ ...prev, [fileToCrop.key]: croppedUrl }))
     setFiles(prev => ({ ...prev, [fileToCrop.key]: croppedFile }))
     setFileToCrop(null)
-    setCropperOpen(false) // just to be sure
+    setCropperOpen(false)
   }
 
   const handleGenerate = async (e: React.FormEvent) => {
@@ -793,11 +797,11 @@ export function EventRegistrationView({ event, template, isEmbed = false }: Even
         </div>
       )}
       <ImageCropper
-        isOpen={cropperOpen}
+        open={cropperOpen}
         onClose={() => setCropperOpen(false)}
-        imageSrc={fileToCrop?.src || null}
+        image={fileToCrop?.src || null}
         onCropComplete={handleCropComplete}
-        aspect={1}
+        aspectRatio={1}
       />
     </div>
   )

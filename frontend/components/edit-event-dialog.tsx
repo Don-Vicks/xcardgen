@@ -103,9 +103,10 @@ export function EditEventDialog({ event, open, onOpenChange, onUpdate }: EditEve
     reader.readAsDataURL(file)
   }
 
-  const handleCropComplete = async (croppedFile: File) => {
+  const handleCropComplete = async (croppedBlob: Blob) => {
     setIsUploading(true)
     try {
+      const croppedFile = new File([croppedBlob], "cover-image.jpg", { type: "image/jpeg" })
       const secureUrl = await uploadToCloudinary(croppedFile)
       form.setValue("coverImage", secureUrl, { shouldValidate: true })
       toast.success("Cover image uploaded successfully")
@@ -117,6 +118,8 @@ export function EditEventDialog({ event, open, onOpenChange, onUpdate }: EditEve
       setIsUploading(false)
     }
   }
+
+  // ... (lines 120-292 omitted for brevity, ensure they are preserved or just replace targeted blocks)
 
   const onSubmit = async (data: EventFormValues) => {
     setLoading(true)
@@ -291,11 +294,11 @@ export function EditEventDialog({ event, open, onOpenChange, onUpdate }: EditEve
         </Form>
       </DialogContent>
       <ImageCropper
-        isOpen={cropperOpen}
+        open={cropperOpen}
         onClose={() => setCropperOpen(false)}
-        imageSrc={imageToCrop}
+        image={imageToCrop}
         onCropComplete={handleCropComplete}
-        aspect={2.5}
+        aspectRatio={2.5}
       />
     </Dialog>
   )
